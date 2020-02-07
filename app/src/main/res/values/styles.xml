@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -20,9 +20,9 @@
     </style>
 
     <style name="RobotoButtonStyle" parent="android:Widget.Button">
+        <item name="android:textSize">@dimen/button</item>
         <item name="android:fontFamily">@font/roboto_medium</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:textStyle">bold</item>
     </style>
 
 </resources>

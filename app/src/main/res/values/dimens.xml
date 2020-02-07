@@ -12,4 +12,6 @@
     <dimen name="sub_title">16sp</dimen>
     <dimen name="body">14sp</dimen>
     <dimen name="button">14sp</dimen>
+    <dimen name="borderRadius">10dp</dimen>
+    <dimen name="cardElevation">8dp</dimen>
 </resources>

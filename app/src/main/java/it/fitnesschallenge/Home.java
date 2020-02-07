@@ -10,6 +10,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+
+import com.google.android.material.button.MaterialButton;
 
 
 /**
@@ -23,7 +26,6 @@ import android.view.ViewGroup;
 public class Home extends Fragment {
 
     private OnFragmentInteractionListener mListener;
-    private RecyclerView mRecyclerView;
 
     public Home() {
         // Required empty public constructor
@@ -44,7 +46,9 @@ public class Home extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        mRecyclerView = view.findViewById(R.id.home_recycler_view);
+        MaterialButton entreGymButton = view.findViewById(R.id.enterGym);
+        MaterialButton startOutdoor = view.findViewById(R.id.startOutdoorWorkout);
+        MaterialButton login = view.findViewById(R.id.trainerLogin);
         return view;
     }
 
