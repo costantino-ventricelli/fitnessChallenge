@@ -43,19 +43,6 @@ pom.xml.versionsBackup
 pom.xml.next
 release.properties
 
-# [Gradle-Android] ========================
-# Ignore Gradle GUI config
-gradle-app.setting
-# Gradle Signing
-signing.properties
-trestle.keystore
-# Signing files
-.signing/
-# Gradle files
-.idea/gradle.xml
-.gradle/
-.gradle
-
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
