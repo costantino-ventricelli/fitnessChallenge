@@ -1,6 +1,5 @@
 /**
- * Questa classe astratta "implementa" il DataBase vero e proprio, infatti crea un collegamento tra
- * i DAO e il DB
+ * La classe repository fa da mediatore tra i View Model e il DAO
  */
 package it.fitnesschallenge.model;
 
@@ -13,55 +12,55 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-/**
- * Questa annotazione indica che la classe è un DB e le entità che lo compongono sono elencate nell'
- * array entries, la versone indica come per SQLite la verisone del DB attuale, quindi nell'eventualità
- * di un aggiornamento alla struttura del DB verranno aggiunte le nuove entità, però l'aggiunta di
- * fallbackToDestructiveMigration dice che nel caso non si trovino i Migrations, ovvero i metodi necessari
- * alla migrazione dal vecchio al nuovo DB esso verrà distrutto e ricostruito.
- */
-@Database(entities = {Exercise.class}, version = 1)
-public abstract class FitnessChallengeDatabase extends RoomDatabase {
+import java.util.List;
 
-    private static final String DATABASE_NAME = "FitnessChallengeDB";
+import it.fitnesschallenge.ExerciseList;
+import it.fitnesschallenge.R;
+
+@Database(entities = {ExerciseTable.class}, version = 2)
+public abstract class FitnessChallengeDatabase extends RoomDatabase {
 
     private static FitnessChallengeDatabase instance;
 
     public abstract ExerciseDAO exerciseDAO();
 
-    public static synchronized FitnessChallengeDatabase getInstance(Context context){
-        if(instance == null){
+    /**
+     * Questo metodo crea il DB
+     * synchronized serve a non creare più istanze del DB contemporaneamente
+     */
+     static synchronized FitnessChallengeDatabase getInstance(Context context){
+        if(instance == null)
             instance = Room.databaseBuilder(context.getApplicationContext(),
-                    FitnessChallengeDatabase.class, DATABASE_NAME)
+                    FitnessChallengeDatabase.class,
+                    context.getString(R.string.fitness_challenge_db))
                     .fallbackToDestructiveMigration()
                     .addCallback(roomCallback)
                     .build();
-        }
         return instance;
     }
 
-    /**
-     * Questo metodo popola il DB quando viene chiamato la prima volta con onCreate
-     */
     private static RoomDatabase.Callback roomCallback = new RoomDatabase.Callback(){
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
+            new PopulateDBAsyncTask(instance).execute();
         }
     };
 
-    private static class PopulateDBAsyncTask extends AsyncTask<Void, Void, Void>{
-        private ExerciseDAO exerciseDAO;
+     private static class PopulateDBAsyncTask extends AsyncTask<Void, Void, Void>{
 
-        private PopulateDBAsyncTask(FitnessChallengeDatabase database){
-            exerciseDAO = database.exerciseDAO();
-        }
+         private ExerciseDAO exerciseDAO;
 
-        @Override
-        protected Void doInBackground(Void... voids) {
-            // TODO: aggiungere una Dummy Class con tutti gli esercizi per popolare il DB
-            return null;
-        }
-    }
+         private PopulateDBAsyncTask(FitnessChallengeDatabase db){
+             exerciseDAO = db.exerciseDAO();
+         }
 
+         @Override
+         protected Void doInBackground(Void... voids) {
+             List<ExerciseTable> exerciseList = new ExerciseList().getList();
+             for(ExerciseTable tuple : exerciseList)
+                exerciseDAO.insert(tuple);
+             return null;
+         }
+     }
 }

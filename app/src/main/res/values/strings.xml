@@ -10,4 +10,18 @@
     <string name="start">Start</string>
     <string name="trainer_login">Trainer login</string>
     <string name="login">Login</string>
+    <string name="curl_hammer_description">The hammer curl works mainly on the brachioradialis muscle of the upper part of the forearm and on the lateral part of the biceps.</string>
+    <string name="curl_hummer">Hummer curl</string>
+    <string name="barbell_curl">Barbell curl</string>
+    <string name="barbell_curl_description">Exercise involving the long head of the biceps and the flexor muscles of the forearm.</string>
+    <string name="alternate_curl_description">The dumbbell curl sitting on the bench is an excellent biceps isolation exercise. The support on the thigh completely relieves the deltoid focusing the work on the lower part of the biceps contributing to the development of the protuberance of the muscle in contact with the forearm.</string>
+    <string name="alternate_curl">Alternate curl</string>
+    <string name="bumbbell_flyes_description">The openings with dumbbells performed on the high bench work specifically on the external / high area of the bib, developing symmetry and shape of the bib. The anterior part of the shoulder is recruited as secondary muscle.</string>
+    <string name="dumbbell_flyes">Dumbbell flyes</string>
+    <string name="pectoral_machine_description">Pectoral machine closures are an excellent exercise for working the entire pectoral muscle, both in the internal part (closing phase) and in the external part (opening and stretching phase).</string>
+    <string name="pectoral_machine">Pectoral machine</string>
+    <string name="bench_press_description">The flat bench presses with the barbell are the main exercise for the development of the mass and strength of the entire pectoral muscle, usually used as the first exercise in pectoral routines. In this exercise the involvement of the triceps is very significant and the anterior deltoids are also recruited as accessory muscles.</string>
+    <string name="bench_press">Bench press</string>
+    <string name="error_in_db">Error in DB please verify</string>
+    <string name="fitness_challenge_db">FitnessChallengeDB</string>
 </resources>
