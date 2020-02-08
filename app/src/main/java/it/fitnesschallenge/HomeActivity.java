@@ -16,20 +16,20 @@ import java.util.List;
 
 import it.fitnesschallenge.model.ExerciseTable;
 import it.fitnesschallenge.model.HomeViewModel;
+import it.fitnesschallenge.Login.*;
 
-public class HomeActivity extends AppCompatActivity {
+import static it.fitnesschallenge.model.Fragment.*;
+
+
+public class HomeActivity extends AppCompatActivity implements OnChangeFragment{
 
     private static final String TAG = "HomeActivity";
     private Home mHomeFragment;
     private BottomNavigationView mBottomNavigation;
     private ImageButton mBackButton;
-    private static Context mContext;
     private HomeViewModel homeViewModel;
-    private static final String HOME_FRAGMENT = "HomeFragment";
-    private static final String PROFILE_FRAGMENT = "ProfileFragment";
-    private static final String TIMER_FRAGMENT = "TimerFragment";
-    private static final String SETTING_FRAGMENT = "SettingFragment";
-    private static final String LAST_FRAGMENT = "LastFragment";
+    private static Context mContext;
+    private boolean isHome;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,17 +45,31 @@ public class HomeActivity extends AppCompatActivity {
         mBottomNavigation = findViewById(R.id.bottom_navigation);
         mBackButton = findViewById(R.id.btn_back);
         mBackButton.setVisibility(View.GONE);
-        mContext = getApplicationContext();
-
+        mContext = this;
 
         if(savedInstanceState == null){
             mBottomNavigation.setSelectedItemId(R.id.navigation_home);
             mHomeFragment = new Home();
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, mHomeFragment, HOME_FRAGMENT).commit();
+            isHome = true;
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, mHomeFragment, HOME_FRAGMENT)
+                    .addToBackStack(HOME_FRAGMENT)
+                    .commit();
         }else{
             String lastFragment = savedInstanceState.getString(LAST_FRAGMENT);
             setCurrentFragment(lastFragment);
         }
+
+        mBackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getSupportFragmentManager().popBackStackImmediate();
+                try {
+                    setCurrentFragment(getSupportFragmentManager().findFragmentById(R.id.fragmentContainer).getTag());
+                }catch (NullPointerException ex){
+                    Toast.makeText(mContext, mContext.getString(R.string.shit_error), Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
     private void setCurrentFragment(String lastFragment){
@@ -67,11 +81,17 @@ public class HomeActivity extends AppCompatActivity {
             case SETTING_FRAGMENT:
                 break;
             case HOME_FRAGMENT:
+                mBackButton.setVisibility(View.GONE);
                 break;
         }
     }
 
     public static Context getHomeActivityContext(){
         return mContext;
+    }
+
+    @Override
+    public void onChangeFragment() {
+        mBackButton.setVisibility(View.VISIBLE);
     }
 }

@@ -17,7 +17,7 @@ import java.util.List;
 import it.fitnesschallenge.ExerciseList;
 import it.fitnesschallenge.R;
 
-@Database(entities = {ExerciseTable.class}, version = 2)
+@Database(entities = {ExerciseTable.class}, version = 2, exportSchema = false)
 public abstract class FitnessChallengeDatabase extends RoomDatabase {
 
     private static FitnessChallengeDatabase instance;
