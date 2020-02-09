@@ -7,4 +7,5 @@ public final class Fragment {
     public static final String TIMER_FRAGMENT = "TimerFragment";
     public static final String SETTING_FRAGMENT = "SettingFragment";
     public static final String LAST_FRAGMENT = "LastFragment";
+    public static final String SIGN_UP_FRAGMENT = "SignInFragment";
 }

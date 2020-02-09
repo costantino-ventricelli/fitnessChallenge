@@ -30,4 +30,26 @@
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="shit_error">Shit something wrong!</string>
+    <string name="no_auto_login">No auto login detected</string>
+    <string name="yes_auto_login">Auto loggin detected</string>
+    <string name="email">Email</string>
+    <string name="complete_correctly_field">Complete correctly this field</string>
+    <string name="login_failed">Login failed, verify your email and password</string>
+    <string name="login_successfull">Login successfull</string>
+    <string name="login_image">Login image</string>
+    <string name="not_a_member_sign_up">Not a member? Sign up</string>
+    <string name="back_button">Back button</string>
+    <string name="repeat_password">Repeat password</string>
+    <string name="surname">Surname</string>
+    <string name="name">Name</string>
+    <string name="role">Role</string>
+    <string name="pick_image">Pick image</string>
+    <string name="sign_in">Sign in</string>
+    <string name="trainer_user">TRAINER/USER</string>
+    <string name="user">USER</string>
+    <string name="trainer">TRAINER</string>
+    <string name="registration_failed">Something went wrong</string>
+    <string name="sign_in_fail">SignIn failed</string>
+    <string name="sign_in_successfully">SignIn successfully</string>
+    <string name="sign_up">Sign Up</string>
 </resources>

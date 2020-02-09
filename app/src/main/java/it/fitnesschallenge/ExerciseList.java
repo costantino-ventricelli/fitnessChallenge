@@ -5,7 +5,7 @@ import android.content.Context;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.fitnesschallenge.model.ExerciseTable;
+import it.fitnesschallenge.model.room.ExerciseTable;
 
 public class ExerciseList {
 

@@ -14,14 +14,17 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.List;
 
-import it.fitnesschallenge.model.ExerciseTable;
-import it.fitnesschallenge.model.HomeViewModel;
-import it.fitnesschallenge.Login.*;
+import it.fitnesschallenge.model.room.ExerciseTable;
+import it.fitnesschallenge.model.view.HomeViewModel;
 
-import static it.fitnesschallenge.model.Fragment.*;
+import static it.fitnesschallenge.model.Fragment.HOME_FRAGMENT;
+import static it.fitnesschallenge.model.Fragment.LAST_FRAGMENT;
+import static it.fitnesschallenge.model.Fragment.PROFILE_FRAGMENT;
+import static it.fitnesschallenge.model.Fragment.SETTING_FRAGMENT;
+import static it.fitnesschallenge.model.Fragment.TIMER_FRAGMENT;
 
 
-public class HomeActivity extends AppCompatActivity implements OnChangeFragment{
+public class HomeActivity extends AppCompatActivity implements Login.OnChangeFragment, SignUpFragment.OnChangeFragment {
 
     private static final String TAG = "HomeActivity";
     private Home mHomeFragment;
