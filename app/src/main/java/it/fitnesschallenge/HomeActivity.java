@@ -22,7 +22,7 @@ import static it.fitnesschallenge.model.SharedConstance.HOME_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.LAST_FRAGMENT;
 
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity{
 
     private static final String TAG = "HomeActivity";
     private Home mHomeFragment;
@@ -86,5 +86,4 @@ public class HomeActivity extends AppCompatActivity {
     public static Context getHomeActivityContext() {
         return mContext;
     }
-
 }

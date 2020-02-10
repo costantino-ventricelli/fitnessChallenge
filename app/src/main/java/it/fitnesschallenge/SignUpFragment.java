@@ -69,7 +69,7 @@ public class SignUpFragment extends Fragment {
                 getContext().getString(R.string.trainer_user)};
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
-                R.layout.drop_down_role_layout,
+                R.layout.drop_down_single_layout,
                 ROLE);
         roleAutoComplete.setAdapter(adapter);
 

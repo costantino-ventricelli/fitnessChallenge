@@ -13,4 +13,11 @@ public final class SharedConstance {
     public static final String LOGGED_IN = "loggedIn";
     public static final String AUTO_LOGGED = "autoLogged";
     public static final String CREATE_TAINIG_LIST = "createTrainingList";
+    public static final String FIRST_STEP_CREATION = "firstStepCreation";
+    public static final String SECOND_STEP_CREATION = "secondStepCreation";
+    public static final String THIRD_STEP_CREATION = "thirdStepCreation";
+    public static final String FOURTH_STEP_CREATION = "fourthStepCreation";
+    public static final String EXERCISE_LIST = "exerciseList";
+    public static final String DATE_PICKER = "datePicker";
+    public static final String SELECTED_DATE = "selectedDate";
 }

@@ -62,4 +62,9 @@
     <string name="_100">/100</string>
     <string name="previous">previous</string>
     <string name="next">next</string>
+    <string name="training_goal">Training goal</string>
+    <string name="starting_training_date">Starting training date</string>
+    <string name="date_pattern">AAAA/MM/GG</string>
+    <string name="gain_muscle">GAIN MUSCLE</string>
+    <string name="get_fit">GET FIT</string>
 </resources>
