@@ -15,9 +15,13 @@
                 android:id="@+id/gymWorkOutCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin"
-                android:elevation="@dimen/cardElevation"
-                app:cardCornerRadius="@dimen/borderRadius">
+                android:layout_marginStart="@dimen/margin"
+                android:layout_marginTop="@dimen/margin"
+                android:layout_marginEnd="@dimen/margin"
+                android:layout_marginBottom="@dimen/margin"
+                android:elevation="@dimen/card_elevation"
+                app:cardCornerRadius="@dimen/border_radius"
+                app:cardElevation="@dimen/card_elevation">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -69,10 +73,14 @@
                 android:id="@+id/outdoorWorkoutCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin"
-                android:elevation="@dimen/cardElevation"
-                app:cardCornerRadius="@dimen/borderRadius"
-                android:layout_below="@id/gymWorkOutCard">
+                android:layout_below="@id/gymWorkOutCard"
+                android:layout_marginStart="@dimen/margin"
+                android:layout_marginTop="@dimen/margin"
+                android:layout_marginEnd="@dimen/margin"
+                android:layout_marginBottom="@dimen/margin"
+                android:elevation="@dimen/card_elevation"
+                app:cardCornerRadius="@dimen/border_radius"
+                app:cardElevation="@dimen/card_elevation">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -123,10 +131,14 @@
                 android:id="@+id/trainerCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin"
-                android:elevation="@dimen/cardElevation"
-                app:cardCornerRadius="@dimen/borderRadius"
-                android:layout_below="@id/outdoorWorkoutCard">
+                android:layout_below="@id/outdoorWorkoutCard"
+                android:layout_marginStart="@dimen/margin"
+                android:layout_marginTop="@dimen/margin"
+                android:layout_marginEnd="@dimen/margin"
+                android:layout_marginBottom="@dimen/margin"
+                android:elevation="@dimen/card_elevation"
+                app:cardCornerRadius="@dimen/border_radius"
+                app:cardElevation="@dimen/card_elevation">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"

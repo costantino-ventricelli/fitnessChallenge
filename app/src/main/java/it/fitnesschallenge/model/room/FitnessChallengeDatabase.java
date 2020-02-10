@@ -14,8 +14,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import java.util.List;
 
-import it.fitnesschallenge.ExerciseList;
 import it.fitnesschallenge.R;
+import it.fitnesschallenge.model.ExerciseList;
 
 @Database(entities = {ExerciseTable.class}, version = 2, exportSchema = false)
 public abstract class FitnessChallengeDatabase extends RoomDatabase {

@@ -18,7 +18,8 @@ import java.util.List;
 import it.fitnesschallenge.model.room.ExerciseTable;
 import it.fitnesschallenge.model.view.HomeViewModel;
 
-import static it.fitnesschallenge.model.Fragment.*;
+import static it.fitnesschallenge.model.SharedConstance.HOME_FRAGMENT;
+import static it.fitnesschallenge.model.SharedConstance.LAST_FRAGMENT;
 
 
 public class HomeActivity extends AppCompatActivity {

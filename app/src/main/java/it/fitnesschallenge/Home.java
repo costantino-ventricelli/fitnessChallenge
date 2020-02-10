@@ -12,8 +12,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.button.MaterialButton;
 
-import static it.fitnesschallenge.model.Fragment.HOME_FRAGMENT;
-import static it.fitnesschallenge.model.Fragment.LOGIN_FRAGMENT;
+import static it.fitnesschallenge.model.SharedConstance.HOME_FRAGMENT;
+import static it.fitnesschallenge.model.SharedConstance.LOGIN_FRAGMENT;
 
 
 public class Home extends Fragment{
@@ -61,12 +61,6 @@ public class Home extends Fragment{
             }
         });
         return view;
-    }
-
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
     }
 
 }

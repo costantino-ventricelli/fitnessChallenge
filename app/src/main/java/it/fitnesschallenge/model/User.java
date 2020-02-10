@@ -1,21 +1,31 @@
 package it.fitnesschallenge.model;
 
-public class User {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class User implements Parcelable {
 
     private String username;
     private String nome;
     private String surname;
-    private String rule;
+    private String role;
 
     private User(){
         //necessario per fire base
     }
 
-    public User(String username, String nome, String surname, String rule) {
+    public User(String username, String nome, String surname, String role) {
         this.username = username;
         this.nome = nome;
         this.surname = surname;
-        this.rule = rule;
+        this.role = role;
+    }
+
+    private User(Parcel in){
+        this.username = in.readString();
+        this.nome = in.readString();
+        this.surname = in.readString();
+        this.role = in.readString();
     }
 
     public String getUsername() {
@@ -42,11 +52,35 @@ public class User {
         this.surname = surname;
     }
 
-    public String getRule() {
-        return rule;
+    public String getRole() {
+        return role;
     }
 
-    public void setRule(String rule) {
-        this.rule = rule;
+    public void setRole(String role) {
+        this.role = role;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(username);
+        dest.writeString(nome);
+        dest.writeString(surname);
+        dest.writeString(role);
+    }
+
+    public static final Parcelable.Creator<User> CREATOR
+            = new Parcelable.Creator<User>() {
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 }

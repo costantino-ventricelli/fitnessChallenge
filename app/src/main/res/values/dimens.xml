@@ -11,7 +11,9 @@
     <dimen name="title">20sp</dimen>
     <dimen name="sub_title">16sp</dimen>
     <dimen name="body">14sp</dimen>
+    <dimen name="caption">12sp</dimen>
     <dimen name="button">14sp</dimen>
-    <dimen name="borderRadius">10dp</dimen>
-    <dimen name="cardElevation">8dp</dimen>
+    <dimen name="border_radius">10dp</dimen>
+    <dimen name="card_elevation">8dp</dimen>
+    <dimen name="multiline_distance">4dp</dimen>
 </resources>

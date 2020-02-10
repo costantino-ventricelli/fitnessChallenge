@@ -4,8 +4,8 @@ package it.fitnesschallenge;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,16 +39,21 @@ import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventList
 import it.fitnesschallenge.model.User;
 
 import static android.util.Patterns.EMAIL_ADDRESS;
-import static it.fitnesschallenge.model.Fragment.LOGIN_FRAGMENT;
-import static it.fitnesschallenge.model.Fragment.SIGN_UP_FRAGMENT;
+import static it.fitnesschallenge.model.SharedConstance.AUTO_LOGGED;
+import static it.fitnesschallenge.model.SharedConstance.LOGGED_IN;
+import static it.fitnesschallenge.model.SharedConstance.LOGIN_FRAGMENT;
+import static it.fitnesschallenge.model.SharedConstance.SHARED_PREFERENCES;
+import static it.fitnesschallenge.model.SharedConstance.SIGN_UP_FRAGMENT;
+import static it.fitnesschallenge.model.SharedConstance.TRAINER_HOME_FRAGMENT;
 
-public class Login extends Fragment{
+public class Login extends Fragment {
 
     private static final String TAG = "Login";
     //istanza per l'accesso in firebase
     private FirebaseAuth mAuth;
     private ImageView topImageView;
     private FirebaseFirestore database;
+    private Context mContext;
     private FirebaseUser firebaseUser;
     private User user;
     private ProgressBar progressBar;
@@ -65,16 +70,25 @@ public class Login extends Fragment{
     public void onStart() {
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
-            firebaseUser = mAuth.getCurrentUser();
-            readUserFromDB();
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        if(sharedPreferences.getBoolean(AUTO_LOGGED, false)) {
+            if (currentUser != null && sharedPreferences.getBoolean(LOGGED_IN, false)) {
+                firebaseUser = mAuth.getCurrentUser();
+                readUserFromDB();
+            }
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        HomeActivity.setCurrentFragment(LOGIN_FRAGMENT);
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        HomeActivity.setCurrentFragment(LOGIN_FRAGMENT);
+        mContext = context;
     }
 
     @Override
@@ -82,13 +96,12 @@ public class Login extends Fragment{
         super.onCreate(savedInstanceState);
         //prelievo l'istanza del DB Firebase
         mAuth = FirebaseAuth.getInstance();
-        mAuth.signOut();
 
         //questo listener cattura l'aperura della tastiera per nascondere l'immagine superiore
         KeyboardVisibilityEvent.setEventListener(getActivity(), new KeyboardVisibilityEventListener() {
             @Override
             public void onVisibilityChanged(boolean isOpen) {
-                if(isOpen) {
+                if (isOpen) {
                     int previouslyHeigth = topImageView.getHeight();
                     int duration = 200;
                     int finalHeigth = 0;
@@ -126,11 +139,10 @@ public class Login extends Fragment{
 
                         }
                     });
-                }
-                else{
+                } else {
                     int previusyHeigth = topImageView.getHeight();
-                    int finalHeight = Math.round(getContext().getResources()
-                                    .getDisplayMetrics().density * 150);
+                    int finalHeight = Math.round(mContext.getResources()
+                            .getDisplayMetrics().density * 150);
                     int duration = 100;
                     ValueAnimator valueAnimator = ValueAnimator.ofInt(previusyHeigth, finalHeight);
                     valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -168,17 +180,17 @@ public class Login extends Fragment{
                 boolean allCompiled = false;
                 String username = usernameInputText.getEditText().getText().toString();
                 String password = passwordInputText.getEditText().getText().toString();
-                if(!username.isEmpty() && EMAIL_ADDRESS.matcher(username).matches())
+                if (!username.isEmpty() && EMAIL_ADDRESS.matcher(username).matches())
                     allCompiled = true;
                 else
                     usernameInputText.setError(getString(R.string.
                             complete_correctly_field));
-                if(!password.isEmpty())
+                if (!password.isEmpty())
                     allCompiled = true;
                 else
                     passwordInputText.setError(getString(R.string.
                             complete_correctly_field));
-                if(allCompiled)
+                if (allCompiled)
                     signInMethod(username, password);
             }
         });
@@ -201,12 +213,12 @@ public class Login extends Fragment{
     }
 
     //metodo per il login con email e password
-    private void signInMethod(String username, String password){
+    private void signInMethod(String username, String password) {
         mAuth.signInWithEmailAndPassword(username, password)
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             firebaseUser = mAuth.getCurrentUser();
                             readUserFromDB();
                         } else {
@@ -216,7 +228,7 @@ public class Login extends Fragment{
                 });
     }
 
-    private void readUserFromDB(){
+    private void readUserFromDB() {
         progressBar.setVisibility(View.VISIBLE);
         database = FirebaseFirestore.getInstance();
         try {
@@ -227,12 +239,21 @@ public class Login extends Fragment{
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     progressBar.setVisibility(View.GONE);
                     user = documentSnapshot.toObject(User.class);
-                    Log.d(TAG, "User read from db: " + user.getNome());
+                    TrainerHome trainerHome = TrainerHome.newInstance(user);
+                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    FragmentTransaction transaction = fragmentManager.beginTransaction();
+                    transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
+                            R.anim.enter_from_rigth, R.anim.exit_from_left);
+                    transaction.replace(R.id.fragmentContainer, trainerHome, TRAINER_HOME_FRAGMENT)
+                            .addToBackStack(TRAINER_HOME_FRAGMENT)
+                            .commit();
                 }
             });
-        }catch (NullPointerException ex){
-            Toast.makeText(getContext(), getContext().getResources()
-                                .getString(R.string.shit_error), Toast.LENGTH_LONG).show();
+        } catch (NullPointerException ex) {
+            Toast.makeText(mContext, mContext.getResources()
+                    .getString(R.string.shit_error), Toast.LENGTH_LONG).show();
         }
+
     }
+
 }
