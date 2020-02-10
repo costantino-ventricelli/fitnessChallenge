@@ -39,11 +39,11 @@ import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventList
 import it.fitnesschallenge.model.User;
 
 import static android.util.Patterns.EMAIL_ADDRESS;
+import static it.fitnesschallenge.model.Fragment.LOGIN_FRAGMENT;
 import static it.fitnesschallenge.model.Fragment.SIGN_UP_FRAGMENT;
 
-public class Login extends Fragment implements SignUpFragment.OnChangeFragment{
+public class Login extends Fragment{
 
-    private OnChangeFragment mChangheFragment;
     private static final String TAG = "Login";
     //istanza per l'accesso in firebase
     private FirebaseAuth mAuth;
@@ -72,12 +72,17 @@ public class Login extends Fragment implements SignUpFragment.OnChangeFragment{
     }
 
     @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        HomeActivity.setCurrentFragment(LOGIN_FRAGMENT);
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //prelievo l'istanza del DB Firebase
         mAuth = FirebaseAuth.getInstance();
         mAuth.signOut();
-        mChangheFragment.onChangeFragment();
 
         //questo listener cattura l'aperura della tastiera per nascondere l'immagine superiore
         KeyboardVisibilityEvent.setEventListener(getActivity(), new KeyboardVisibilityEventListener() {
@@ -229,24 +234,5 @@ public class Login extends Fragment implements SignUpFragment.OnChangeFragment{
             Toast.makeText(getContext(), getContext().getResources()
                                 .getString(R.string.shit_error), Toast.LENGTH_LONG).show();
         }
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        if(context instanceof OnChangeFragment)
-            mChangheFragment = (OnChangeFragment) context;
-        else
-            throw new RuntimeException(context.toString()
-                    + " must implement OnChangeFragment");
-    }
-
-    @Override
-    public void onChangeFragment() {
-        mChangheFragment.onChangeFragment();
-    }
-
-    public interface OnChangeFragment{
-        void onChangeFragment();
     }
 }

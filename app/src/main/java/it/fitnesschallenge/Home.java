@@ -1,6 +1,7 @@
 package it.fitnesschallenge;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,17 +12,26 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.button.MaterialButton;
 
-import static it.fitnesschallenge.model.Fragment.*;
+import static it.fitnesschallenge.model.Fragment.HOME_FRAGMENT;
+import static it.fitnesschallenge.model.Fragment.LOGIN_FRAGMENT;
 
 
-public class Home extends Fragment {
+public class Home extends Fragment{
 
     private MaterialButton enterGymButton;
     private MaterialButton startOutdoor;
     private MaterialButton login;
+    private static final String TAG = "Home";
 
     public Home() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onResume() {
+        Log.d(TAG, "Home set button GONE");
+        HomeActivity.setCurrentFragment(HOME_FRAGMENT);
+        super.onResume();
     }
 
     @Override
@@ -53,8 +63,10 @@ public class Home extends Fragment {
         return view;
     }
 
+
     @Override
     public void onDetach() {
         super.onDetach();
     }
+
 }

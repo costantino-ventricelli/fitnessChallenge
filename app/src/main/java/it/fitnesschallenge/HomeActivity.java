@@ -2,6 +2,7 @@ package it.fitnesschallenge;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -17,19 +18,15 @@ import java.util.List;
 import it.fitnesschallenge.model.room.ExerciseTable;
 import it.fitnesschallenge.model.view.HomeViewModel;
 
-import static it.fitnesschallenge.model.Fragment.HOME_FRAGMENT;
-import static it.fitnesschallenge.model.Fragment.LAST_FRAGMENT;
-import static it.fitnesschallenge.model.Fragment.PROFILE_FRAGMENT;
-import static it.fitnesschallenge.model.Fragment.SETTING_FRAGMENT;
-import static it.fitnesschallenge.model.Fragment.TIMER_FRAGMENT;
+import static it.fitnesschallenge.model.Fragment.*;
 
 
-public class HomeActivity extends AppCompatActivity implements Login.OnChangeFragment, SignUpFragment.OnChangeFragment {
+public class HomeActivity extends AppCompatActivity {
 
     private static final String TAG = "HomeActivity";
     private Home mHomeFragment;
     private BottomNavigationView mBottomNavigation;
-    private ImageButton mBackButton;
+    private static ImageButton mBackButton;
     private HomeViewModel homeViewModel;
     private static Context mContext;
     private boolean isHome;
@@ -50,14 +47,14 @@ public class HomeActivity extends AppCompatActivity implements Login.OnChangeFra
         mBackButton.setVisibility(View.GONE);
         mContext = this;
 
-        if(savedInstanceState == null){
+        if (savedInstanceState == null) {
             mBottomNavigation.setSelectedItemId(R.id.navigation_home);
             mHomeFragment = new Home();
             isHome = true;
             getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, mHomeFragment, HOME_FRAGMENT)
                     .addToBackStack(HOME_FRAGMENT)
                     .commit();
-        }else{
+        } else {
             String lastFragment = savedInstanceState.getString(LAST_FRAGMENT);
             setCurrentFragment(lastFragment);
         }
@@ -67,34 +64,26 @@ public class HomeActivity extends AppCompatActivity implements Login.OnChangeFra
             public void onClick(View v) {
                 getSupportFragmentManager().popBackStackImmediate();
                 try {
+                    Log.d(TAG, "back button pressed");
                     setCurrentFragment(getSupportFragmentManager().findFragmentById(R.id.fragmentContainer).getTag());
-                }catch (NullPointerException ex){
+                } catch (NullPointerException ex) {
                     Toast.makeText(mContext, mContext.getString(R.string.shit_error), Toast.LENGTH_LONG).show();
                 }
             }
         });
     }
 
-    private void setCurrentFragment(String lastFragment){
-        switch (lastFragment){
-            case PROFILE_FRAGMENT:
-                break;
-            case TIMER_FRAGMENT:
-                break;
-            case SETTING_FRAGMENT:
-                break;
-            case HOME_FRAGMENT:
-                mBackButton.setVisibility(View.GONE);
-                break;
+    public static void setCurrentFragment(String currentFragment) {
+        Log.d(TAG, "SetCurrentFragment on: " + currentFragment);
+        if (HOME_FRAGMENT.equals(currentFragment)) {
+            mBackButton.setVisibility(View.GONE);
+        } else {
+            mBackButton.setVisibility(View.VISIBLE);
         }
     }
 
-    public static Context getHomeActivityContext(){
+    public static Context getHomeActivityContext() {
         return mContext;
     }
 
-    @Override
-    public void onChangeFragment() {
-        mBackButton.setVisibility(View.VISIBLE);
-    }
 }
