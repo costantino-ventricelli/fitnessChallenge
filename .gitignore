@@ -96,3 +96,5 @@ ehthumbs.db
 Thumbs.db
 _linux/
 
+#Gradle autogenete
+/.gradle/*
