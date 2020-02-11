@@ -1,5 +1,7 @@
 /**
- * La classe repository fa da mediatore tra i View Model e il DAO
+ * Questa classe definisce il DB con le sue entità e lo popola quando viene creato
+ * la versione del DB indica al sistema se c'è stato un upgrade del DB, nel caso in cui esso avviene
+ * il DB viene ricreato
  */
 package it.fitnesschallenge.model.room;
 
@@ -17,12 +19,15 @@ import java.util.List;
 import it.fitnesschallenge.R;
 import it.fitnesschallenge.model.ExerciseList;
 
-@Database(entities = {ExerciseTable.class}, version = 2, exportSchema = false)
+@Database(entities = {ExerciseTable.class, Workout.class, WorkoutListExercise.class}, version = 4, exportSchema = false)
 public abstract class FitnessChallengeDatabase extends RoomDatabase {
 
     private static FitnessChallengeDatabase instance;
 
-    public abstract ExerciseDAO exerciseDAO();
+    public abstract ExerciseDAO getExerciseDAO();
+    public abstract WorkoutDAO getWorkoutDao();
+    public abstract WorkoutAndExerciseDAO getWorkoutListAndExereciseDAO();
+
 
     /**
      * Questo metodo crea il DB
@@ -52,7 +57,7 @@ public abstract class FitnessChallengeDatabase extends RoomDatabase {
          private ExerciseDAO exerciseDAO;
 
          private PopulateDBAsyncTask(FitnessChallengeDatabase db){
-             exerciseDAO = db.exerciseDAO();
+             exerciseDAO = db.getExerciseDAO();
          }
 
          @Override

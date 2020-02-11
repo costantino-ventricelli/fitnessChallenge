@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/exercise_item"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="88dp">
+
+    <ImageView
+        android:id="@+id/exercise_item_image"
+        android:layout_width="100dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="@dimen/margin"
+        android:layout_marginBottom="@dimen/margin"
+        app:srcCompat="@mipmap/curl_2_manubri"
+        android:contentDescription="@string/exercise_image" />
+
+    <TextView
+        android:id="@+id/exercise_item_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="@dimen/margin"
+        android:layout_toEndOf="@id/exercise_item_image"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/sub_title"
+        android:text="@string/title_goes_here" />
+
+    <TextView
+        android:id="@+id/exercise_item_set"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/exercise_item_title"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="@dimen/margin"
+        android:layout_marginTop="@dimen/small_distance"
+        android:layout_toEndOf="@id/exercise_item_image"
+        android:text="@string/repetition_set"
+        android:textSize="@dimen/caption" />
+
+    <TextView
+        android:id="@+id/exercise_item_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/exercise_item_set"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="@dimen/margin"
+        android:layout_toEndOf="@id/exercise_item_image"
+        android:text="@string/repetition_set"
+        android:textSize="@dimen/caption" />
+
+    <ImageButton
+        android:id="@+id/exercise_item_action"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:layout_marginEnd="@dimen/margin"
+        android:backgroundTint="@android:color/transparent"
+        app:srcCompat="@drawable/ic_remove_circle"
+        android:contentDescription="@string/action_button" />
+
+    <ImageButton
+        android:id="@+id/exercise_item_drag_handle"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:backgroundTint="@android:color/transparent"
+        app:srcCompat="@drawable/ic_drag_handle"
+        android:layout_below="@id/exercise_item_action"
+        android:layout_marginTop="@dimen/small_distance"
+        android:layout_marginEnd="@dimen/margin"
+        android:layout_alignParentEnd="true"
+        android:contentDescription="@string/drag_handle_button" />
+</RelativeLayout>

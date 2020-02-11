@@ -10,6 +10,10 @@ import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import it.fitnesschallenge.model.room.ExerciseTable;
+import it.fitnesschallenge.model.room.FitnessChallengeRepository;
 
 public class CreationViewModel extends AndroidViewModel {
 

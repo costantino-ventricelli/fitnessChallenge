@@ -198,13 +198,13 @@ public class Login extends Fragment {
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SignUpFragment signUpFragment = new SignUpFragment();
+                SignUp signUp = new SignUp();
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
                         R.anim.enter_from_rigth, R.anim.exit_from_left);
                 transaction.addToBackStack(SIGN_UP_FRAGMENT);
-                transaction.replace(R.id.fragmentContainer, signUpFragment, SIGN_UP_FRAGMENT)
+                transaction.replace(R.id.fragmentContainer, signUp, SIGN_UP_FRAGMENT)
                         .commit();
             }
         });

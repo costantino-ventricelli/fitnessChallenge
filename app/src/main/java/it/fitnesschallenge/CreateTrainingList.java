@@ -1,6 +1,8 @@
 package it.fitnesschallenge;
 
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -33,6 +36,7 @@ public class CreateTrainingList extends Fragment {
     private CreationViewModel mViewModel;
     private ProgressBar mProgressBar;
     private TextView mProgressTextView;
+    private TextView mPrevText;
     private ImageButton mNext;
     private ImageButton mPrev;
 
@@ -45,7 +49,8 @@ public class CreateTrainingList extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_create_training_list, container, false);
         mProgressBar = view.findViewById(R.id.create_list_progress_bar);
-        mProgressTextView = view.findViewById(R.id.previous_text);
+        mProgressTextView = view.findViewById(R.id.create_list_percent);
+        mPrevText = view.findViewById(R.id.previous_text);
         mNext = view.findViewById(R.id.right_key_arrow);
         mPrev = view.findViewById(R.id.left_key_arrow);
 
@@ -55,8 +60,36 @@ public class CreateTrainingList extends Fragment {
             @Override
             public void onChanged(Integer integer) {
                 if(mProgressBar != null && mProgressTextView != null){
-                    mProgressBar.setProgress(integer);
-                    mProgressTextView.setText(NumberFormat.getInstance().format(integer));
+                    ObjectAnimator objectAnimator = ObjectAnimator.ofInt(mProgressBar, "progress", integer)
+                            .setDuration(300);
+                    objectAnimator.addListener(new Animator.AnimatorListener() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+                            mProgressTextView.setText(NumberFormat
+                                    .getNumberInstance()
+                                    .format(mProgressBar.getProgress()));
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            mProgressTextView.setText(NumberFormat
+                                    .getNumberInstance()
+                                    .format(mProgressBar.getProgress()));
+                        }
+
+                        @Override
+                        public void onAnimationCancel(Animator animation) {
+                            Toast.makeText(mContext, mContext.getResources().getString(R.string.shit_error), Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animator animation) {
+                            mProgressTextView.setText(NumberFormat
+                                    .getNumberInstance()
+                                    .format(mProgressBar.getProgress()));
+                        }
+                    });
+                    objectAnimator.start();
                 } else {
                     Log.d(TAG, "Change detected on progress: " + integer);
                 }
@@ -100,14 +133,15 @@ public class CreateTrainingList extends Fragment {
                 transaction.replace(R.id.inner_frame_creation_list, firstCreationStep, FIRST_STEP_CREATION)
                         .commit();
                 mPrev.setVisibility(View.GONE);
-                mProgressTextView.setVisibility(View.GONE);
+                mPrevText.setVisibility(View.GONE);
                 break;
             case 2:
                 mPrev.setVisibility(View.VISIBLE);
-                mProgressTextView.setVisibility(View.VISIBLE);
-                SecondCreationStep secondCreationStep = new SecondCreationStep();
-                transaction.replace(R.id.inner_frame_creation_list, secondCreationStep, SECOND_STEP_CREATION)
+                mPrevText.setVisibility(View.VISIBLE);
+                ExerciseList exerciseList = new ExerciseList();
+                transaction.replace(R.id.inner_frame_creation_list, exerciseList, SECOND_STEP_CREATION)
                         .commit();
+                mViewModel.setLiveDataProgress(33);
                 break;
         }
     }

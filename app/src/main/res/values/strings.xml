@@ -67,4 +67,9 @@
     <string name="date_pattern">AAAA/MM/GG</string>
     <string name="gain_muscle">GAIN MUSCLE</string>
     <string name="get_fit">GET FIT</string>
+    <string name="title_goes_here">Title goes here</string>
+    <string name="repetition_set">Repetition/Set</string>
+    <string name="action_button">Action button</string>
+    <string name="drag_handle_button">Drag handle button</string>
+    <string name="exercise_image">Exercise image</string>
 </resources>

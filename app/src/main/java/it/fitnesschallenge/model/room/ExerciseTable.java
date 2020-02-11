@@ -13,10 +13,11 @@ import androidx.room.PrimaryKey;
 public class ExerciseTable {
 
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    @ColumnInfo(name = "exercise_id")
+    private int exerciseId;
     @ColumnInfo(name = "image_reference")
     private int imageReference;
-    @ColumnInfo(name = "exerciseName")
+    @ColumnInfo(name = "exercise_ame")
     private String exerciseName;
     @ColumnInfo(name =  "exercise_description")
     private String exerciseDescription;
@@ -28,7 +29,7 @@ public class ExerciseTable {
     }
 
     public int getId() {
-        return id;
+        return exerciseId;
     }
 
     public int getImageReference() {
@@ -44,6 +45,6 @@ public class ExerciseTable {
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.exerciseId = id;
     }
 }

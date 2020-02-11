@@ -37,15 +37,9 @@ public class HomeActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
-        homeViewModel.getAllExercise().observe(this, new Observer<List<ExerciseTable>>() {
-            @Override
-            public void onChanged(List<ExerciseTable> exerciseTables) {
-                //necessario per il ViewModel
-            }
-        });
         mBottomNavigation = findViewById(R.id.bottom_navigation);
         mBackButton = findViewById(R.id.btn_back);
-        mBackButton.setVisibility(View.GONE);
+        mBackButton.setVisibility(View.INVISIBLE);
         mContext = this;
 
         if (savedInstanceState == null) {
@@ -77,7 +71,7 @@ public class HomeActivity extends AppCompatActivity{
     public static void setCurrentFragment(String currentFragment) {
         Log.d(TAG, "SetCurrentFragment on: " + currentFragment);
         if (HOME_FRAGMENT.equals(currentFragment)) {
-            mBackButton.setVisibility(View.GONE);
+            mBackButton.setVisibility(View.INVISIBLE);
         } else {
             mBackButton.setVisibility(View.VISIBLE);
         }
