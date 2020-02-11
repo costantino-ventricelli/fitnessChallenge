@@ -15,7 +15,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.List;
 
-import it.fitnesschallenge.model.room.ExerciseTable;
+import it.fitnesschallenge.model.room.Exercise;
 import it.fitnesschallenge.model.view.HomeViewModel;
 
 import static it.fitnesschallenge.model.SharedConstance.HOME_FRAGMENT;
@@ -37,9 +37,15 @@ public class HomeActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
+        homeViewModel.getExerciseList().observe(this, new Observer<List<Exercise>>() {
+            @Override
+            public void onChanged(List<Exercise> exercises) {
+                Log.d(TAG, "Esercizi prelevati dal DB: " + exercises.size());
+            }
+        });
         mBottomNavigation = findViewById(R.id.bottom_navigation);
         mBackButton = findViewById(R.id.btn_back);
-        mBackButton.setVisibility(View.INVISIBLE);
+        mBackButton.setVisibility(View.GONE);
         mContext = this;
 
         if (savedInstanceState == null) {
@@ -71,7 +77,7 @@ public class HomeActivity extends AppCompatActivity{
     public static void setCurrentFragment(String currentFragment) {
         Log.d(TAG, "SetCurrentFragment on: " + currentFragment);
         if (HOME_FRAGMENT.equals(currentFragment)) {
-            mBackButton.setVisibility(View.INVISIBLE);
+            mBackButton.setVisibility(View.GONE);
         } else {
             mBackButton.setVisibility(View.VISIBLE);
         }

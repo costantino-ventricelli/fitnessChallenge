@@ -13,9 +13,9 @@ import java.util.List;
 public interface ExerciseDAO {
 
     @Insert
-    void insert(ExerciseTable listLiveData);
+    void insert(Exercise listLiveData);
 
     @Transaction
-    @Query("SELECT * FROM exercise")
-    LiveData<List<ExerciseTable>> selectAllExercise();
+    @Query("SELECT * FROM Exercise")
+    LiveData<List<Exercise>> selectAllExercise();
 }

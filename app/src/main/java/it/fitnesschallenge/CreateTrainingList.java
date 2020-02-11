@@ -61,7 +61,7 @@ public class CreateTrainingList extends Fragment {
             public void onChanged(Integer integer) {
                 if(mProgressBar != null && mProgressTextView != null){
                     ObjectAnimator objectAnimator = ObjectAnimator.ofInt(mProgressBar, "progress", integer)
-                            .setDuration(300);
+                            .setDuration(500);
                     objectAnimator.addListener(new Animator.AnimatorListener() {
                         @Override
                         public void onAnimationStart(Animator animation) {
@@ -110,6 +110,12 @@ public class CreateTrainingList extends Fragment {
                 mViewModel.nextStep();
             }
         });
+        mPrev.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mViewModel.prevStep();
+            }
+        });
 
         return view;
     }
@@ -134,6 +140,7 @@ public class CreateTrainingList extends Fragment {
                         .commit();
                 mPrev.setVisibility(View.GONE);
                 mPrevText.setVisibility(View.GONE);
+                mViewModel.setLiveDataProgress(0);
                 break;
             case 2:
                 mPrev.setVisibility(View.VISIBLE);

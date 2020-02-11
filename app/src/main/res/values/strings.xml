@@ -72,4 +72,5 @@
     <string name="action_button">Action button</string>
     <string name="drag_handle_button">Drag handle button</string>
     <string name="exercise_image">Exercise image</string>
+    <string name="nothing_to_show_yet">Nothing to show yet!</string>
 </resources>

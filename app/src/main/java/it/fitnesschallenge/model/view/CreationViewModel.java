@@ -10,10 +10,9 @@ import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import it.fitnesschallenge.model.room.ExerciseTable;
 import it.fitnesschallenge.model.room.FitnessChallengeRepository;
+import it.fitnesschallenge.model.room.WorkoutWithExercise;
 
 public class CreationViewModel extends AndroidViewModel {
 
@@ -25,6 +24,8 @@ public class CreationViewModel extends AndroidViewModel {
     private MutableLiveData<String> mEmail;
     private MutableLiveData<String> mGoal;
     private MutableLiveData<Date> mStartDate;
+    private MutableLiveData<WorkoutWithExercise> mWorkoutWithExercise;
+    private MutableLiveData<Integer> mWorkoutId;
 
     public CreationViewModel(@NonNull Application application) {
         super(application);
@@ -35,11 +36,23 @@ public class CreationViewModel extends AndroidViewModel {
         mEmail = new MutableLiveData<>();
         mStartDate = new MutableLiveData<>();
         mLiveDataProgress = new MutableLiveData<>();
+        mWorkoutWithExercise = new MutableLiveData<>();
+        mWorkoutId = new MutableLiveData<>();
+
+        setWorkoutId(-1);
         setLiveDataSteps();
     }
 
     public LiveData<String> getEmail() {
         return mEmail;
+    }
+
+    public MutableLiveData<Integer> getWorkoutId() {
+        return mWorkoutId;
+    }
+
+    public void setWorkoutId(Integer workoutId) {
+        this.mWorkoutId.setValue(workoutId);
     }
 
     public void setEmail(String email) {
@@ -88,5 +101,10 @@ public class CreationViewModel extends AndroidViewModel {
 
     public LiveData<ArrayList<Integer>> getLiveDataSteps(){
         return mLiveDataSteps;
+    }
+
+    public LiveData<WorkoutWithExercise> getWorkoutWithExercise(int workoutId){
+        FitnessChallengeRepository repository = new FitnessChallengeRepository(getApplication());
+        return repository.getWorkoutWithExerciseList(workoutId);
     }
 }

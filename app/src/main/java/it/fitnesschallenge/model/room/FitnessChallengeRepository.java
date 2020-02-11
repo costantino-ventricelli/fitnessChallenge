@@ -11,39 +11,41 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
+
 public class FitnessChallengeRepository {
 
     private ExerciseDAO exerciseDAO;
-    private WorkoutAndExerciseDAO workoutAndExerciseDAO;
     private WorkoutDAO workoutDAO;
-    private LiveData<List<ExerciseTable>> listExercise;
-    private LiveData<List<Workout>> listWorkout;
-    private LiveData<List<WorkoutAndExercise>> listWorkoutAndExercise;
+    private WorkoutWithExerciseDAO workoutWithExerciseDAO;
+    private LiveData<List<Exercise>> listExercise;
+    private LiveData<WorkoutWithExercise> workoutWithExerciseList;
+    private LiveData<Workout> workoutLiveData;
+    private LiveData<List<Workout>> workoutList;
 
     public FitnessChallengeRepository(Application application){
         FitnessChallengeDatabase database = FitnessChallengeDatabase.getInstance(application);
         exerciseDAO = database.getExerciseDAO();
-        workoutDAO = database.getWorkoutDao();
-        workoutAndExerciseDAO = database.getWorkoutListAndExereciseDAO();
+        workoutWithExerciseDAO = database.getWorkoutWithExerciseDAO();
+        workoutDAO = database.getWorkoutDAO();
     }
 
-    public LiveData<List<ExerciseTable>> getListExercise() {
+    public LiveData<List<Exercise>> getListExercise() {
         listExercise = exerciseDAO.selectAllExercise();
         return listExercise;
     }
 
-    public LiveData<List<Workout>> getListWorkout(int workoutId) {
-        listWorkout = workoutDAO.getWorkout(workoutId);
-        return listWorkout;
+    public LiveData<WorkoutWithExercise> getWorkoutWithExerciseList(int workoutId) {
+        workoutWithExerciseList = workoutWithExerciseDAO.getWorkoutWithExercise(workoutId);
+        return workoutWithExerciseList;
     }
 
-    public LiveData<List<Workout>> getListWorkout(){
-        listWorkout = workoutDAO.getAllWorkOut();
-        return listWorkout;
+    public LiveData<Workout> getWorkoutLiveData(int workoutId) {
+        workoutLiveData = workoutDAO.getWorkout(workoutId);
+        return workoutLiveData;
     }
 
-    public LiveData<List<WorkoutAndExercise>> getListWorkoutAndExercise(int workoutAndExercise) {
-        listWorkoutAndExercise = workoutAndExerciseDAO.getWorkOutAndExercise(workoutAndExercise);
-        return listWorkoutAndExercise;
+    public LiveData<List<Workout>> getWorkoutList() {
+        workoutList = workoutDAO.getAllWorkOut();
+        return workoutList;
     }
 }

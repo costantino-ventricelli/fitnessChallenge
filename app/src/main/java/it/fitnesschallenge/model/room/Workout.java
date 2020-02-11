@@ -14,7 +14,7 @@ import java.util.Date;
 public class Workout {
 
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "work_out_id")
+    @ColumnInfo(name = "workout_id")
     private int workOutId;
     @ColumnInfo(name = "is_active")
     private boolean isActive;
@@ -29,11 +29,11 @@ public class Workout {
         this.endDate = endDate;
     }
 
-    public int getId() {
+    public int getWorkOutId() {
         return workOutId;
     }
 
-    public void setId(int id) {
+    public void setWorkOutId(int id) {
         this.workOutId = id;
     }
 
@@ -48,4 +48,5 @@ public class Workout {
     public Date getEndDate() {
         return endDate;
     }
+
 }

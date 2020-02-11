@@ -7,11 +7,13 @@ package it.fitnesschallenge.model.room;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import java.util.List;
@@ -19,14 +21,17 @@ import java.util.List;
 import it.fitnesschallenge.R;
 import it.fitnesschallenge.model.ExerciseList;
 
-@Database(entities = {ExerciseTable.class, Workout.class, WorkoutListExercise.class}, version = 4, exportSchema = false)
+@Database(entities = {Exercise.class, Workout.class, PersonalExerciseWorkoutCrossReference.class, PersonalExercise.class},
+        version = 12, exportSchema = false)
+@TypeConverters({Converter.class})
 public abstract class FitnessChallengeDatabase extends RoomDatabase {
 
     private static FitnessChallengeDatabase instance;
+    private static final String TAG = "FitnessChallengeDB";
 
     public abstract ExerciseDAO getExerciseDAO();
-    public abstract WorkoutDAO getWorkoutDao();
-    public abstract WorkoutAndExerciseDAO getWorkoutListAndExereciseDAO();
+    public abstract WorkoutDAO getWorkoutDAO();
+    public abstract WorkoutWithExerciseDAO getWorkoutWithExerciseDAO();
 
 
     /**
@@ -34,13 +39,15 @@ public abstract class FitnessChallengeDatabase extends RoomDatabase {
      * synchronized serve a non creare più istanze del DB contemporaneamente
      */
      static synchronized FitnessChallengeDatabase getInstance(Context context){
-        if(instance == null)
+        if(instance == null) {
             instance = Room.databaseBuilder(context.getApplicationContext(),
                     FitnessChallengeDatabase.class,
                     context.getString(R.string.fitness_challenge_db))
                     .fallbackToDestructiveMigration()
                     .addCallback(roomCallback)
                     .build();
+            Log.d(TAG, "Istanza db creata");
+        }
         return instance;
     }
 
@@ -48,6 +55,7 @@ public abstract class FitnessChallengeDatabase extends RoomDatabase {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
+            Log.d(TAG, "onCreate database");
             new PopulateDBAsyncTask(instance).execute();
         }
     };
@@ -62,8 +70,9 @@ public abstract class FitnessChallengeDatabase extends RoomDatabase {
 
          @Override
          protected Void doInBackground(Void... voids) {
-             List<ExerciseTable> exerciseList = new ExerciseList().getList();
-             for(ExerciseTable tuple : exerciseList)
+             List<Exercise> exerciseList = new ExerciseList().getList();
+             Log.d(TAG, "Popolo il db");
+             for(Exercise tuple : exerciseList)
                 exerciseDAO.insert(tuple);
              return null;
          }
