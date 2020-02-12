@@ -4,6 +4,7 @@ package it.fitnesschallenge;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,15 +22,19 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.List;
 
+import it.fitnesschallenge.model.room.PersonalExercise;
 import it.fitnesschallenge.model.view.CreationViewModel;
 
 import static it.fitnesschallenge.model.SharedConstance.FIRST_STEP_CREATION;
 import static it.fitnesschallenge.model.SharedConstance.SECOND_STEP_CREATION;
 
-public class CreateTrainingList extends Fragment {
+public class CreateTrainingList extends Fragment implements AddExerciseToList.OnFragmentInteractionListener{
 
     private static final String TAG = "CreateTrainingList";
     private Context mContext;
@@ -39,6 +44,8 @@ public class CreateTrainingList extends Fragment {
     private TextView mPrevText;
     private ImageButton mNext;
     private ImageButton mPrev;
+    private FloatingActionButton mAddExerciseFAB;
+    private List<PersonalExercise> mPersonalExerciseList;
 
     public CreateTrainingList() {
         //empty creation method needed
@@ -53,6 +60,7 @@ public class CreateTrainingList extends Fragment {
         mPrevText = view.findViewById(R.id.previous_text);
         mNext = view.findViewById(R.id.right_key_arrow);
         mPrev = view.findViewById(R.id.left_key_arrow);
+        mAddExerciseFAB = view.findViewById(R.id.add_exercise_FAB);
 
         //collego il View model al Fragment
         mViewModel = ViewModelProviders.of(getActivity()).get(CreationViewModel.class);
@@ -117,6 +125,13 @@ public class CreateTrainingList extends Fragment {
             }
         });
 
+        mAddExerciseFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
         return view;
     }
 
@@ -149,7 +164,17 @@ public class CreateTrainingList extends Fragment {
                 transaction.replace(R.id.inner_frame_creation_list, exerciseList, SECOND_STEP_CREATION)
                         .commit();
                 mViewModel.setLiveDataProgress(33);
+                mAddExerciseFAB.setVisibility(View.VISIBLE);
                 break;
+        }
+    }
+
+    //restituisce la lista degli esercizi aggiunti
+    @Override
+    public void onFragmentInteraction(List<PersonalExercise> personalExerciseList) {
+        if(personalExerciseList != null) {
+            mPersonalExerciseList = personalExerciseList;
+            Log.d(TAG, "Agggiunti: " + mPersonalExerciseList.size() + " esercizi");
         }
     }
 }

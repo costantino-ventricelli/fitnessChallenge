@@ -85,8 +85,8 @@ public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder> {
         public ViewHolder(@NonNull View itemView, final OnClickListener actionClickListener, final OnLongClickListener handleClickListener) {
             super(itemView);
             mLayout = itemView.findViewById(R.id.exercise_item);
-            mImageView = itemView.findViewById(R.id.exercise_item_image);
-            mTitleTextView = itemView.findViewById(R.id.exercise_item_title);
+            mImageView = itemView.findViewById(R.id.add_exercise_img);
+            mTitleTextView = itemView.findViewById(R.id.add_exercise_title);
             mSetNumberTextView = itemView.findViewById(R.id.exercise_item_number);
             mActionButton = itemView.findViewById(R.id.exercise_item_action);
             mDragHandleButton = itemView.findViewById(R.id.exercise_item_drag_handle);

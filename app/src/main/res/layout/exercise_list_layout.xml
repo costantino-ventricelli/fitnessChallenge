@@ -8,7 +8,7 @@
     android:layout_height="88dp">
 
     <ImageView
-        android:id="@+id/exercise_item_image"
+        android:id="@+id/add_exercise_img"
         android:layout_width="100dp"
         android:layout_height="56dp"
         android:layout_marginTop="@dimen/margin"
@@ -17,12 +17,12 @@
         android:contentDescription="@string/exercise_image" />
 
     <TextView
-        android:id="@+id/exercise_item_title"
+        android:id="@+id/add_exercise_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="@dimen/margin"
-        android:layout_toEndOf="@id/exercise_item_image"
+        android:layout_toEndOf="@id/add_exercise_img"
         android:textColor="@android:color/black"
         android:textSize="@dimen/sub_title"
         android:text="@string/title_goes_here" />
@@ -31,11 +31,11 @@
         android:id="@+id/exercise_item_set"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/exercise_item_title"
+        android:layout_below="@id/add_exercise_title"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="@dimen/margin"
         android:layout_marginTop="@dimen/small_distance"
-        android:layout_toEndOf="@id/exercise_item_image"
+        android:layout_toEndOf="@id/add_exercise_img"
         android:text="@string/repetition_set"
         android:textSize="@dimen/caption" />
 
@@ -47,7 +47,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="2dp"
         android:layout_marginEnd="@dimen/margin"
-        android:layout_toEndOf="@id/exercise_item_image"
+        android:layout_toEndOf="@id/add_exercise_img"
         android:text="@string/repetition_set"
         android:textSize="@dimen/caption" />
 
@@ -73,4 +73,12 @@
         android:layout_marginEnd="@dimen/margin"
         android:layout_alignParentEnd="true"
         android:contentDescription="@string/drag_handle_button" />
+
+    <View
+        android:id="@+id/add_card_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@id/add_exercise_img"
+        android:background="?android:attr/listDivider" />
 </RelativeLayout>
