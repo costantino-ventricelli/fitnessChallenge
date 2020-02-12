@@ -1,11 +1,17 @@
 package it.fitnesschallenge;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -70,8 +76,8 @@ public class AddExerciseToList extends Fragment {
                 if(mAddAdapter != null){
                     mAddAdapter.setOnClickListener(new AddAdapter.OnClickListener() {
                         @Override
-                        public void onClickListener(View view) {
-                            Log.d(TAG, "Expand button click detected");
+                        public void onClickListener(int finalHeight, int startHeight, View itemView, boolean expanded) {
+                            expandCardLayout(itemView, finalHeight, startHeight, expanded);
                         }
                     });
                     mAddAdapter.setOnSelectedItemListener(new AddAdapter.OnSelectItemListener() {
@@ -98,5 +104,48 @@ public class AddExerciseToList extends Fragment {
     public void onDetach() {
         super.onDetach();
         mContext = null;
+    }
+
+    private void expandCardLayout(final View view, final int finalHeight, final int startHeight, final boolean expanded){
+        final View layoutView = view.findViewById(R.id.exercise_item);
+        int duration = 300;
+        Log.d(TAG, "final: " + finalHeight);
+        Log.d(TAG, "start: " + startHeight);
+        final TextView description = view.findViewById(R.id.add_exercise_description);
+        final ImageButton expandButton = view.findViewById(R.id.card_expander_collapse_arrow);
+        ValueAnimator animator;
+        if(expanded) {
+            Log.d(TAG, "expanded");
+            animator = ValueAnimator.ofInt(startHeight, finalHeight);
+            expandButton.setImageResource(R.drawable.ic_keyboard_arrow_up);
+            expandButton.setContentDescription("EXPANDED");
+        }
+        else {
+            Log.d(TAG, "not expanded");
+            animator = ValueAnimator.ofInt(finalHeight, startHeight);
+            description.setVisibility(View.GONE);
+            expandButton.setContentDescription("COLLAPSED");
+            expandButton.setImageResource(R.drawable.ic_keyboard_arrow_down);
+        }
+        animator.setDuration(duration);
+        animator.setInterpolator(new DecelerateInterpolator());
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                int animationValue = (Integer) animation.getAnimatedValue();
+                ViewGroup.LayoutParams layoutParams = layoutView.getLayoutParams();
+                layoutParams.height = animationValue;
+                layoutView.setLayoutParams(layoutParams);
+            }
+        });
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                if(expanded)
+                    description.setVisibility(View.VISIBLE);
+            }
+        });
+        animator.start();
     }
 }

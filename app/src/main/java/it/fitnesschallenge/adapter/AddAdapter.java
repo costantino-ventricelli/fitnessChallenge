@@ -1,13 +1,16 @@
 package it.fitnesschallenge.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.checkbox.MaterialCheckBox;
@@ -19,6 +22,8 @@ import it.fitnesschallenge.R;
 import it.fitnesschallenge.model.room.Exercise;
 
 public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
+
+    private static final String TAG = "AddAdapter";
 
     private OnClickListener mOnClickListener;
     private OnSelectItemListener mOnSelectedItemListener;
@@ -44,39 +49,63 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
         holder.exerciseDescrption.setText(mList.get(position).getExerciseDescription());
     }
 
+
     @Override
     public int getItemCount() {
         return mList.size();
     }
 
-    public interface OnClickListener{
-        void onClickListener(View view);
+    public interface OnClickListener {
+        void onClickListener(int finalHeight, int startHeight, View itemView, boolean expanded);
     }
 
-    public interface OnSelectItemListener{
+    public interface OnSelectItemListener {
         void onSelectItemListener(View view);
     }
 
-    public void setOnClickListener(OnClickListener onClickListener){
+    public void setOnClickListener(OnClickListener onClickListener) {
         this.mOnClickListener = onClickListener;
     }
 
-    public void setOnSelectedItemListener(OnSelectItemListener onSelectedItemListener){
+    public void setOnSelectedItemListener(OnSelectItemListener onSelectedItemListener) {
         this.mOnSelectedItemListener = onSelectedItemListener;
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder{
+    class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView exerciseTitle;
+        private CardView cardView;
         private TextView exerciseDescrption;
+        private boolean modified;
+        private boolean expanded;
         private TextInputLayout exerciseSeries;
         private TextInputLayout exerciseRepetition;
         private ImageButton expandCollapseButton;
         private MaterialCheckBox selectedCheckBox;
         private View divider;
+        private int finalHeight;
+        private int startHeigth;
 
-        ViewHolder(@NonNull View itemView, final OnClickListener mOnClickListener, final OnSelectItemListener mOnSelectedItemListener) {
+        ViewHolder(@NonNull final View itemView, final OnClickListener mOnClickListener,
+                   final OnSelectItemListener mOnSelectedItemListener) {
             super(itemView);
+            modified = false;
+            cardView = itemView.findViewById(R.id.item_card_view);
+            /*
+             * Questo call back rileva che la view sta per essere disegnata, da qui prendo l'altezza finale
+             * che dovrebbe avere e la assegno a finalHeight per usarla dopo nell'animazione.
+             */
+            cardView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    if (!modified) {
+                        modified = true;
+                        finalHeight = cardView.getHeight() + 20;
+                        exerciseDescrption.setVisibility(View.GONE);
+                    }
+                }
+            });
+            expanded = false;
             exerciseTitle = itemView.findViewById(R.id.add_exercise_title);
             exerciseDescrption = itemView.findViewById(R.id.add_exercise_description);
             exerciseSeries = itemView.findViewById(R.id.exercise_series);
@@ -87,17 +116,22 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
             expandCollapseButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(mOnClickListener != null && getAdapterPosition()
+                    if(!expanded) {
+                        startHeigth = cardView.getHeight();
+                        expanded = true;
+                    }else
+                        expanded = false;
+                    if (mOnClickListener != null && getAdapterPosition()
                             != RecyclerView.NO_POSITION)
-                        mOnClickListener.onClickListener(v);
+                        mOnClickListener.onClickListener(finalHeight, startHeigth, itemView, expanded);
                 }
             });
             selectedCheckBox.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(mOnClickListener != null && getAdapterPosition()
+                    if (mOnClickListener != null && getAdapterPosition()
                             != RecyclerView.NO_POSITION)
-                        mOnClickListener.onClickListener(v);
+                        mOnSelectedItemListener.onSelectItemListener(v);
                 }
             });
         }
