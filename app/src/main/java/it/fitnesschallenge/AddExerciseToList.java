@@ -19,6 +19,9 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.checkbox.MaterialCheckBox;
+import com.google.android.material.textfield.TextInputLayout;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,14 +59,14 @@ public class AddExerciseToList extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mPersonalExerciseList =  getArguments().getParcelableArrayList(ARG_PARAM1);
+            mPersonalExerciseList = getArguments().getParcelableArrayList(ARG_PARAM1);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view =  inflater.inflate(R.layout.fragment_add_exercise_to_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_add_exercise_to_list, container, false);
         mRecyclerView = view.findViewById(R.id.adding_exercise_list);
         mViewModel = ViewModelProviders.of(getActivity()).get(AddExerciseToListModel.class);
         mViewModel.getExerciseList().observe(getViewLifecycleOwner(), new Observer<List<Exercise>>() {
@@ -73,7 +76,7 @@ public class AddExerciseToList extends Fragment {
                 mExerciseList = exercises;
                 mAddAdapter = new AddAdapter(mContext, mExerciseList);
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-                if(mAddAdapter != null){
+                if (mAddAdapter != null) {
                     mAddAdapter.setOnClickListener(new AddAdapter.OnClickListener() {
                         @Override
                         public void onClickListener(int finalHeight, int startHeight, View itemView, boolean expanded) {
@@ -82,8 +85,15 @@ public class AddExerciseToList extends Fragment {
                     });
                     mAddAdapter.setOnSelectedItemListener(new AddAdapter.OnSelectItemListener() {
                         @Override
-                        public void onSelectItemListener(View view) {
-                            Log.d(TAG, "Check button click detected");
+                        public void onSelectItemListener(View view, final int position) {
+                            TextInputLayout repetitionText = view.findViewById(R.id.exercise_repetition);
+                            TextInputLayout seriesText = view.findViewById(R.id.exercise_series);
+                            MaterialCheckBox checkBox = view.findViewById(R.id.select_exercise_check);
+                            if (checkBox.isChecked())
+                                addPersonalExercise(position, repetitionText, seriesText);
+                            else{
+                                mViewModel.removePersonalExercise(new PersonalExercise(mExerciseList.get(position)));
+                            }
                         }
                     });
                 }
@@ -91,7 +101,33 @@ public class AddExerciseToList extends Fragment {
             }
         });
 
+        mViewModel.getPersonalExerciseLiveData().observe(getViewLifecycleOwner(), new Observer<List<PersonalExercise>>() {
+            @Override
+            public void onChanged(List<PersonalExercise> personalExerciseList) {
+                Log.d(TAG, "Aggiunto o rimosso esercizio");
+                //TODO: implementare FAB con controllo sulla compilazione dei campi
+            }
+        });
         return view;
+    }
+
+    private void addPersonalExercise(int position, TextInputLayout repetitionText, TextInputLayout seriesText) {
+        int repetition = 0;
+        int series = 0;
+        try {
+            String stringRepetition = repetitionText.getEditText().getText().toString().trim();
+            String stringSeries = seriesText.getEditText().getText().toString().trim();
+            if (!stringRepetition.isEmpty())
+                repetition = Integer.parseInt(stringRepetition);
+            if (!stringSeries.isEmpty())
+                series = Integer.parseInt(stringSeries);
+        } catch (NumberFormatException ex) {
+            repetitionText.setError(mContext.getResources().getString(R.string.complete_correctly_field));
+            seriesText.setError(mContext.getResources().getString(R.string.complete_correctly_field));
+        }
+        PersonalExercise personalExercise = new PersonalExercise(mExerciseList.get(position).getImageReference(),
+                mExerciseList.get(position).getExerciseName(), mExerciseList.get(position).getExerciseDescription(), series, repetition);
+        mViewModel.addPersonalExercise(personalExercise);
     }
 
     @Override
@@ -106,7 +142,7 @@ public class AddExerciseToList extends Fragment {
         mContext = null;
     }
 
-    private void expandCardLayout(final View view, final int finalHeight, final int startHeight, final boolean expanded){
+    private void expandCardLayout(final View view, final int finalHeight, final int startHeight, final boolean expanded) {
         final View layoutView = view.findViewById(R.id.exercise_item);
         int duration = 300;
         Log.d(TAG, "final: " + finalHeight);
@@ -114,13 +150,12 @@ public class AddExerciseToList extends Fragment {
         final TextView description = view.findViewById(R.id.add_exercise_description);
         final ImageButton expandButton = view.findViewById(R.id.card_expander_collapse_arrow);
         ValueAnimator animator;
-        if(expanded) {
+        if (expanded) {
             Log.d(TAG, "expanded");
             animator = ValueAnimator.ofInt(startHeight, finalHeight);
             expandButton.setImageResource(R.drawable.ic_keyboard_arrow_up);
             expandButton.setContentDescription("EXPANDED");
-        }
-        else {
+        } else {
             Log.d(TAG, "not expanded");
             animator = ValueAnimator.ofInt(finalHeight, startHeight);
             description.setVisibility(View.GONE);
@@ -142,7 +177,7 @@ public class AddExerciseToList extends Fragment {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                if(expanded)
+                if (expanded)
                     description.setVisibility(View.VISIBLE);
             }
         });

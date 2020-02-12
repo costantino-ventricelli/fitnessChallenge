@@ -4,6 +4,7 @@ package it.fitnesschallenge.model.room;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.Nullable;
 import androidx.room.Entity;
 
 @Entity(tableName = "personal_exercise")
@@ -22,6 +23,10 @@ public class PersonalExercise extends Exercise implements Parcelable {
         super(in.readInt(), in.readString(), in.readString());
         this.steps = in.readInt();
         this.repetition = in.readInt();
+    }
+
+    public PersonalExercise(Exercise exercise){
+        super(exercise.getImageReference(), exercise.getExerciseName(), exercise.getExerciseDescription());
     }
 
     public int getSteps() {
