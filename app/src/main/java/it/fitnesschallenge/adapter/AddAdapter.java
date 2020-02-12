@@ -42,6 +42,7 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.exerciseTitle.setText(mList.get(position).getExerciseName());
+        holder.exerciseDescrption.setText(mList.get(position).getExerciseDescription());
     }
 
     @Override
@@ -57,6 +58,13 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
         void onSelectItemListener(View view);
     }
 
+    public void setmOnClickListener(OnClickListener onClickListener){
+        mOnClickListener = onClickListener;
+    }
+
+    public void setmOnSelectedItemListener(OnSelectItemListener onSelectedItemListener){
+        mOnSelectedItemListener = onSelectedItemListener;
+    }
     class ViewHolder extends RecyclerView.ViewHolder{
 
         private TextView exerciseTitle;
@@ -67,7 +75,7 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
         private MaterialCheckBox selectedCheckBox;
         private View divider;
 
-        ViewHolder(@NonNull View itemView, final OnClickListener mOnClickListener, OnSelectItemListener mOnSelectedItemListener) {
+        ViewHolder(@NonNull View itemView, final OnClickListener mOnClickListener, final OnSelectItemListener mOnSelectedItemListener) {
             super(itemView);
             exerciseTitle = itemView.findViewById(R.id.add_exercise_title);
             exerciseDescrption = itemView.findViewById(R.id.add_exercise_description);
@@ -80,6 +88,12 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
                 @Override
                 public void onClick(View v) {
                     mOnClickListener.onClickListener(v);
+                }
+            });
+            selectedCheckBox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mOnSelectedItemListener.onSelectItemListener(v);
                 }
             });
 
