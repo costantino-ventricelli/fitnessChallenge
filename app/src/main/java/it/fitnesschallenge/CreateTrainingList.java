@@ -4,7 +4,6 @@ package it.fitnesschallenge;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,15 +25,15 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.List;
 
 import it.fitnesschallenge.model.room.PersonalExercise;
 import it.fitnesschallenge.model.view.CreationViewModel;
 
+import static it.fitnesschallenge.model.SharedConstance.ADD_EXERCISE_TO_LIST;
 import static it.fitnesschallenge.model.SharedConstance.FIRST_STEP_CREATION;
 import static it.fitnesschallenge.model.SharedConstance.SECOND_STEP_CREATION;
 
-public class CreateTrainingList extends Fragment implements AddExerciseToList.OnFragmentInteractionListener{
+public class CreateTrainingList extends Fragment{
 
     private static final String TAG = "CreateTrainingList";
     private Context mContext;
@@ -45,7 +44,7 @@ public class CreateTrainingList extends Fragment implements AddExerciseToList.On
     private ImageButton mNext;
     private ImageButton mPrev;
     private FloatingActionButton mAddExerciseFAB;
-    private List<PersonalExercise> mPersonalExerciseList;
+    private ArrayList<PersonalExercise> mPersonalExerciseList;
 
     public CreateTrainingList() {
         //empty creation method needed
@@ -128,7 +127,14 @@ public class CreateTrainingList extends Fragment implements AddExerciseToList.On
         mAddExerciseFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                AddExerciseToList addExerciseToList = AddExerciseToList.newInstance(mPersonalExerciseList);
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
+                        R.anim.enter_from_rigth, R.anim.exit_from_left)
+                        .replace(R.id.fragmentContainer, addExerciseToList, ADD_EXERCISE_TO_LIST)
+                        .addToBackStack(ADD_EXERCISE_TO_LIST)
+                        .commit();
             }
         });
 
@@ -166,15 +172,6 @@ public class CreateTrainingList extends Fragment implements AddExerciseToList.On
                 mViewModel.setLiveDataProgress(33);
                 mAddExerciseFAB.setVisibility(View.VISIBLE);
                 break;
-        }
-    }
-
-    //restituisce la lista degli esercizi aggiunti
-    @Override
-    public void onFragmentInteraction(List<PersonalExercise> personalExerciseList) {
-        if(personalExerciseList != null) {
-            mPersonalExerciseList = personalExerciseList;
-            Log.d(TAG, "Agggiunti: " + mPersonalExerciseList.size() + " esercizi");
         }
     }
 }

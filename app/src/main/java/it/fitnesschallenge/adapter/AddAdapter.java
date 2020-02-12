@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.checkbox.MaterialCheckBox;
-import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.List;
@@ -58,13 +57,14 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
         void onSelectItemListener(View view);
     }
 
-    public void setmOnClickListener(OnClickListener onClickListener){
-        mOnClickListener = onClickListener;
+    public void setOnClickListener(OnClickListener onClickListener){
+        this.mOnClickListener = onClickListener;
     }
 
-    public void setmOnSelectedItemListener(OnSelectItemListener onSelectedItemListener){
-        mOnSelectedItemListener = onSelectedItemListener;
+    public void setOnSelectedItemListener(OnSelectItemListener onSelectedItemListener){
+        this.mOnSelectedItemListener = onSelectedItemListener;
     }
+
     class ViewHolder extends RecyclerView.ViewHolder{
 
         private TextView exerciseTitle;
@@ -87,16 +87,19 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
             expandCollapseButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mOnClickListener.onClickListener(v);
+                    if(mOnClickListener != null && getAdapterPosition()
+                            != RecyclerView.NO_POSITION)
+                        mOnClickListener.onClickListener(v);
                 }
             });
             selectedCheckBox.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mOnSelectedItemListener.onSelectItemListener(v);
+                    if(mOnClickListener != null && getAdapterPosition()
+                            != RecyclerView.NO_POSITION)
+                        mOnClickListener.onClickListener(v);
                 }
             });
-
         }
     }
 }
