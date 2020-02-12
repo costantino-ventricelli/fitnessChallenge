@@ -102,11 +102,11 @@ public class Login extends Fragment {
             @Override
             public void onVisibilityChanged(boolean isOpen) {
                 if (isOpen) {
-                    int previouslyHeigth = topImageView.getHeight();
+                    int previouslyHigth = topImageView.getHeight();
                     int duration = 200;
-                    int finalHeigth = 0;
-                    ValueAnimator valueAnimator = ValueAnimator.ofInt(previouslyHeigth,
-                            finalHeigth);
+                    int finalHigth = 0;
+                    ValueAnimator valueAnimator = ValueAnimator.ofInt(previouslyHigth,
+                            finalHigth);
                     valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                         @Override
                         public void onAnimationUpdate(ValueAnimator animation) {
