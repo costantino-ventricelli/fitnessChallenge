@@ -96,6 +96,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/add_exercise_title" />
 
+    <TextView
+        android:id="@+id/add_exercise_description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/small_distance"
+        android:layout_marginEnd="@dimen/small_distance"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="@dimen/small_distance"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/card_expander_collapse_arrow"
+        app:layout_constraintStart_toEndOf="@+id/add_exercise_img"
+        app:layout_constraintTop_toBottomOf="@+id/exercise_repetition"
+        app:layout_constraintBottom_toTopOf="@id/add_card_divider"/>
+
+
     <View
         android:id="@+id/add_card_divider"
         android:layout_width="0dp"
@@ -105,5 +120,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/add_exercise_img"
-        app:layout_constraintTop_toBottomOf="@+id/add_exercise_img" />
+        app:layout_constraintTop_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

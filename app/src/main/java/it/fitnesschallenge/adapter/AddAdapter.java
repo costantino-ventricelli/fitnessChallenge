@@ -41,7 +41,7 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        
+        holder.exerciseTitle.setText(mList.get(position).getExerciseName());
     }
 
     @Override
@@ -60,6 +60,7 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
     class ViewHolder extends RecyclerView.ViewHolder{
 
         private TextView exerciseTitle;
+        private TextView exerciseDescrption;
         private TextInputLayout exerciseSeries;
         private TextInputLayout exerciseRepetition;
         private ImageButton expandCollapseButton;
@@ -69,6 +70,7 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
         ViewHolder(@NonNull View itemView, final OnClickListener mOnClickListener, OnSelectItemListener mOnSelectedItemListener) {
             super(itemView);
             exerciseTitle = itemView.findViewById(R.id.add_exercise_title);
+            exerciseDescrption = itemView.findViewById(R.id.add_exercise_description);
             exerciseSeries = itemView.findViewById(R.id.exercise_series);
             exerciseRepetition = itemView.findViewById(R.id.exercise_repetition);
             expandCollapseButton = itemView.findViewById(R.id.card_expander_collapse_arrow);
