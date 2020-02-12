@@ -97,4 +97,4 @@ Thumbs.db
 _linux/
 
 #Gradle autogenete
-/.gradle/*
+*/.gradle/*
