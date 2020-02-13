@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,7 +26,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 import it.fitnesschallenge.adapter.AddAdapter;
@@ -129,9 +127,11 @@ public class AddExerciseToList extends Fragment {
                  * permette di verificare se tutto è stato compilato in maniera corretta
                  */
                 List<PersonalExercise> personalExerciseList = mViewModel.getPersonalExerciseLiveData().getValue();
-                if (personalExerciseList != null)
+                if (personalExerciseList != null) {
                     for (PersonalExercise personalExercise : personalExerciseList)
                         checkPersonalExercise(personalExercise);
+                    getActivity().getSupportFragmentManager().popBackStackImmediate();
+                }
             }
         });
         return view;
@@ -166,7 +166,6 @@ public class AddExerciseToList extends Fragment {
         if (!error) {
             CreationViewModel creationViewModel = ViewModelProviders.of(getActivity()).get(CreationViewModel.class);
             creationViewModel.setPersonalExerciseList(mViewModel.getPersonalExerciseLiveData().getValue());
-            getActivity().getSupportFragmentManager().popBackStackImmediate();
         }
     }
 

@@ -21,9 +21,6 @@ import it.fitnesschallenge.model.room.PersonalExercise;
 import it.fitnesschallenge.model.view.CreationViewModel;
 
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class ExerciseList extends Fragment {
 
     private CreationViewModel mCreationViewModel;
@@ -37,6 +34,7 @@ public class ExerciseList extends Fragment {
         // Required empty public constructor
     }
 
+    //TODO: handle click su rimozione e sopostamento elementi nella view
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,8 +49,8 @@ public class ExerciseList extends Fragment {
         mCreationViewModel.getPersonalExerciseList().observe(getViewLifecycleOwner(), new Observer<List<PersonalExercise>>() {
             @Override
             public void onChanged(List<PersonalExercise> personalExerciseList) {
-                Log.d(TAG, "Ottenuta lista esercizi personale");
-                mShowAdapter = new ShowAdapter(personalExerciseList, getContext());
+                Log.d(TAG, "Ottenuta lista esercizi personale: " + personalExerciseList.toString());
+                mShowAdapter = new ShowAdapter(personalExerciseList);
                 mRecyclerList.setAdapter(mShowAdapter);
             }
         });

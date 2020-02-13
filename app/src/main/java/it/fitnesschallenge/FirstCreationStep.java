@@ -40,6 +40,7 @@ public class FirstCreationStep extends Fragment {
         // Required empty public constructor
     }
 
+    //TODO: aggiungere verifica compilazione campi, assente al momento per maggiore velocità nelle successive fasi del debug
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

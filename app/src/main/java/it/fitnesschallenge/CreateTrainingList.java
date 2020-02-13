@@ -68,8 +68,8 @@ public class CreateTrainingList extends Fragment{
             @Override
             public void onChanged(Integer integer) {
                 if(mProgressBar != null && mProgressTextView != null){
-                    Log.d(TAG, "nuovo progresso: " + integer);
-                    Log.d(TAG, "progress bar getProgress(): " + mProgressBar.getProgress());
+                    Log.d(TAG, "Nuovo progresso: " + integer);
+                    Log.d(TAG, "ProgressBar getProgress(): " + mProgressBar.getProgress());
                     ValueAnimator animator = ValueAnimator.ofInt(mProgressBar.getProgress(), integer);
                     animator.setDuration(500)
                             .setInterpolator(new DecelerateInterpolator());

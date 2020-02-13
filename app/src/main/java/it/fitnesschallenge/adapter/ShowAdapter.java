@@ -1,6 +1,5 @@
 package it.fitnesschallenge.adapter;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,19 +22,42 @@ import it.fitnesschallenge.model.room.PersonalExercise;
 public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder> {
 
     private List<PersonalExercise> mList;
-    private Context mContext;
     private OnLongClickListener mOnLongClickListener;
     private OnClickListener mOnClickListener;
 
-    public ShowAdapter(List<PersonalExercise> mList, Context mContext) {
+    public ShowAdapter(List<PersonalExercise> mList) {
         this.mList = mList;
-        this.mContext = mContext;
     }
 
+    /**
+     * Interfacce per la gestione dei click
+     */
+    public interface OnClickListener {
+        void onClickListener(View view);
+    }
+
+    /**
+     * Interfacce per la gestione dei click
+     */
+    public interface OnLongClickListener {
+        boolean onLongClickListener(View view);
+    }
+
+    /**
+     * Metodi di set da richiamare nell'oggetto chiamate per gestire il click
+     *
+     * @param onClickListener serve per richiamare l'interfaccia e sovrascirvere il metodo di gestione
+     *                        del click
+     */
     public void setOnClickListener(OnClickListener onClickListener){
         mOnClickListener = onClickListener;
     }
 
+    /**
+     * Metodi di set da richiamare nell'oggetto chiamate per gestire il click
+     * @param onLongClickListener serve per richiamare l'interfaccia e sovrascirvere il metodo di gestione
+     *                        della lunga pressione sul bottone
+     */
     public void setOnLongClickListener(OnLongClickListener onLongClickListener){
         mOnLongClickListener = onLongClickListener;
     }
@@ -64,16 +86,7 @@ public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder> {
         return mList.size();
     }
 
-    public interface OnClickListener{
-        void onClickListener(View view);
-    }
-
-    public interface OnLongClickListener{
-        boolean onLongClickListener(View view);
-    }
-
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
 
         private RelativeLayout mLayout;
         private ImageView mImageView;
@@ -82,7 +95,7 @@ public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder> {
         private ImageButton mActionButton;
         private ImageButton mDragHandleButton;
 
-        public ViewHolder(@NonNull View itemView, final OnClickListener actionClickListener, final OnLongClickListener handleClickListener) {
+        ViewHolder(@NonNull View itemView, final OnClickListener actionClickListener, final OnLongClickListener handleClickListener) {
             super(itemView);
             mLayout = itemView.findViewById(R.id.exercise_item);
             mImageView = itemView.findViewById(R.id.add_exercise_img);
@@ -90,6 +103,7 @@ public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder> {
             mSetNumberTextView = itemView.findViewById(R.id.exercise_item_number);
             mActionButton = itemView.findViewById(R.id.exercise_item_action);
             mDragHandleButton = itemView.findViewById(R.id.exercise_item_drag_handle);
+            //Qui vengono collegati i metodi di call back con gli oggetti a cui appartengono
             mActionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

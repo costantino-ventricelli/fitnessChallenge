@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import it.fitnesschallenge.adapter.AddAdapter;
 import it.fitnesschallenge.model.room.FitnessChallengeRepository;
 import it.fitnesschallenge.model.room.PersonalExercise;
 import it.fitnesschallenge.model.room.WorkoutWithExercise;
@@ -97,13 +96,14 @@ public class CreationViewModel extends AndroidViewModel {
     }
 
     public void nextStep(){
-        Log.d(TAG, "nextStep");
+        Log.d(TAG, "NextStep");
         mListSteps.add(mListSteps.get(mListSteps.size() - 1) + 1);
         Log.d(TAG, "Step: " + mListSteps.size());
         setLiveDataSteps();
     }
 
     public void prevStep(){
+        Log.d(TAG, "PrevStep");
         mListSteps.remove(mListSteps.size() - 1);
         setLiveDataSteps();
     }
