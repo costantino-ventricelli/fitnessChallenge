@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -47,6 +48,8 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.exerciseTitle.setText(mList.get(position).getExerciseName());
         holder.exerciseDescrption.setText(mList.get(position).getExerciseDescription());
+        Log.d(TAG, "img resource: " + mList.get(position).getImageReference());
+        holder.exerciseImage.setImageResource(mList.get(position).getImageReference());
     }
 
 
@@ -60,7 +63,7 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
     }
 
     public interface OnSelectItemListener {
-        void onSelectItemListener(View view);
+        void onSelectItemListener(View view, int position);
     }
 
     public void setOnClickListener(OnClickListener onClickListener) {
@@ -82,6 +85,7 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
         private TextInputLayout exerciseRepetition;
         private ImageButton expandCollapseButton;
         private MaterialCheckBox selectedCheckBox;
+        private ImageView exerciseImage;
         private View divider;
         private int finalHeight;
         private int startHeigth;
@@ -107,6 +111,7 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
             });
             expanded = false;
             exerciseTitle = itemView.findViewById(R.id.add_exercise_title);
+            exerciseImage = itemView.findViewById(R.id.add_exercise_img);
             exerciseDescrption = itemView.findViewById(R.id.add_exercise_description);
             exerciseSeries = itemView.findViewById(R.id.exercise_series);
             exerciseRepetition = itemView.findViewById(R.id.exercise_repetition);
@@ -131,7 +136,7 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
                 public void onClick(View v) {
                     if (mOnClickListener != null && getAdapterPosition()
                             != RecyclerView.NO_POSITION)
-                        mOnSelectedItemListener.onSelectItemListener(v);
+                        mOnSelectedItemListener.onSelectItemListener(itemView, getAdapterPosition());
                 }
             });
         }
