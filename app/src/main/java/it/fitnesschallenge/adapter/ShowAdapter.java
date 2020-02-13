@@ -1,28 +1,30 @@
 package it.fitnesschallenge.adapter;
 
+import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.NumberFormat;
+import java.util.Collections;
 import java.util.List;
 
 import it.fitnesschallenge.R;
 import it.fitnesschallenge.model.room.PersonalExercise;
 
-//TODO: capire come questire le query dal DB
+public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder>
+        implements ItemTouchHelperCallBack.ItemTouchHelperContract {
 
-public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder> {
+    private static final String TAG = "ShowAdapter";
 
     private List<PersonalExercise> mList;
-    private OnLongClickListener mOnLongClickListener;
     private OnClickListener mOnClickListener;
 
     public ShowAdapter(List<PersonalExercise> mList) {
@@ -30,17 +32,58 @@ public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder> {
     }
 
     /**
-     * Interfacce per la gestione dei click
+     * Questo metodo sovrasctitto da ItemTouchHelperCallBack implementa lo spostamento effettivo tra
+     * le card nella RecyclerView.
+     *
+     * @param fromPosition indica la posizione iniziale della card nella RecyclerView
+     * @param toPosition   inidica la posizione finale della card nella RecyclerView
      */
-    public interface OnClickListener {
-        void onClickListener(View view);
+    @Override
+    public void onRowMoved(int fromPosition, int toPosition) {
+        Log.d(TAG, "FromPosition: " + fromPosition);
+        Log.d(TAG, "ToPosition: " + toPosition);
+        if (fromPosition < toPosition)
+            for (int i = fromPosition; i < toPosition; i++) {
+                /*
+                 * Collection.swap è un metodo che scambia automanticamente la posizione tra gli
+                 * elementi di una Collection in questo caso la List<>
+                 */
+                Collections.swap(mList, i, i + 1);
+                Log.d(TAG, "(DOWN SWAPPING) swapping: " + i);
+            }
+        else
+            for (int i = fromPosition; i > toPosition; i--) {
+                Collections.swap(mList, i, i - 1);
+                Log.d(TAG, "(UP SWAPPING) Swapping: " + i);
+            }
+        notifyItemMoved(fromPosition, toPosition);
+    }
+
+    /**
+     * onRowSelected permette di dare un feedback quando la selezione della card avviene.
+     *
+     * @param viewHolder viewHolder è l'holder dell'item selezionato.
+     */
+    @Override
+    public void onRowSelected(ViewHolder viewHolder) {
+        viewHolder.mCardView.setBackgroundColor(Color.LTGRAY);
+    }
+
+    /**
+     * onRowClear permette di dare un feedback di avvenuto rilascio della card.
+     *
+     * @param viewHolder viewHolder è l'holder dell'item selezionato.
+     */
+    @Override
+    public void onRowClear(ViewHolder viewHolder) {
+        viewHolder.mCardView.setBackgroundColor(Color.WHITE);
     }
 
     /**
      * Interfacce per la gestione dei click
      */
-    public interface OnLongClickListener {
-        boolean onLongClickListener(View view);
+    public interface OnClickListener {
+        void onClickListener(View view, boolean isRemoved);
     }
 
     /**
@@ -49,17 +92,8 @@ public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder> {
      * @param onClickListener serve per richiamare l'interfaccia e sovrascirvere il metodo di gestione
      *                        del click
      */
-    public void setOnClickListener(OnClickListener onClickListener){
+    public void setOnClickListener(OnClickListener onClickListener) {
         mOnClickListener = onClickListener;
-    }
-
-    /**
-     * Metodi di set da richiamare nell'oggetto chiamate per gestire il click
-     * @param onLongClickListener serve per richiamare l'interfaccia e sovrascirvere il metodo di gestione
-     *                        della lunga pressione sul bottone
-     */
-    public void setOnLongClickListener(OnLongClickListener onLongClickListener){
-        mOnLongClickListener = onLongClickListener;
     }
 
     @NonNull
@@ -67,11 +101,13 @@ public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder> {
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.exercise_list_layout, parent, false);
-        return new ViewHolder(view, mOnClickListener, mOnLongClickListener);
+        Log.d(TAG, "Creo il ViewHolder");
+        return new ViewHolder(view, mOnClickListener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        Log.d(TAG, "Collego il ViewHolder");
         PersonalExercise exercise = mList.get(position);
         holder.mImageView.setImageResource(exercise.getImageReference());
         holder.mTitleTextView.setText(exercise.getExerciseName());
@@ -79,6 +115,7 @@ public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder> {
         builder.append("/");
         builder.append(NumberFormat.getInstance().format(exercise.getSteps()));
         holder.mSetNumberTextView.setText(builder.toString());
+        holder.mCardView.setTag(exercise.getExerciseName());
     }
 
     @Override
@@ -88,33 +125,27 @@ public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder> {
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        private RelativeLayout mLayout;
         private ImageView mImageView;
         private TextView mTitleTextView;
         private TextView mSetNumberTextView;
-        private ImageButton mActionButton;
-        private ImageButton mDragHandleButton;
+        private View mCardView;
+        private boolean isRemoved;
 
-        ViewHolder(@NonNull View itemView, final OnClickListener actionClickListener, final OnLongClickListener handleClickListener) {
+        ViewHolder(@NonNull View itemView, final OnClickListener actionClickListener) {
             super(itemView);
-            mLayout = itemView.findViewById(R.id.exercise_item);
+            Log.d(TAG, "Creo la view per l'item");
+            isRemoved = false;
+            mCardView = itemView;
             mImageView = itemView.findViewById(R.id.add_exercise_img);
             mTitleTextView = itemView.findViewById(R.id.add_exercise_title);
             mSetNumberTextView = itemView.findViewById(R.id.exercise_item_number);
-            mActionButton = itemView.findViewById(R.id.exercise_item_action);
-            mDragHandleButton = itemView.findViewById(R.id.exercise_item_drag_handle);
+            ImageButton mActionButton = itemView.findViewById(R.id.exercise_item_action);
             //Qui vengono collegati i metodi di call back con gli oggetti a cui appartengono
             mActionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    actionClickListener.onClickListener(v);
-                }
-            });
-            mDragHandleButton.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    handleClickListener.onLongClickListener(v);
-                    return true;
+                    actionClickListener.onClickListener(v, isRemoved);
+                    isRemoved = !isRemoved;
                 }
             });
         }

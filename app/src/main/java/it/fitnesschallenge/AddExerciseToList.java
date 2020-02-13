@@ -15,8 +15,10 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,6 +28,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import it.fitnesschallenge.adapter.AddAdapter;
@@ -44,6 +47,7 @@ public class AddExerciseToList extends Fragment {
     private Context mContext;
     private AddExerciseToListModel mViewModel;
     private AddAdapter mAddAdapter;
+    private List<PersonalExercise> mPersonalExerciseList;
 
     public AddExerciseToList() {
         // Required empty public constructor
@@ -107,6 +111,21 @@ public class AddExerciseToList extends Fragment {
                         }
                     });
                 }
+                /*
+                 * Quando c'è uno scroll sulla RecyclerView potrebbe essere necessario ricostruire la
+                 * selezione precedente, quindi viene richiamato RebuildRecyclerView.
+                 */
+                mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                        super.onScrolled(recyclerView, dx, dy);
+                        if (mPersonalExerciseList != null) {
+                            Log.d(TAG, "Scrolling richiamo Rebuild");
+                            new RebuildRecyclerView(mRecyclerView, mPersonalExerciseList).execute();
+                        } else
+                            Log.d(TAG, "Fuck, onScrolled catturato, ma non c'è un cazzo in lista");
+                    }
+                });
             }
         });
 
@@ -115,6 +134,7 @@ public class AddExerciseToList extends Fragment {
             public void onChanged(List<PersonalExercise> personalExerciseList) {
                 if (personalExerciseList.size() > 0) {
                     new RebuildRecyclerView(mRecyclerView, personalExerciseList).execute();
+                    mPersonalExerciseList = personalExerciseList;
                 }
             }
         });
@@ -126,12 +146,11 @@ public class AddExerciseToList extends Fragment {
                  * Quando viene richiesto il salvataggio inizia il processo di controllo sui dati che
                  * permette di verificare se tutto è stato compilato in maniera corretta
                  */
-                List<PersonalExercise> personalExerciseList = mViewModel.getPersonalExerciseLiveData().getValue();
-                if (personalExerciseList != null) {
-                    for (PersonalExercise personalExercise : personalExerciseList)
+                if (mPersonalExerciseList != null) {
+                    for (PersonalExercise personalExercise : mPersonalExerciseList)
                         checkPersonalExercise(personalExercise);
-                    getActivity().getSupportFragmentManager().popBackStackImmediate();
                 }
+                getActivity().getSupportFragmentManager().popBackStackImmediate();
             }
         });
         return view;
@@ -306,11 +325,28 @@ public class AddExerciseToList extends Fragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            /*
+             * Scorrendo la lista degli esercizi ogni volta non vogiamo che il metodo cerchi di
+             * recuperare informazioni da elementi non visibili al momento, perché nella RecyclerView
+             * se un item non è visibile non esiste nell'Holder.
+             */
             for (PersonalExercise personalExercise : mPersonalExerciseList) {
-                int position = mExerciseList.indexOf(personalExercise);
-                Log.d(TAG, "Posizione: " + position);
-                Log.d(TAG, "Recycler view: " + mRecyclerView.getAdapter().toString());
-                View itemView = mRecyclerView.getChildAt(position);
+                try {
+                    checkRecycler(personalExercise);
+                } catch (NullPointerException ex) {
+                    Log.d(TAG, "La view selezionata non è visibile");
+                }
+            }
+        }
+
+        private void checkRecycler(PersonalExercise personalExercise) {
+            Log.d(TAG, "Esercizio selezionato: " + personalExercise.getExerciseName());
+            int position = mExerciseList.indexOf(personalExercise);
+            Log.d(TAG, "Posizione: " + position);
+            Log.d(TAG, "Recycler view: " + mRecyclerView.getAdapter().toString());
+            Log.d(TAG, "View selezionata: " + mRecyclerView.findViewWithTag(personalExercise.getExerciseName()).toString());
+            View itemView = mRecyclerView.findViewWithTag(personalExercise.getExerciseName());
+            if (itemView != null) {
                 Log.d(TAG, "Item view: " + itemView.getTag().toString());
                 MaterialCheckBox materialCheckBox = itemView.findViewById(R.id.select_exercise_check);
                 TextInputLayout series = itemView.findViewById(R.id.exercise_series);
