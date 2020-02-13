@@ -55,7 +55,6 @@
     <string name="welcome_back">Welcome back</string>
     <string name="training_card">Training card</string>
     <string name="show_training_list">Show training list</string>
-    <string name="open">Open</string>
     <string name="create_training_list">Create training list</string>
     <string name="create">CREATE</string>
     <string name="_0">0</string>
@@ -76,4 +75,7 @@
     <string name="exercise_series">Exercise series</string>
     <string name="exercise_repetition">Exercise repetition</string>
     <string name="expand_collapse_button">Expand collapse button</string>
+    <string name="workout_statistics">Workout statistics</string>
+    <string name="training_list">Training list</string>
+    <string name="open">Open</string>
 </resources>

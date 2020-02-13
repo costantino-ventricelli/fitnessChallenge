@@ -1,85 +1,80 @@
 package it.fitnesschallenge;
 
+
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import com.google.android.material.button.MaterialButton;
 
-import static it.fitnesschallenge.model.SharedConstance.HOME_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.LOGIN_FRAGMENT;
+import static it.fitnesschallenge.model.SharedConstance.TRAINING_LIST_HOME;
 import static it.fitnesschallenge.model.SharedConstance.WORKOUT_FRAGMENT;
+import static it.fitnesschallenge.model.SharedConstance.WORKOUT_STATISTICS_FRAGMENT;
+
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class WorkoutHome extends Fragment {
 
 
-public class Home extends Fragment{
+    private MaterialButton openStatistics;
+    private MaterialButton openTrainingList;
+    private MaterialButton openCreateNewList;
 
-    private MaterialButton enterGymButton;
-    private MaterialButton startOutdoor;
-    private MaterialButton login;
-    private static final String TAG = "Home";
-
-    public Home() {
+    public WorkoutHome() {
         // Required empty public constructor
     }
 
     @Override
     public void onResume() {
-        Log.d(TAG, "Home set button GONE");
-        HomeActivity.setCurrentFragment(HOME_FRAGMENT);
         super.onResume();
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        HomeActivity.setCurrentFragment(WORKOUT_FRAGMENT);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
-        enterGymButton = view.findViewById(R.id.enterGym);
-        startOutdoor = view.findViewById(R.id.startOutdoorWorkout);
-        login = view.findViewById(R.id.trainerLogin);
 
-        login.setOnClickListener(new View.OnClickListener() {
+        View view = inflater.inflate(R.layout.fragment_workout_home, container, false);
+
+        openStatistics = view.findViewById(R.id.openStatistics);
+        openTrainingList = view.findViewById(R.id.openTrainingList);
+
+        openStatistics.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Login login = new Login();
+                WorkoutStatistics workoutStatistics = new WorkoutStatistics();
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
                         R.anim.enter_from_rigth, R.anim.exit_from_left);
-                transaction.replace(R.id.fragmentContainer, login, LOGIN_FRAGMENT)
-                        .addToBackStack(LOGIN_FRAGMENT)
+                transaction.replace(R.id.fragmentContainer, workoutStatistics, WORKOUT_STATISTICS_FRAGMENT)
+                        .addToBackStack(WORKOUT_STATISTICS_FRAGMENT)
                         .commit();
             }
         });
 
-
-        startOutdoor.setOnClickListener(new View.OnClickListener() {
+        openTrainingList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                WorkoutHome workoutHome = new WorkoutHome();
+                TrainingListHome trainingListHome = new TrainingListHome();
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
                         R.anim.enter_from_rigth, R.anim.exit_from_left);
-                transaction.replace(R.id.fragmentContainer, workoutHome, WORKOUT_FRAGMENT)
-                        .addToBackStack(WORKOUT_FRAGMENT)
+                transaction.replace(R.id.fragmentContainer, trainingListHome, TRAINING_LIST_HOME)
+                        .addToBackStack(TRAINING_LIST_HOME)
                         .commit();
             }
         });
-
-
 
         return view;
     }
-
 }

@@ -22,4 +22,7 @@ public final class SharedConstance {
     public static final String SELECTED_DATE = "selectedDate";
     public static final String WORKOUT_FRAGMENT = "workoutFragment";
     public static final String ADD_EXERCISE_TO_LIST = "addExerciseToList";
+    public static final String WORKOUT_STATISTICS_FRAGMENT = "workoutStatisticsFragment";
+    public static final String TRAINING_LIST_HOME = "trainingListHome";
+
 }
