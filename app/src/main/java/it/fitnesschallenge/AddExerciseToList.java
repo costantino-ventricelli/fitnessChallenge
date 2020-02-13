@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.checkbox.MaterialCheckBox;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
@@ -67,6 +68,7 @@ public class AddExerciseToList extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_exercise_to_list, container, false);
+        FloatingActionButton saveButton = view.findViewById(R.id.add_exercise_FAB);
         mRecyclerView = view.findViewById(R.id.adding_exercise_list);
         mViewModel = ViewModelProviders.of(getActivity()).get(AddExerciseToListModel.class);
         mViewModel.getExerciseList().observe(getViewLifecycleOwner(), new Observer<List<Exercise>>() {
@@ -74,7 +76,7 @@ public class AddExerciseToList extends Fragment {
             public void onChanged(List<Exercise> exercises) {
                 Log.d(TAG, "Exercise getted: " + exercises.size());
                 mExerciseList = exercises;
-                mAddAdapter = new AddAdapter(mContext, mExerciseList);
+                mAddAdapter = new AddAdapter(mExerciseList);
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
                 if (mAddAdapter != null) {
                     mAddAdapter.setOnClickListener(new AddAdapter.OnClickListener() {
@@ -106,6 +108,31 @@ public class AddExerciseToList extends Fragment {
             public void onChanged(List<PersonalExercise> personalExerciseList) {
                 Log.d(TAG, "Aggiunto o rimosso esercizio");
                 //TODO: implementare FAB con controllo sulla compilazione dei campi
+            }
+        });
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                List<PersonalExercise> personalExerciseList = mViewModel.getPersonalExerciseLiveData().getValue();
+                for(PersonalExercise personalExercise : personalExerciseList){
+                    Log.d(TAG, "Personal exercise: " + personalExercise.getExerciseName());
+                    if(personalExercise.getRepetition() == 0 || personalExercise.getSteps() == 0){
+                        int position = mExerciseList.indexOf(personalExercise);
+                        Log.d(TAG, "Posizione: " + position);
+                        View itemView = mRecyclerView.getChildAt(position);
+                        if(itemView != null) {
+                            TextInputLayout repetition = itemView.findViewById(R.id.exercise_repetition);
+                            TextInputLayout series = itemView.findViewById(R.id.exercise_series);
+                            repetition.setError(mContext.getResources().getString(R.string.complete_correctly_field));
+                            series.setError(mContext.getResources().getString(R.string.complete_correctly_field));
+                        }else {
+                            Log.d(TAG, "View non trovata");
+                            itemView = mRecyclerView.getLayoutManager().findViewByPosition(position);
+                            Log.d(TAG, "item view findViewByPosition: " + itemView);
+                        }
+                    }
+                }
             }
         });
         return view;

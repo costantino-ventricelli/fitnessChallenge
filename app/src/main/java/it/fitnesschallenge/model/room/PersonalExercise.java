@@ -61,4 +61,12 @@ public class PersonalExercise extends Exercise implements Parcelable {
             return new PersonalExercise[size];
         }
     };
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if(obj instanceof Exercise){
+            return this.getExerciseName().equals(((Exercise) obj).getExerciseName());
+        }else
+            return false;
+    }
 }
