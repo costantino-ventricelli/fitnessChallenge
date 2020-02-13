@@ -2,17 +2,18 @@ package it.fitnesschallenge;
 
 
 import android.animation.Animator;
-import android.animation.ObjectAnimator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -67,36 +68,29 @@ public class CreateTrainingList extends Fragment{
             @Override
             public void onChanged(Integer integer) {
                 if(mProgressBar != null && mProgressTextView != null){
-                    ObjectAnimator objectAnimator = ObjectAnimator.ofInt(mProgressBar, "progress", integer)
-                            .setDuration(500);
-                    objectAnimator.addListener(new Animator.AnimatorListener() {
+                    Log.d(TAG, "nuovo progresso: " + integer);
+                    Log.d(TAG, "progress bar getProgress(): " + mProgressBar.getProgress());
+                    ValueAnimator animator = ValueAnimator.ofInt(mProgressBar.getProgress(), integer);
+                    animator.setDuration(500)
+                            .setInterpolator(new DecelerateInterpolator());
+                    animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                         @Override
-                        public void onAnimationStart(Animator animation) {
-                            mProgressTextView.setText(NumberFormat
-                                    .getNumberInstance()
-                                    .format(mProgressBar.getProgress()));
+                        public void onAnimationUpdate(ValueAnimator animation) {
+                            int progress = (int) animation.getAnimatedValue();
+                            mProgressBar.setProgress(progress);
+                            mProgressTextView.setText(NumberFormat.getInstance().format(progress));
                         }
-
+                    });
+                    animator.addListener(new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(Animator animation) {
-                            mProgressTextView.setText(NumberFormat
-                                    .getNumberInstance()
-                                    .format(mProgressBar.getProgress()));
-                        }
-
-                        @Override
-                        public void onAnimationCancel(Animator animation) {
-                            Toast.makeText(mContext, mContext.getResources().getString(R.string.shit_error), Toast.LENGTH_SHORT).show();
-                        }
-
-                        @Override
-                        public void onAnimationRepeat(Animator animation) {
+                            super.onAnimationEnd(animation);
                             mProgressTextView.setText(NumberFormat
                                     .getNumberInstance()
                                     .format(mProgressBar.getProgress()));
                         }
                     });
-                    objectAnimator.start();
+                    animator.start();
                 } else {
                     Log.d(TAG, "Change detected on progress: " + integer);
                 }
@@ -127,7 +121,7 @@ public class CreateTrainingList extends Fragment{
         mAddExerciseFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AddExerciseToList addExerciseToList = AddExerciseToList.newInstance(mPersonalExerciseList);
+                AddExerciseToList addExerciseToList = new AddExerciseToList();
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
@@ -162,6 +156,7 @@ public class CreateTrainingList extends Fragment{
                 mPrev.setVisibility(View.GONE);
                 mPrevText.setVisibility(View.GONE);
                 mViewModel.setLiveDataProgress(0);
+                mAddExerciseFAB.setVisibility(View.GONE);
                 break;
             case 2:
                 mPrev.setVisibility(View.VISIBLE);

@@ -10,8 +10,11 @@ import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import it.fitnesschallenge.adapter.AddAdapter;
 import it.fitnesschallenge.model.room.FitnessChallengeRepository;
+import it.fitnesschallenge.model.room.PersonalExercise;
 import it.fitnesschallenge.model.room.WorkoutWithExercise;
 
 public class CreationViewModel extends AndroidViewModel {
@@ -26,6 +29,7 @@ public class CreationViewModel extends AndroidViewModel {
     private MutableLiveData<Date> mStartDate;
     private MutableLiveData<WorkoutWithExercise> mWorkoutWithExercise;
     private MutableLiveData<Integer> mWorkoutId;
+    private MutableLiveData<List<PersonalExercise>> mPersonalExerciseList;
 
     public CreationViewModel(@NonNull Application application) {
         super(application);
@@ -38,6 +42,7 @@ public class CreationViewModel extends AndroidViewModel {
         mLiveDataProgress = new MutableLiveData<>();
         mWorkoutWithExercise = new MutableLiveData<>();
         mWorkoutId = new MutableLiveData<>();
+        mPersonalExerciseList = new MutableLiveData<>();
 
         setWorkoutId(-1);
         setLiveDataSteps();
@@ -81,6 +86,14 @@ public class CreationViewModel extends AndroidViewModel {
 
     public void setLiveDataSteps(){
         mLiveDataSteps.setValue(mListSteps);
+    }
+
+    public void setPersonalExerciseList(List<PersonalExercise> personalExerciseList) {
+        mPersonalExerciseList.setValue(personalExerciseList);
+    }
+
+    public MutableLiveData<List<PersonalExercise>> getPersonalExerciseList() {
+        return mPersonalExerciseList;
     }
 
     public void nextStep(){

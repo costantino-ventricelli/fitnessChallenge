@@ -5,6 +5,8 @@
 
 package it.fitnesschallenge.model.room;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -46,5 +48,19 @@ public class Exercise {
 
     public void setExerciseId(int id) {
         this.exerciseId = id;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return this.getExerciseName();
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj instanceof Exercise) {
+            return this.getExerciseName().equals(((Exercise) obj).getExerciseName());
+        } else
+            return false;
     }
 }

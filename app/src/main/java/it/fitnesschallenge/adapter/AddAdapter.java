@@ -4,6 +4,7 @@
  */
 package it.fitnesschallenge.adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import it.fitnesschallenge.model.room.Exercise;
 
 public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
 
+    private static final String TAG = "AddAdapter";
 
     private OnClickListener mOnClickListener;
     private OnSelectItemListener mOnSelectedItemListener;
@@ -40,15 +42,18 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.add_exercise_item, parent, false);
+        Log.d(TAG, "Creo il ViewHolder");
         //qui avviene l'assegnazione dei listener al ViewHolder
         return new ViewHolder(view, mOnClickListener, mOnSelectedItemListener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        Log.d(TAG, "Collego il ViewHolder");
         holder.exerciseTitle.setText(mList.get(position).getExerciseName());
         holder.exerciseDescription.setText(mList.get(position).getExerciseDescription());
         holder.exerciseImage.setImageResource(mList.get(position).getImageReference());
+        holder.cardView.setTag(mList.get(position).getExerciseName());
     }
 
     @Override
@@ -110,6 +115,7 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
         ViewHolder(@NonNull final View itemView, final OnClickListener mOnClickListener,
                    final OnSelectItemListener mOnSelectedItemListener) {
             super(itemView);
+            Log.d(TAG, "Setto il layout degli oggetti nella RecyclerView");
             modified = false;
             cardView = itemView.findViewById(R.id.item_card_view);
             /*
@@ -163,5 +169,11 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
                 }
             });
         }
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return mList.toString();
     }
 }

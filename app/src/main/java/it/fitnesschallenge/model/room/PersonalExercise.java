@@ -4,6 +4,7 @@ package it.fitnesschallenge.model.room;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.Entity;
 
@@ -61,12 +62,4 @@ public class PersonalExercise extends Exercise implements Parcelable {
             return new PersonalExercise[size];
         }
     };
-
-    @Override
-    public boolean equals(@Nullable Object obj) {
-        if(obj instanceof Exercise){
-            return this.getExerciseName().equals(((Exercise) obj).getExerciseName());
-        }else
-            return false;
-    }
 }
