@@ -21,4 +21,8 @@ public final class SharedConstance {
     public static final String DATE_PICKER = "datePicker";
     public static final String SELECTED_DATE = "selectedDate";
     public static final String WORKOUT_FRAGMENT = "workout_fragment";
+    public static final String ADD_EXERCISE_TO_LIST = "add_exercise_to_list";
+    public static final String WORKOUT_STATISTICS_FRAGMENT = "workout_statistics_fragment";
+    public static final String TRAINING_LIST_HOME = "training_list_home";
+
 }
