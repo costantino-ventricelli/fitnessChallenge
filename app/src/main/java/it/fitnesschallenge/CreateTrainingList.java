@@ -31,10 +31,11 @@ import it.fitnesschallenge.model.room.PersonalExercise;
 import it.fitnesschallenge.model.view.CreationViewModel;
 
 import static it.fitnesschallenge.model.SharedConstance.ADD_EXERCISE_TO_LIST;
-import static it.fitnesschallenge.model.SharedConstance.FIRST_STEP_CREATION;
-import static it.fitnesschallenge.model.SharedConstance.SECOND_STEP_CREATION;
+import static it.fitnesschallenge.model.SharedConstance.ADD_FINISH_DATE;
+import static it.fitnesschallenge.model.SharedConstance.ADD_USERNAME_AND_START_DATE;
+import static it.fitnesschallenge.model.SharedConstance.UPLOAD_NEW_WORKOUT;
 
-public class CreateTrainingList extends Fragment{
+public class CreateTrainingList extends Fragment {
 
     private static final String TAG = "CreateTrainingList";
     private Context mContext;
@@ -42,6 +43,7 @@ public class CreateTrainingList extends Fragment{
     private ProgressBar mProgressBar;
     private TextView mProgressTextView;
     private TextView mPrevText;
+    private TextView mNextText;
     private ImageButton mNext;
     private ImageButton mPrev;
     private FloatingActionButton mAddExerciseFAB;
@@ -60,6 +62,7 @@ public class CreateTrainingList extends Fragment{
         mPrevText = view.findViewById(R.id.previous_text);
         mNext = view.findViewById(R.id.right_key_arrow);
         mPrev = view.findViewById(R.id.left_key_arrow);
+        mNextText = view.findViewById(R.id.next_text);
         mAddExerciseFAB = view.findViewById(R.id.add_exercise_FAB);
 
         //collego il View model al Fragment
@@ -67,7 +70,7 @@ public class CreateTrainingList extends Fragment{
         mViewModel.getLiveDataProgress().observe(getViewLifecycleOwner(), new Observer<Integer>() {
             @Override
             public void onChanged(Integer integer) {
-                if(mProgressBar != null && mProgressTextView != null){
+                if (mProgressBar != null && mProgressTextView != null) {
                     Log.d(TAG, "Nuovo progresso: " + integer);
                     Log.d(TAG, "ProgressBar getProgress(): " + mProgressBar.getProgress());
                     ValueAnimator animator = ValueAnimator.ofInt(mProgressBar.getProgress(), integer);
@@ -108,7 +111,21 @@ public class CreateTrainingList extends Fragment{
         mNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mViewModel.nextStep();
+                String currentFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.inner_frame_creation_list).getTag();
+                switch (currentFragment) {
+                    case ADD_USERNAME_AND_START_DATE:
+                        if (!checkFirstStepCompleted())
+                            mViewModel.nextStep();
+                        break;
+                    case ADD_EXERCISE_TO_LIST:
+                        if (!checkSecondStepCompleted())
+                            mViewModel.nextStep();
+                        break;
+                    case ADD_FINISH_DATE:
+                        if (!checkThirdStepCompleted())
+                            mViewModel.nextStep();
+                        break;
+                }
             }
         });
         mPrev.setOnClickListener(new View.OnClickListener() {
@@ -141,32 +158,79 @@ public class CreateTrainingList extends Fragment{
         mContext = context;
     }
 
-    private void setCurrentStep(ArrayList<Integer> integers){
+    private void setCurrentStep(ArrayList<Integer> integers) {
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
                 R.anim.enter_from_rigth, R.anim.exit_from_left);
         Log.d(TAG, "Current step: " + integers.size());
-        switch (integers.size()){
+        Log.d(TAG, "Error: " + mViewModel.isError());
+        switch (integers.size()) {
             case 0:
             case 1:
-                FirstCreationStep firstCreationStep = new FirstCreationStep();
-                transaction.replace(R.id.inner_frame_creation_list, firstCreationStep, FIRST_STEP_CREATION)
-                        .commit();
-                mPrev.setVisibility(View.GONE);
-                mPrevText.setVisibility(View.GONE);
-                mViewModel.setLiveDataProgress(0);
-                mAddExerciseFAB.setVisibility(View.GONE);
+                if (!mViewModel.getIsError().getValue()) {
+                    AddUserNameAndStartDate addUserNameAndStartDate = new AddUserNameAndStartDate();
+                    transaction.replace(R.id.inner_frame_creation_list, addUserNameAndStartDate, ADD_USERNAME_AND_START_DATE)
+                            .commit();
+                    mPrev.setVisibility(View.GONE);
+                    mPrevText.setVisibility(View.GONE);
+                    mViewModel.setLiveDataProgress(1);
+                    mAddExerciseFAB.setVisibility(View.GONE);
+                }
                 break;
             case 2:
                 mPrev.setVisibility(View.VISIBLE);
                 mPrevText.setVisibility(View.VISIBLE);
                 ExerciseList exerciseList = new ExerciseList();
-                transaction.replace(R.id.inner_frame_creation_list, exerciseList, SECOND_STEP_CREATION)
+                transaction.replace(R.id.inner_frame_creation_list, exerciseList, ADD_EXERCISE_TO_LIST)
                         .commit();
                 mViewModel.setLiveDataProgress(33);
                 mAddExerciseFAB.setVisibility(View.VISIBLE);
                 break;
+            case 3:
+                if (mNext.getVisibility() == View.GONE) {
+                    mNext.setVisibility(View.VISIBLE);
+                    mNextText.setVisibility(View.VISIBLE);
+                }
+                AddFinishDate finishDate = new AddFinishDate();
+                transaction.replace(R.id.inner_frame_creation_list, finishDate, ADD_FINISH_DATE)
+                        .commit();
+                mViewModel.setLiveDataProgress(66);
+                mAddExerciseFAB.setVisibility(View.GONE);
+                break;
+            case 4:
+                mNext.setVisibility(View.GONE);
+                mNextText.setVisibility(View.GONE);
+                UploadNewWorkout uploadNewWorkout = new UploadNewWorkout();
+                transaction.replace(R.id.inner_frame_creation_list, uploadNewWorkout, UPLOAD_NEW_WORKOUT)
+                        .commit();
+                mViewModel.setLiveDataProgress(100);
+                break;
+            default:
+                Log.d(TAG, "Non dovrebbe esserci");
         }
+    }
+
+    private boolean checkFirstStepCompleted() {
+        Log.d(TAG, "Verifico il completamento del primo step");
+        Log.d(TAG, "Email: " + mViewModel.getEmail().getValue() + "\n" +
+                "\t Goal: " + mViewModel.getGoal().getValue() + "\n" +
+                "\t Data: " + mViewModel.getStartDate().getValue());
+        if (mViewModel.getEmail().getValue() == null
+                || mViewModel.getGoal().getValue() == null) {
+            mViewModel.setIsError(true);
+            return true;
+        } else {
+            mViewModel.setIsError(false);
+            return false;
+        }
+    }
+
+    private boolean checkSecondStepCompleted() {
+        return true;
+    }
+
+    private boolean checkThirdStepCompleted() {
+        return true;
     }
 }

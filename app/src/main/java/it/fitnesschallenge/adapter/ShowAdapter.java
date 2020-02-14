@@ -83,7 +83,7 @@ public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder>
      * Interfacce per la gestione dei click
      */
     public interface OnClickListener {
-        void onClickListener(View view, boolean isRemoved);
+        void onClickListener(View view, int position);
     }
 
     /**
@@ -129,12 +129,10 @@ public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder>
         private TextView mTitleTextView;
         private TextView mSetNumberTextView;
         private View mCardView;
-        private boolean isRemoved;
 
         ViewHolder(@NonNull View itemView, final OnClickListener actionClickListener) {
             super(itemView);
             Log.d(TAG, "Creo la view per l'item");
-            isRemoved = false;
             mCardView = itemView;
             mImageView = itemView.findViewById(R.id.add_exercise_img);
             mTitleTextView = itemView.findViewById(R.id.add_exercise_title);
@@ -144,8 +142,7 @@ public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder>
             mActionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    actionClickListener.onClickListener(v, isRemoved);
-                    isRemoved = !isRemoved;
+                    actionClickListener.onClickListener(v, getAdapterPosition());
                 }
             });
         }

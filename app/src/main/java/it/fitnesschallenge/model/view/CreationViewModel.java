@@ -26,9 +26,12 @@ public class CreationViewModel extends AndroidViewModel {
     private MutableLiveData<String> mEmail;
     private MutableLiveData<String> mGoal;
     private MutableLiveData<Date> mStartDate;
+    private MutableLiveData<Date> mFinishDate;
     private MutableLiveData<WorkoutWithExercise> mWorkoutWithExercise;
     private MutableLiveData<Integer> mWorkoutId;
     private MutableLiveData<List<PersonalExercise>> mPersonalExerciseList;
+    private MutableLiveData<Boolean> mIsError;
+    private boolean mError;
 
     public CreationViewModel(@NonNull Application application) {
         super(application);
@@ -42,9 +45,20 @@ public class CreationViewModel extends AndroidViewModel {
         mWorkoutWithExercise = new MutableLiveData<>();
         mWorkoutId = new MutableLiveData<>();
         mPersonalExerciseList = new MutableLiveData<>();
+        mFinishDate = new MutableLiveData<>();
+        mError = false;
+        mIsError = new MutableLiveData<>(false);
 
         setWorkoutId(-1);
         setLiveDataSteps();
+    }
+
+    public MutableLiveData<Date> getFinishDate() {
+        return mFinishDate;
+    }
+
+    public void setFinishDate(Date mFinishDate) {
+        this.mFinishDate.setValue(mFinishDate);
     }
 
     public LiveData<String> getEmail() {
@@ -95,6 +109,14 @@ public class CreationViewModel extends AndroidViewModel {
         return mPersonalExerciseList;
     }
 
+    public MutableLiveData<Boolean> getIsError() {
+        return mIsError;
+    }
+
+    public void setIsError(Boolean isError) {
+        this.mIsError.setValue(isError);
+    }
+
     public void nextStep(){
         Log.d(TAG, "NextStep");
         mListSteps.add(mListSteps.get(mListSteps.size() - 1) + 1);
@@ -119,5 +141,34 @@ public class CreationViewModel extends AndroidViewModel {
     public LiveData<WorkoutWithExercise> getWorkoutWithExercise(int workoutId){
         FitnessChallengeRepository repository = new FitnessChallengeRepository(getApplication());
         return repository.getWorkoutWithExerciseList(workoutId);
+    }
+
+    //metodi di get per sigolo elemento
+    public String getEmailValue() {
+        return mEmail.getValue();
+    }
+
+    public Date getStartDateValue() {
+        return mStartDate.getValue();
+    }
+
+    public String getGoalValue() {
+        return mGoal.getValue();
+    }
+
+    public List<PersonalExercise> getPersonalValue() {
+        return mPersonalExerciseList.getValue();
+    }
+
+    public Date getFinishDateValue() {
+        return mFinishDate.getValue();
+    }
+
+    public boolean isError() {
+        return mError;
+    }
+
+    public void setError(boolean error) {
+        this.mError = error;
     }
 }

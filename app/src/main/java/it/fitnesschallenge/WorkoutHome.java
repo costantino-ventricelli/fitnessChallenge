@@ -2,18 +2,16 @@ package it.fitnesschallenge;
 
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.google.android.material.button.MaterialButton;
 
-import static it.fitnesschallenge.model.SharedConstance.LOGIN_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.TRAINING_LIST_HOME;
 import static it.fitnesschallenge.model.SharedConstance.WORKOUT_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.WORKOUT_STATISTICS_FRAGMENT;

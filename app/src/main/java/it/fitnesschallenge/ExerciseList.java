@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -31,19 +30,14 @@ public class ExerciseList extends Fragment {
     private CreationViewModel mCreationViewModel;
     private ShowAdapter mShowAdapter;
     private RecyclerView mRecyclerView;
-    private TextView mMessageView;
     private Context mContext;
+    private List<PersonalExercise> mActualList;
     private static final String TAG = "ExerciseList";
 
 
     public ExerciseList() {
         // Required empty public constructor
     }
-
-    /*
-     * TODO: trovare un modo di eliminare gli esercizi logicamente all'inizo e poi eliminarli
-     * effettivamente allo step successivo della creazione della scheda.
-     */
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,14 +46,14 @@ public class ExerciseList extends Fragment {
 
         mRecyclerView = view.findViewById(R.id.show_exercise_list);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mMessageView = view.findViewById(R.id.exercise_list_message);
 
         mCreationViewModel = ViewModelProviders.of(getActivity()).get(CreationViewModel.class);
         mCreationViewModel.getPersonalExerciseList().observe(getViewLifecycleOwner(), new Observer<List<PersonalExercise>>() {
             @Override
-            public void onChanged(List<PersonalExercise> personalExerciseList) {
+            public void onChanged(final List<PersonalExercise> personalExerciseList) {
                 Log.d(TAG, "Ottenuta lista esercizi personale: " + personalExerciseList.toString());
-                mShowAdapter = new ShowAdapter(personalExerciseList);
+                mActualList = personalExerciseList;
+                mShowAdapter = new ShowAdapter(mActualList);
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
                 mRecyclerView.setAdapter(mShowAdapter);
                 ItemTouchHelper.Callback callback = new ItemTouchHelperCallBack(mShowAdapter);
@@ -67,15 +61,19 @@ public class ExerciseList extends Fragment {
                 touchHelper.attachToRecyclerView(mRecyclerView);
                 mShowAdapter.setOnClickListener(new ShowAdapter.OnClickListener() {
                     @Override
-                    public void onClickListener(View view, boolean isRemoved) {
+                    public void onClickListener(View view, int position) {
                         ImageButton removeButton = view.findViewById(R.id.exercise_item_action);
-                        if (!isRemoved) {
+                        Log.d(TAG, "E' rimosso: " + mActualList.get(position).isDeleted());
+                        if (!mActualList.get(position).isDeleted()) {
                             removeButton.setImageResource(R.drawable.ic_undo);
                             Log.d(TAG, "Rimuovo esercizio");
+                            mActualList.get(position).setDeleted(true);
                         } else {
                             removeButton.setImageResource(R.drawable.ic_remove_circle);
                             Log.d(TAG, "Riaggiungo esercizio");
+                            mActualList.get(position).setDeleted(false);
                         }
+                        mCreationViewModel.setPersonalExerciseList(mActualList);
                     }
                 });
             }

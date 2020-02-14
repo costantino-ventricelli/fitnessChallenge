@@ -24,8 +24,6 @@
     <string name="bench_press">Bench press</string>
     <string name="error_in_db">Error in DB please verify</string>
     <string name="fitness_challenge_db">FitnessChallengeDB</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
@@ -63,7 +61,7 @@
     <string name="next">next</string>
     <string name="training_goal">Training goal</string>
     <string name="starting_training_date">Starting training date</string>
-    <string name="date_pattern">AAAA/MM/GG</string>
+    <string name="date_pattern">YYYY-MM-DD</string>
     <string name="gain_muscle">GAIN MUSCLE</string>
     <string name="get_fit">GET FIT</string>
     <string name="title_goes_here">Title goes here</string>
@@ -78,4 +76,10 @@
     <string name="workout_statistics">Workout statistics</string>
     <string name="training_list">Training list</string>
     <string name="open">Open</string>
+    <string name="whe_are_almost_here">Whe are almost here</string>
+    <string name="pick_the_date">Pick the date</string>
+    <string name="finish_date">Finish date</string>
+    <string name="entry_completed">Entry completed</string>
+    <string name="finish">Finish</string>
+    <string name="check_image">Check image</string>
 </resources>
