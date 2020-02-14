@@ -1,6 +1,7 @@
 package it.fitnesschallenge;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -21,6 +23,8 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -92,8 +96,10 @@ public class AddUserNameAndStartDate extends Fragment {
             @Override
             public void onChanged(Boolean aBoolean) {
                 Log.d(TAG, "Error status changed: " + aBoolean);
-                if (aBoolean)
-                    checkEmptyValue();
+                if (aBoolean != null) {
+                    if (aBoolean)
+                        checkEmptyValue();
+                }
             }
         });
 
@@ -103,6 +109,14 @@ public class AddUserNameAndStartDate extends Fragment {
                 TextInputEditText view = (TextInputEditText) v;
                 Log.d(TAG, "Email onFocusChange: " + view.getText().toString());
                 mCreationViewModel.setEmail(view.getText().toString().trim());
+                if (KeyboardVisibilityEvent.isKeyboardVisible(getActivity())) {
+                    try {
+                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+                    } catch (NullPointerException ex) {
+                        Log.d(TAG, "Non riesco a nascondere la tastiera");
+                    }
+                }
             }
         });
 

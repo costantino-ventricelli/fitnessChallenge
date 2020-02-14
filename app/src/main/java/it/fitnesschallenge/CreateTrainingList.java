@@ -26,6 +26,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import it.fitnesschallenge.model.room.PersonalExercise;
 import it.fitnesschallenge.model.view.CreationViewModel;
@@ -131,6 +133,7 @@ public class CreateTrainingList extends Fragment {
         mPrev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mViewModel.setIsError(false);
                 mViewModel.prevStep();
             }
         });
@@ -179,24 +182,28 @@ public class CreateTrainingList extends Fragment {
                 }
                 break;
             case 2:
-                mPrev.setVisibility(View.VISIBLE);
-                mPrevText.setVisibility(View.VISIBLE);
-                ExerciseList exerciseList = new ExerciseList();
-                transaction.replace(R.id.inner_frame_creation_list, exerciseList, ADD_EXERCISE_TO_LIST)
-                        .commit();
-                mViewModel.setLiveDataProgress(33);
-                mAddExerciseFAB.setVisibility(View.VISIBLE);
+                if (!mViewModel.getIsError().getValue()) {
+                    mPrev.setVisibility(View.VISIBLE);
+                    mPrevText.setVisibility(View.VISIBLE);
+                    ExerciseList exerciseList = new ExerciseList();
+                    transaction.replace(R.id.inner_frame_creation_list, exerciseList, ADD_EXERCISE_TO_LIST)
+                            .commit();
+                    mViewModel.setLiveDataProgress(33);
+                    mAddExerciseFAB.setVisibility(View.VISIBLE);
+                }
                 break;
             case 3:
-                if (mNext.getVisibility() == View.GONE) {
-                    mNext.setVisibility(View.VISIBLE);
-                    mNextText.setVisibility(View.VISIBLE);
+                if (!mViewModel.getIsError().getValue()) {
+                    if (mNext.getVisibility() == View.GONE) {
+                        mNext.setVisibility(View.VISIBLE);
+                        mNextText.setVisibility(View.VISIBLE);
+                    }
+                    AddFinishDate finishDate = new AddFinishDate();
+                    transaction.replace(R.id.inner_frame_creation_list, finishDate, ADD_FINISH_DATE)
+                            .commit();
+                    mViewModel.setLiveDataProgress(66);
+                    mAddExerciseFAB.setVisibility(View.GONE);
                 }
-                AddFinishDate finishDate = new AddFinishDate();
-                transaction.replace(R.id.inner_frame_creation_list, finishDate, ADD_FINISH_DATE)
-                        .commit();
-                mViewModel.setLiveDataProgress(66);
-                mAddExerciseFAB.setVisibility(View.GONE);
                 break;
             case 4:
                 mNext.setVisibility(View.GONE);
@@ -227,10 +234,44 @@ public class CreateTrainingList extends Fragment {
     }
 
     private boolean checkSecondStepCompleted() {
-        return true;
+        Log.d(TAG, "Controllo correttezza secondo step");
+        List<PersonalExercise> personalExerciseList = mViewModel.getPersonalExerciseList().getValue();
+        if (personalExerciseList == null) {
+            mViewModel.setIsError(true);
+            return true;
+        }
+
+        for (PersonalExercise personalExercise : personalExerciseList) {
+            if (personalExercise.isDeleted())
+                personalExerciseList.remove(personalExercise);
+        }
+        mViewModel.setPersonalExerciseList(personalExerciseList);
+        if (personalExerciseList.size() < 1) {
+            Log.d(TAG, "Non ci sono esercizi");
+            mViewModel.setIsError(true);
+            return true;
+        } else {
+            Log.d(TAG, "Ci sono esercizi");
+            mViewModel.setIsError(false);
+            return false;
+        }
     }
 
     private boolean checkThirdStepCompleted() {
-        return true;
+        Log.d(TAG, "Controllo correttezza terzo step");
+        Date date = mViewModel.getFinishDate().getValue();
+        if (date == null) {
+            mViewModel.setIsError(true);
+            return true;
+        } else {
+            mViewModel.setIsError(false);
+            return false;
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mViewModel.resetLiveData();
     }
 }

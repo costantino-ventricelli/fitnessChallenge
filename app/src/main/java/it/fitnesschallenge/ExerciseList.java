@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import java.util.List;
 
 import it.fitnesschallenge.adapter.ItemTouchHelperCallBack;
@@ -76,6 +78,16 @@ public class ExerciseList extends Fragment {
                         mCreationViewModel.setPersonalExerciseList(mActualList);
                     }
                 });
+            }
+        });
+        mCreationViewModel.getIsError().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                Log.d(TAG, "Error status changed: " + aBoolean);
+                if (aBoolean)
+                    Snackbar.make(getView(), getContext()
+                            .getResources()
+                            .getString(R.string.add_exercise_to_list), Snackbar.LENGTH_LONG).show();
             }
         });
         return view;

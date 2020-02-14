@@ -2,11 +2,13 @@ package it.fitnesschallenge;
 
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -53,6 +55,25 @@ public class AddFinishDate extends Fragment {
 
         MaterialButton pickDateButton = view.findViewById(R.id.add_finish_date_pick_date);
         mDateText = view.findViewById(R.id.add_finish_date_date);
+
+        mCreationViewModel.getFinishDate().observe(getViewLifecycleOwner(), new Observer<Date>() {
+            @Override
+            public void onChanged(Date date) {
+                if (date != null)
+                    mDateText.setText(new SimpleDateFormat("YYYY-MM-dd", Locale.getDefault()).format(date));
+            }
+        });
+
+        mCreationViewModel.getIsError().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if (aBoolean) {
+                    mDateText.setTextColor(Color.RED);
+                    mDateText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_error, 0);
+                    mDateText.setText(R.string.complete_correctly_field);
+                }
+            }
+        });
 
         pickDateButton.setOnClickListener(new View.OnClickListener() {
             @Override

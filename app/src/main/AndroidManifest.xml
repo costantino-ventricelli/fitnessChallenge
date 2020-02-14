@@ -15,7 +15,7 @@
         android:fullBackupContent="true">
         <activity
             android:name=".HomeActivity"
-            android:windowSoftInputMode="stateVisible|adjustPan">
+            android:windowSoftInputMode="stateVisible|adjustUnspecified">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW"/>

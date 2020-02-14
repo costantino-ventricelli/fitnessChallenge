@@ -143,32 +143,22 @@ public class CreationViewModel extends AndroidViewModel {
         return repository.getWorkoutWithExerciseList(workoutId);
     }
 
-    //metodi di get per sigolo elemento
-    public String getEmailValue() {
-        return mEmail.getValue();
-    }
-
-    public Date getStartDateValue() {
-        return mStartDate.getValue();
-    }
-
-    public String getGoalValue() {
-        return mGoal.getValue();
-    }
-
-    public List<PersonalExercise> getPersonalValue() {
-        return mPersonalExerciseList.getValue();
-    }
-
-    public Date getFinishDateValue() {
-        return mFinishDate.getValue();
+    public void resetLiveData() {
+        mLiveDataProgress.setValue(null);
+        mListSteps = new ArrayList<>();
+        mLiveDataSteps.setValue(null);
+        mEmail.setValue(null);
+        mGoal.setValue(null);
+        mStartDate.setValue(null);
+        mFinishDate.setValue(null);
+        mWorkoutWithExercise.setValue(null);
+        mWorkoutId.setValue(null);
+        mPersonalExerciseList.setValue(null);
+        mIsError.setValue(null);
+        mError = false;
     }
 
     public boolean isError() {
         return mError;
-    }
-
-    public void setError(boolean error) {
-        this.mError = error;
     }
 }

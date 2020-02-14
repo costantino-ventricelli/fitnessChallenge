@@ -116,6 +116,10 @@ public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder>
         builder.append(NumberFormat.getInstance().format(exercise.getSteps()));
         holder.mSetNumberTextView.setText(builder.toString());
         holder.mCardView.setTag(exercise.getExerciseName());
+        if (exercise.isDeleted())
+            holder.mActionButton.setImageResource(R.drawable.ic_undo);
+        else
+            holder.mActionButton.setImageResource(R.drawable.ic_remove_circle);
     }
 
     @Override
@@ -129,6 +133,7 @@ public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder>
         private TextView mTitleTextView;
         private TextView mSetNumberTextView;
         private View mCardView;
+        private ImageButton mActionButton;
 
         ViewHolder(@NonNull View itemView, final OnClickListener actionClickListener) {
             super(itemView);
@@ -137,7 +142,7 @@ public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder>
             mImageView = itemView.findViewById(R.id.add_exercise_img);
             mTitleTextView = itemView.findViewById(R.id.add_exercise_title);
             mSetNumberTextView = itemView.findViewById(R.id.exercise_item_number);
-            ImageButton mActionButton = itemView.findViewById(R.id.exercise_item_action);
+            mActionButton = itemView.findViewById(R.id.exercise_item_action);
             //Qui vengono collegati i metodi di call back con gli oggetti a cui appartengono
             mActionButton.setOnClickListener(new View.OnClickListener() {
                 @Override

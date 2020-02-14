@@ -2,6 +2,7 @@ package it.fitnesschallenge;
 
 
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -118,25 +119,11 @@ public class Login extends Fragment {
                     valueAnimator.setInterpolator(new DecelerateInterpolator());
                     valueAnimator.setDuration(duration);
                     valueAnimator.start();
-                    valueAnimator.addListener(new Animator.AnimatorListener() {
-                        @Override
-                        public void onAnimationStart(Animator animation) {
-
-                        }
-
+                    valueAnimator.addListener(new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
                             topImageView.setVisibility(View.GONE);
-                        }
-
-                        @Override
-                        public void onAnimationCancel(Animator animation) {
-
-                        }
-
-                        @Override
-                        public void onAnimationRepeat(Animator animation) {
-
                         }
                     });
                 } else {
