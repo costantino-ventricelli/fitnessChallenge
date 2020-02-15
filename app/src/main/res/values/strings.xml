@@ -83,4 +83,5 @@
     <string name="finish">Finish</string>
     <string name="check_image">Check image</string>
     <string name="add_exercise_to_list">Add exercise to list</string>
+    <string name="user_does_not_exist_select_another_one">The selected user does not exist, please insert another user</string>
 </resources>
