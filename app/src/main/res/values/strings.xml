@@ -84,4 +84,7 @@
     <string name="check_image">Check image</string>
     <string name="add_exercise_to_list">Add exercise to list</string>
     <string name="user_does_not_exist_select_another_one">The selected user does not exist, please insert another user</string>
+    <string name="gym_enter_background">Gym enter background</string>
+    <string name="nfc_image">NFC image</string>
+    <string name="nfc_instruction">Place the device on the NFC reader</string>
 </resources>

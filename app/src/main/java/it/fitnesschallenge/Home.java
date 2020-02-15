@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.button.MaterialButton;
 
+import static it.fitnesschallenge.model.SharedConstance.ENTER_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.HOME_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.LOGIN_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.WORKOUT_FRAGMENT;
@@ -47,6 +48,20 @@ public class Home extends Fragment{
         enterGymButton = view.findViewById(R.id.enterGym);
         startOutdoor = view.findViewById(R.id.startOutdoorWorkout);
         login = view.findViewById(R.id.trainerLogin);
+
+        enterGymButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GymEnter gymEnter = new GymEnter();
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
+                        R.anim.enter_from_rigth, R.anim.exit_from_left);
+                transaction.replace(R.id.fragmentContainer, gymEnter, ENTER_FRAGMENT)
+                        .addToBackStack(ENTER_FRAGMENT)
+                        .commit();
+            }
+        });
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -12,7 +12,7 @@ public final class SharedConstance {
     public static final String SHARED_PREFERENCES = "sharedPreferences";
     public static final String LOGGED_IN = "loggedIn";
     public static final String AUTO_LOGGED = "autoLogged";
-    public static final String CREATE_TAINIG_LIST = "createTrainingList";
+    public static final String CREATE_TRAINING_LIST = "createTrainingList";
     public static final String ADD_USERNAME_AND_START_DATE = "addUsernameAndStartDate";
     public static final String ADD_EXERCISE_TO_WORKOUT = "addExerciseToWorkout";
     public static final String ADD_FINISH_DATE = "addFinishDate";
@@ -24,5 +24,5 @@ public final class SharedConstance {
     public static final String ADD_EXERCISE_TO_LIST = "addExerciseToList";
     public static final String WORKOUT_STATISTICS_FRAGMENT = "workoutStatisticsFragment";
     public static final String TRAINING_LIST_HOME = "trainingListHome";
-
+    public static final String ENTER_FRAGMENT = "enterFragment";
 }
