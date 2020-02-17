@@ -1,7 +1,11 @@
 package it.fitnesschallenge;
 
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.nfc.NfcAdapter;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -12,6 +16,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 
@@ -31,6 +36,8 @@ public class HomeActivity extends AppCompatActivity{
     private HomeViewModel homeViewModel;
     private static Context mContext;
     private boolean isHome;
+    private NfcAdapter mNfcAdapter;
+    private PendingIntent mPendingIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +54,17 @@ public class HomeActivity extends AppCompatActivity{
         mBackButton = findViewById(R.id.btn_back);
         mBackButton.setVisibility(View.GONE);
         mContext = this;
+
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+
+        if (mNfcAdapter == null)
+            Snackbar.make(mBottomNavigation, "This smart phone do not have NFC", Snackbar.LENGTH_LONG).show();
+        else
+            Snackbar.make(mBottomNavigation, "This smart phone have NFC", Snackbar.LENGTH_LONG).show();
+
+        mPendingIntent = PendingIntent.getActivity(mContext,
+                0, new Intent(this, HomeActivity.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
         if (savedInstanceState == null) {
             mBottomNavigation.setSelectedItemId(R.id.navigation_home);
@@ -85,5 +103,24 @@ public class HomeActivity extends AppCompatActivity{
 
     public static Context getHomeActivityContext() {
         return mContext;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mNfcAdapter != null)
+            if (!mNfcAdapter.isEnabled())
+                turnOnNFC();
+        mNfcAdapter.enableForegroundDispatch(this, mPendingIntent, null, null);
+    }
+
+    private void turnOnNFC() {
+        startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        
     }
 }

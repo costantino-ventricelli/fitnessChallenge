@@ -29,10 +29,6 @@ import static android.app.Activity.RESULT_OK;
 import static it.fitnesschallenge.model.SharedConstance.DATE_PICKER;
 import static it.fitnesschallenge.model.SharedConstance.SELECTED_DATE;
 
-
-/**
- * A simple {@link Fragment} subclass.
- */
 public class AddFinishDate extends Fragment {
 
     private static final int DATE_PICKER_RESULT = 1;
