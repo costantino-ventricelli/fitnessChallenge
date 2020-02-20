@@ -3,8 +3,11 @@ package it.fitnesschallenge;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
@@ -18,6 +21,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import it.fitnesschallenge.model.room.Exercise;
@@ -118,9 +122,25 @@ public class HomeActivity extends AppCompatActivity{
         startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
     }
 
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mNfcAdapter.disableForegroundDispatch(this);
+    }
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        
+        if (intent != null) {
+            if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
+                Parcelable[] rawMessage = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
+                if (rawMessage != null) {
+                    NdefMessage[] messages = new NdefMessage[rawMessage.length];
+                    for (int i = 0; i < rawMessage.length; i++)
+                        messages[i] = (NdefMessage) rawMessage[i];
+                }
+            }
+        }
     }
 }
