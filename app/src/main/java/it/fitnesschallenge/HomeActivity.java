@@ -61,11 +61,6 @@ public class HomeActivity extends AppCompatActivity{
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
-        if (mNfcAdapter == null)
-            Snackbar.make(mBottomNavigation, "This smart phone do not have NFC", Snackbar.LENGTH_LONG).show();
-        else
-            Snackbar.make(mBottomNavigation, "This smart phone have NFC", Snackbar.LENGTH_LONG).show();
-
         mPendingIntent = PendingIntent.getActivity(mContext,
                 0, new Intent(this, HomeActivity.class)
                         .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
@@ -139,6 +134,8 @@ public class HomeActivity extends AppCompatActivity{
                     NdefMessage[] messages = new NdefMessage[rawMessage.length];
                     for (int i = 0; i < rawMessage.length; i++)
                         messages[i] = (NdefMessage) rawMessage[i];
+                    Log.d(TAG, "Messagio ricevuto NFC: " + messages[1]);
+                    //TODO: gli intent sono parcelizabili quindi si possono passare al fragment
                 }
             }
         }

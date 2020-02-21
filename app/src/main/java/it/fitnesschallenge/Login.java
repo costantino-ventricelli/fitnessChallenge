@@ -7,6 +7,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +51,9 @@ import static it.fitnesschallenge.model.SharedConstance.TRAINER_HOME_FRAGMENT;
 public class Login extends Fragment {
 
     private static final String TAG = "Login";
+    private static final String CALLER_STRING = "caller";
+
+    private String mCaller;
     //istanza per l'accesso in firebase
     private FirebaseAuth mAuth;
     private ImageView topImageView;
@@ -67,6 +71,15 @@ public class Login extends Fragment {
      * In onStart verificheremo se l'utente ha abilitato l'auto login dalle shared preferences, dopo
      * di che preleveremo l'account dal data base locale e effettueremo il login
      */
+
+    public static Login newInstance(String caller) {
+        Login fragment = new Login();
+        Bundle args = new Bundle();
+        args.putString(CALLER_STRING, caller);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -96,6 +109,11 @@ public class Login extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //prelievo l'istanza del DB Firebase
+
+        if (getArguments() != null) {
+            mCaller = getArguments().getString(CALLER_STRING);
+        }
+
         mAuth = FirebaseAuth.getInstance();
 
         //questo listener cattura l'aperura della tastiera per nascondere l'immagine superiore
@@ -226,12 +244,16 @@ public class Login extends Fragment {
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     progressBar.setVisibility(View.GONE);
                     user = documentSnapshot.toObject(User.class);
-                    TrainerHome trainerHome = TrainerHome.newInstance(user);
+                    Fragment fragment;
+                    if (mCaller.equals(TRAINER_HOME_FRAGMENT))
+                        fragment = TrainerHome.newInstance(user);
+                    else
+                        fragment = GymHome.newInstance(user);
                     FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                     FragmentTransaction transaction = fragmentManager.beginTransaction();
                     transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
                             R.anim.enter_from_rigth, R.anim.exit_from_left);
-                    transaction.replace(R.id.fragmentContainer, trainerHome, TRAINER_HOME_FRAGMENT)
+                    transaction.replace(R.id.fragmentContainer, fragment, TRAINER_HOME_FRAGMENT)
                             .addToBackStack(TRAINER_HOME_FRAGMENT)
                             .commit();
                 }
