@@ -87,4 +87,6 @@
     <string name="gym_enter_background">Gym enter background</string>
     <string name="nfc_image">NFC image</string>
     <string name="nfc_instruction">Place the device on the NFC reader</string>
+    <string name="previous_exercise">Previous exercise</string>
+    <string name="next_exercise">Next exercise</string>
 </resources>

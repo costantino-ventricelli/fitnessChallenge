@@ -61,9 +61,10 @@ public class HomeActivity extends AppCompatActivity{
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
-        mPendingIntent = PendingIntent.getActivity(mContext,
-                0, new Intent(this, HomeActivity.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+        if (mNfcAdapter != null)
+            mPendingIntent = PendingIntent.getActivity(mContext,
+                    0, new Intent(this, HomeActivity.class)
+                            .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
         if (savedInstanceState == null) {
             mBottomNavigation.setSelectedItemId(R.id.navigation_home);
@@ -107,10 +108,11 @@ public class HomeActivity extends AppCompatActivity{
     @Override
     protected void onResume() {
         super.onResume();
-        if (mNfcAdapter != null)
+        if (mNfcAdapter != null) {
             if (!mNfcAdapter.isEnabled())
                 turnOnNFC();
-        mNfcAdapter.enableForegroundDispatch(this, mPendingIntent, null, null);
+            mNfcAdapter.enableForegroundDispatch(this, mPendingIntent, null, null);
+        }
     }
 
     private void turnOnNFC() {
@@ -121,13 +123,14 @@ public class HomeActivity extends AppCompatActivity{
     @Override
     protected void onPause() {
         super.onPause();
-        mNfcAdapter.disableForegroundDispatch(this);
+        if (mNfcAdapter != null)
+            mNfcAdapter.disableForegroundDispatch(this);
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        if (intent != null) {
+        if (intent != null && mNfcAdapter != null) {
             if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
                 Parcelable[] rawMessage = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
                 if (rawMessage != null) {
