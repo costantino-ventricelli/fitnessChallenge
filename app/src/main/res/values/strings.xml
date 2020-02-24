@@ -89,4 +89,14 @@
     <string name="nfc_instruction">Place the device on the NFC reader</string>
     <string name="previous_exercise">Previous exercise</string>
     <string name="next_exercise">Next exercise</string>
+    <string name="stop">Stop</string>
+    <string name="exercise_title">Exercise title</string>
+    <string name="add_weight">Add weight</string>
+    <string name="_1_20">1\':20\'\'</string>
+    <string name="play_timer">Play timer</string>
+    <string name="current_repetition">Current repetition</string>
+    <string name="_1_3">1/3</string>
+    <string name="last_time">Last time</string>
+    <string name="_22_gen_2020">22 gen 2020</string>
+    <string name="information">Information</string>
 </resources>

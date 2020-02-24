@@ -1,34 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:backgroundTint="@color/white"
     tools:context=".PlayingWorkout">
 
+    <ProgressBar
+        android:id="@+id/playing_workout_progress_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_marginTop="@dimen/small_distance"
+        android:layout_marginStart="@dimen/margin"
+        android:layout_marginEnd="@dimen/margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
+        style="@style/Widget.MaterialComponents.Button"
+        android:id="@+id/playing_workout_stop_workout"
+        android:layout_below="@id/progress_value"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:text="Button"
-        app:cardElevation="@dimen/card_elevation"
-        tools:layout_editor_absoluteX="32dp"
-        tools:layout_editor_absoluteY="32dp" />
+        android:layout_marginTop="@dimen/small_distance"
+        android:backgroundTint="@color/colorAccent"
+        android:text="@string/stop"
+        android:textColor="@android:color/black"
+        android:layout_centerHorizontal="true"
+        android:elevation="10dp"
+        app:cornerRadius="20dp"
+        app:icon="@drawable/ic_stop"
+        app:iconGravity="end"
+        app:iconTint="@android:color/black" />
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/materialCardView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:id="@+id/exercise_card_view"
+        style="@style/Widget.MaterialComponents.CardView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="32dp"
+        android:layout_below="@id/progress_value"
+        android:backgroundTint="@color/white"
         app:cardCornerRadius="@dimen/border_radius"
-        app:cardElevation="@dimen/card_elevation"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:elevation="8dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -82,8 +100,147 @@
                 app:layout_constraintEnd_toEndOf="@+id/next_exercise"
                 app:layout_constraintStart_toStartOf="@+id/next_exercise" />
 
+            <TextView
+                android:id="@+id/playing_workout_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin"
+                android:layout_marginTop="32dp"
+                android:text="@string/exercise_title"
+                android:textSize="@dimen/sub_title"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/playing_workout_image" />
+
+            <ImageView
+                android:id="@+id/playing_workout_image"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:layout_marginStart="@dimen/margin"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="@dimen/margin"
+                android:contentDescription="@string/exercise_image"
+                android:src="@mipmap/curl_bilanciere"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.504"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/playing_workout_title" />
+
+            <Button
+                android:id="@+id/playing_exercise_add_weigth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin"
+                android:backgroundTint="@color/colorAccent"
+                android:text="@string/add_weight"
+                android:textColor="@android:color/black"
+                app:icon="@drawable/ic_add_circle"
+                app:iconTint="@android:color/black"
+                app:layout_constraintBottom_toTopOf="@+id/prev_exercise"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/playing_workout_timer_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin"
+                android:layout_marginTop="@dimen/small_distance"
+                android:text="@string/timer"
+                app:layout_constraintBottom_toTopOf="@id/playing_workout_current_repetition_label"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/playing_workout_image" />
+
+            <TextView
+                android:id="@+id/playing_workout_timer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/small_distance"
+                android:text="@string/_1_20"
+                app:layout_constraintBottom_toBottomOf="@+id/playing_workout_timer_label"
+                app:layout_constraintEnd_toStartOf="@+id/playing_workout_start_timer"
+                app:layout_constraintTop_toTopOf="@+id/playing_workout_timer_label" />
+
+            <ImageButton
+                android:id="@+id/playing_workout_start_timer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/margin"
+                android:backgroundTint="@android:color/transparent"
+                android:contentDescription="@string/play_timer"
+                android:src="@drawable/ic_play_arrow"
+                app:layout_constraintBottom_toBottomOf="@+id/playing_workout_timer"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/playing_workout_timer" />
+
+            <TextView
+                android:id="@+id/playing_workout_current_repetition_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/small_distance"
+                android:text="@string/current_repetition"
+                app:layout_constraintStart_toStartOf="@+id/playing_workout_timer_label"
+                app:layout_constraintTop_toBottomOf="@+id/playing_workout_timer_label"
+                app:layout_constraintBottom_toTopOf="@id/playing_workout_last_time_label" />
+
+            <TextView
+                android:id="@+id/playing_workout_repetition"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/_1_3"
+                app:layout_constraintBottom_toBottomOf="@+id/playing_workout_current_repetition_label"
+                app:layout_constraintStart_toStartOf="@+id/playing_workout_timer"
+                app:layout_constraintTop_toTopOf="@+id/playing_workout_current_repetition_label" />
+
+            <TextView
+                android:id="@+id/playing_workout_last_time_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/small_distance"
+                android:text="@string/last_time"
+                app:layout_constraintStart_toStartOf="@+id/playing_workout_current_repetition_label"
+                app:layout_constraintTop_toBottomOf="@+id/playing_workout_current_repetition_label" />
+
+            <TextView
+                android:id="@+id/playing_workout_last_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/_22_gen_2020"
+                app:layout_constraintBottom_toBottomOf="@+id/playing_workout_last_time_label"
+                app:layout_constraintStart_toStartOf="@+id/playing_workout_repetition"
+                app:layout_constraintTop_toTopOf="@+id/playing_workout_last_time_label" />
+
+            <ImageButton
+                android:id="@+id/playing_workout_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/small_distance"
+                android:backgroundTint="@android:color/transparent"
+                android:contentDescription="@string/information"
+                android:src="@drawable/ic_info"
+                app:layout_constraintEnd_toEndOf="@+id/playing_workout_last_time"
+                app:layout_constraintTop_toBottomOf="@+id/playing_workout_last_time" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/progress_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin"
+        android:layout_below="@id/playing_workout_progress_bar"
+        android:layout_marginTop="@dimen/multiline_distance"
+        android:text="@string/_0" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/_100"
+        android:layout_marginTop="@dimen/multiline_distance"
+        android:layout_marginStart="@dimen/multiline_distance"
+        android:layout_toEndOf="@id/progress_value"
+        android:layout_below="@id/playing_workout_progress_bar" />
+
+</RelativeLayout>

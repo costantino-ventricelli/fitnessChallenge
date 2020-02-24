@@ -49,7 +49,6 @@ public class CreateTrainingList extends Fragment {
     private ImageButton mNext;
     private ImageButton mPrev;
     private FloatingActionButton mAddExerciseFAB;
-    private ArrayList<PersonalExercise> mPersonalExerciseList;
 
     public CreateTrainingList() {
         //empty creation method needed
