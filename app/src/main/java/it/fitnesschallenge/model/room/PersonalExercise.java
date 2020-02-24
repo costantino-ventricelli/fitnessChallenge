@@ -4,26 +4,36 @@ package it.fitnesschallenge.model.room;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.Nullable;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
 
 @Entity(tableName = "personal_exercise")
-public class PersonalExercise extends Exercise implements Parcelable {
+public class PersonalExercise implements Parcelable {
 
+    @PrimaryKey
+    @ColumnInfo(name = "exercise_id")
+    private int exerciseId;
     private int steps;
     private int repetition;
     @Ignore
     private boolean isDeleted;
 
-    public PersonalExercise(int imageReference, String exerciseName, String exerciseDescription, int steps, int repetition) {
-        super(imageReference, exerciseName, exerciseDescription);
+    @Ignore
+    public PersonalExercise(int exerciseId) {
+        this.exerciseId = exerciseId;
+    }
+
+    public PersonalExercise(int exerciseId, int steps, int repetition) {
+        this.exerciseId = exerciseId;
         this.repetition = repetition;
         this.steps = steps;
         this.isDeleted = false;
     }
 
     public PersonalExercise(Parcel in){
-        super(in.readInt(), in.readString(), in.readString());
         this.steps = in.readInt();
         this.repetition = in.readInt();
         if (in.readInt() == 0)
@@ -32,8 +42,12 @@ public class PersonalExercise extends Exercise implements Parcelable {
             this.isDeleted = false;
     }
 
-    public PersonalExercise(Exercise exercise){
-        super(exercise.getImageReference(), exercise.getExerciseName(), exercise.getExerciseDescription());
+    public int getExerciseId() {
+        return exerciseId;
+    }
+
+    public void setExerciseId(int exerciseId) {
+        this.exerciseId = exerciseId;
     }
 
     public int getSteps() {
@@ -59,9 +73,6 @@ public class PersonalExercise extends Exercise implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(getImageReference());
-        dest.writeString(getExerciseName());
-        dest.writeString(getExerciseDescription());
         dest.writeInt(steps);
         dest.writeInt(repetition);
         if (isDeleted)
@@ -80,4 +91,12 @@ public class PersonalExercise extends Exercise implements Parcelable {
             return new PersonalExercise[size];
         }
     };
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj instanceof PersonalExercise) {
+            return ((PersonalExercise) obj).getExerciseId() == this.exerciseId;
+        } else
+            return false;
+    }
 }

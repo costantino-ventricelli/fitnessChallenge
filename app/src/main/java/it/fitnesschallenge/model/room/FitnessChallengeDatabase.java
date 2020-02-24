@@ -22,7 +22,7 @@ import it.fitnesschallenge.R;
 import it.fitnesschallenge.model.ExerciseList;
 
 @Database(entities = {Exercise.class, Workout.class, PersonalExerciseWorkoutCrossReference.class, PersonalExercise.class},
-        version = 13, exportSchema = false)
+        version = 14, exportSchema = false)
 @TypeConverters({Converter.class})
 public abstract class FitnessChallengeDatabase extends RoomDatabase {
 

@@ -18,4 +18,8 @@ public interface ExerciseDAO {
     @Transaction
     @Query("SELECT * FROM Exercise")
     LiveData<List<Exercise>> selectAllExercise();
+
+    @Transaction
+    @Query("SELECT * FROM Exercise WHERE exercise_id = :exerciseId")
+    LiveData<Exercise> selectExercise(int exerciseId);
 }

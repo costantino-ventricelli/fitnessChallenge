@@ -48,4 +48,8 @@ public class FitnessChallengeRepository {
         workoutList = workoutDAO.getAllWorkOut();
         return workoutList;
     }
+
+    public LiveData<Exercise> getExercise(int exerciseId) {
+        return exerciseDAO.selectExercise(exerciseId);
+    }
 }

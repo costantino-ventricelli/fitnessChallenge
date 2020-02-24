@@ -53,7 +53,7 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
         holder.exerciseTitle.setText(mList.get(position).getExerciseName());
         holder.exerciseDescription.setText(mList.get(position).getExerciseDescription());
         holder.exerciseImage.setImageResource(mList.get(position).getImageReference());
-        holder.cardView.setTag(mList.get(position).getExerciseName());
+        holder.cardView.setTag(mList.get(position).getExerciseId());
     }
 
     @Override

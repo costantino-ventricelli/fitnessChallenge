@@ -1,5 +1,8 @@
 package it.fitnesschallenge.adapter;
 
+import android.app.Activity;
+import android.app.Application;
+import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +13,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.NumberFormat;
@@ -17,6 +23,8 @@ import java.util.Collections;
 import java.util.List;
 
 import it.fitnesschallenge.R;
+import it.fitnesschallenge.model.room.Exercise;
+import it.fitnesschallenge.model.room.FitnessChallengeRepository;
 import it.fitnesschallenge.model.room.PersonalExercise;
 
 public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder>
@@ -26,9 +34,13 @@ public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder>
 
     private List<PersonalExercise> mList;
     private OnClickListener mOnClickListener;
+    private FitnessChallengeRepository mRepository;
+    private LifecycleOwner mCallingFragment;
 
-    public ShowAdapter(List<PersonalExercise> mList) {
+    public ShowAdapter(List<PersonalExercise> mList, Application callingApplication, LifecycleOwner fragment) {
         this.mList = mList;
+        this.mRepository = new FitnessChallengeRepository(callingApplication);
+        this.mCallingFragment = fragment;
     }
 
     /**
@@ -106,20 +118,26 @@ public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder>
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         Log.d(TAG, "Collego il ViewHolder");
-        PersonalExercise exercise = mList.get(position);
-        holder.mImageView.setImageResource(exercise.getImageReference());
-        holder.mTitleTextView.setText(exercise.getExerciseName());
-        StringBuilder builder = new StringBuilder(NumberFormat.getInstance().format(exercise.getRepetition()));
-        builder.append("/");
-        builder.append(NumberFormat.getInstance().format(exercise.getSteps()));
-        holder.mSetNumberTextView.setText(builder.toString());
-        holder.mCardView.setTag(exercise.getExerciseName());
-        if (exercise.isDeleted())
-            holder.mActionButton.setImageResource(R.drawable.ic_undo);
-        else
-            holder.mActionButton.setImageResource(R.drawable.ic_remove_circle);
+        final PersonalExercise personalExercise = mList.get(position);
+        mRepository.getExercise(personalExercise.getExerciseId()).observe(mCallingFragment, new Observer<Exercise>() {
+            @Override
+            public void onChanged(Exercise exercise) {
+                Log.d(TAG, "Exercise: " + exercise.getExerciseId());
+                holder.mImageView.setImageResource(exercise.getImageReference());
+                holder.mTitleTextView.setText(exercise.getExerciseName());
+                StringBuilder builder = new StringBuilder(NumberFormat.getInstance().format(personalExercise.getRepetition()));
+                builder.append("/");
+                builder.append(NumberFormat.getInstance().format(personalExercise.getSteps()));
+                holder.mSetNumberTextView.setText(builder.toString());
+                holder.mCardView.setTag(exercise.getExerciseName());
+                if (personalExercise.isDeleted())
+                    holder.mActionButton.setImageResource(R.drawable.ic_undo);
+                else
+                    holder.mActionButton.setImageResource(R.drawable.ic_remove_circle);
+            }
+        });
     }
 
     @Override

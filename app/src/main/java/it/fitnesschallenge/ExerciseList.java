@@ -55,7 +55,7 @@ public class ExerciseList extends Fragment {
             public void onChanged(final List<PersonalExercise> personalExerciseList) {
                 Log.d(TAG, "Ottenuta lista esercizi personale: " + personalExerciseList.toString());
                 mActualList = personalExerciseList;
-                mShowAdapter = new ShowAdapter(mActualList);
+                mShowAdapter = new ShowAdapter(mActualList, getActivity().getApplication(), getViewLifecycleOwner());
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
                 mRecyclerView.setAdapter(mShowAdapter);
                 ItemTouchHelper.Callback callback = new ItemTouchHelperCallBack(mShowAdapter);

@@ -106,7 +106,7 @@ public class AddExerciseToList extends Fragment {
                             if (checkBox.isChecked())
                                 addPersonalExercise(position, repetitionText, seriesText);
                             else{
-                                mViewModel.removePersonalExercise(new PersonalExercise(mExerciseList.get(position)));
+                                mViewModel.removePersonalExercise(mPersonalExerciseList.get(position));
                             }
                         }
                     });
@@ -165,7 +165,6 @@ public class AddExerciseToList extends Fragment {
     private void checkPersonalExercise(PersonalExercise personalExercise) {
         //Error tiene conto di eventuali campi non compilati
         boolean error = false;
-        Log.d(TAG, "Personal exercise: " + personalExercise.getExerciseName());
         if (personalExercise.getRepetition() == 0 || personalExercise.getSteps() == 0) {
             mViewModel.removePersonalExercise(personalExercise);
             error = true;
@@ -208,8 +207,7 @@ public class AddExerciseToList extends Fragment {
             repetitionText.setError(mContext.getResources().getString(R.string.complete_correctly_field));
             seriesText.setError(mContext.getResources().getString(R.string.complete_correctly_field));
         }
-        PersonalExercise personalExercise = new PersonalExercise(mExerciseList.get(position).getImageReference(),
-                mExerciseList.get(position).getExerciseName(), mExerciseList.get(position).getExerciseDescription(), series, repetition);
+        PersonalExercise personalExercise = new PersonalExercise(mExerciseList.get(position).getExerciseId(), series, repetition);
         mViewModel.addPersonalExercise(personalExercise);
     }
 
@@ -340,12 +338,7 @@ public class AddExerciseToList extends Fragment {
         }
 
         private void checkRecycler(PersonalExercise personalExercise) {
-            Log.d(TAG, "Esercizio selezionato: " + personalExercise.getExerciseName());
-            int position = mExerciseList.indexOf(personalExercise);
-            Log.d(TAG, "Posizione: " + position);
-            Log.d(TAG, "Recycler view: " + mRecyclerView.getAdapter().toString());
-            Log.d(TAG, "View selezionata: " + mRecyclerView.findViewWithTag(personalExercise.getExerciseName()).toString());
-            View itemView = mRecyclerView.findViewWithTag(personalExercise.getExerciseName());
+            View itemView = mRecyclerView.findViewWithTag(personalExercise.getExerciseId());
             if (itemView != null) {
                 Log.d(TAG, "Item view: " + itemView.getTag().toString());
                 MaterialCheckBox materialCheckBox = itemView.findViewById(R.id.select_exercise_check);
