@@ -49,4 +49,7 @@ public class Workout {
         return endDate;
     }
 
+    public void setActive(boolean active) {
+        isActive = active;
+    }
 }

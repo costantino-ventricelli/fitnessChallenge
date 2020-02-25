@@ -23,6 +23,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import it.fitnesschallenge.model.User;
@@ -85,6 +86,7 @@ public class WorkoutList extends Fragment {
                                          * scriverlo nel DB locale e settare gli altri ad inattivi sia
                                          * in locale sia su Firebase
                                          */
+                                        checkWorkoutList(workoutList);
                                     }
                                 }
                             })
@@ -98,6 +100,17 @@ public class WorkoutList extends Fragment {
             }
         });
         return view;
+    }
+
+    private void checkWorkoutList(List<Workout> workouts) {
+        Calendar calendar = Calendar.getInstance();
+        for (Workout workout : workouts) {
+            if (workout.isActive()) {
+                if (workout.getEndDate().after(calendar.getTime()))
+                    //Questi sono i wokout da disattivare
+                    workout.setActive(false);
+            }
+        }
     }
 
 }
