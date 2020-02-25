@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "exercise")
@@ -21,13 +22,23 @@ public class Exercise {
     private int imageReference;
     @ColumnInfo(name = "exercise_name")
     private String exerciseName;
-    @ColumnInfo(name =  "exercise_description")
+    @ColumnInfo(name = "exercise_description")
     private String exerciseDescription;
 
     public Exercise(int imageReference, String exerciseName, String exerciseDescription) {
         this.imageReference = imageReference;
         this.exerciseName = exerciseName;
         this.exerciseDescription = exerciseDescription;
+    }
+
+    @Ignore
+    public Exercise(PersonalExercise personalExercise) {
+        this.exerciseId = personalExercise.getExerciseId();
+    }
+
+    @Ignore
+    public Exercise(ExerciseExecution exerciseExecution) {
+        this.exerciseId = exerciseExecution.getExerciseId();
     }
 
     public int getExerciseId() {
@@ -38,7 +49,7 @@ public class Exercise {
         return imageReference;
     }
 
-    public String getExerciseDescription(){
+    public String getExerciseDescription() {
         return exerciseDescription;
     }
 
@@ -58,9 +69,9 @@ public class Exercise {
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        if (obj instanceof Exercise) {
-            return this.getExerciseName().equals(((Exercise) obj).getExerciseName());
-        } else
+        if (obj instanceof Exercise)
+            return this.getExerciseId() == ((Exercise) obj).getExerciseId();
+        else
             return false;
     }
 }

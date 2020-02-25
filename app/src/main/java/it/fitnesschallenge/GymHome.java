@@ -54,12 +54,12 @@ public class GymHome extends Fragment {
         startWorkoutStatistics.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PlayingWorkout playingWorkout = new PlayingWorkout();
+                WorkoutList workoutList = WorkoutList.newInstance(mUser);
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
                         R.anim.enter_from_rigth, R.anim.exit_from_left);
-                transaction.replace(R.id.fragmentContainer, playingWorkout, PLAYING_WORKOUT)
+                transaction.replace(R.id.fragmentContainer, workoutList, PLAYING_WORKOUT)
                         .addToBackStack(PLAYING_WORKOUT)
                         .commit();
             }
