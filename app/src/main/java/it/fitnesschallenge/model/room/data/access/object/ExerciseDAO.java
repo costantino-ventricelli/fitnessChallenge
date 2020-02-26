@@ -1,4 +1,4 @@
-package it.fitnesschallenge.model.room;
+package it.fitnesschallenge.model.room.data.access.object;
 
 
 import androidx.lifecycle.LiveData;
@@ -8,6 +8,8 @@ import androidx.room.Query;
 import androidx.room.Transaction;
 
 import java.util.List;
+
+import it.fitnesschallenge.model.room.entity.Exercise;
 
 @Dao
 public interface ExerciseDAO {

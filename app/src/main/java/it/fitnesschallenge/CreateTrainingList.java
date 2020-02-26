@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import it.fitnesschallenge.model.room.PersonalExercise;
+import it.fitnesschallenge.model.room.entity.PersonalExercise;
 import it.fitnesschallenge.model.view.CreationViewModel;
 
 import static it.fitnesschallenge.model.SharedConstance.ADD_EXERCISE_TO_LIST;

@@ -28,8 +28,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-import it.fitnesschallenge.model.room.Workout;
-import it.fitnesschallenge.model.room.WorkoutWithExercise;
+import it.fitnesschallenge.model.room.entity.Workout;
+import it.fitnesschallenge.model.room.reference.entity.WorkoutWithExercise;
 import it.fitnesschallenge.model.view.CreationViewModel;
 
 public class UploadNewWorkout extends Fragment {

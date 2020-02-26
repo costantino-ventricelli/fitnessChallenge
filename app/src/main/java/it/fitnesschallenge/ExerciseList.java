@@ -23,7 +23,7 @@ import java.util.List;
 
 import it.fitnesschallenge.adapter.ItemTouchHelperCallBack;
 import it.fitnesschallenge.adapter.ShowAdapter;
-import it.fitnesschallenge.model.room.PersonalExercise;
+import it.fitnesschallenge.model.room.entity.PersonalExercise;
 import it.fitnesschallenge.model.view.CreationViewModel;
 
 

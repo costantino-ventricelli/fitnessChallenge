@@ -1,4 +1,4 @@
-package it.fitnesschallenge.model.room;
+package it.fitnesschallenge.model.room.entity;
 
 
 import android.os.Parcel;
@@ -14,12 +14,19 @@ import androidx.room.PrimaryKey;
 public class PersonalExercise implements Parcelable {
 
     @PrimaryKey
+    @ColumnInfo(name = "personal_exercise_id")
+    private int personalExerciseId;
     @ColumnInfo(name = "exercise_id")
     private int exerciseId;
     private int steps;
     private int repetition;
     @Ignore
     private boolean isDeleted;
+
+    @Ignore
+    public PersonalExercise() {
+        //Required empty constructor
+    }
 
     @Ignore
     public PersonalExercise(int exerciseId) {
@@ -64,6 +71,14 @@ public class PersonalExercise implements Parcelable {
 
     public void setDeleted(boolean deleted) {
         isDeleted = deleted;
+    }
+
+    public int getPersonalExerciseId() {
+        return personalExerciseId;
+    }
+
+    public void setPersonalExerciseId(int personalExerciseId) {
+        this.personalExerciseId = personalExerciseId;
     }
 
     @Override

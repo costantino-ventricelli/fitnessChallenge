@@ -1,4 +1,4 @@
-package it.fitnesschallenge.model.room;
+package it.fitnesschallenge.model.room.entity;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;

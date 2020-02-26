@@ -3,7 +3,7 @@
  * identidicare le varie componenti del DB ad esempio @Entity o @PrimaryKey
  */
 
-package it.fitnesschallenge.model.room;
+package it.fitnesschallenge.model.room.entity;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

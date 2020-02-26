@@ -23,7 +23,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.util.List;
 
 import it.fitnesschallenge.R;
-import it.fitnesschallenge.model.room.Exercise;
+import it.fitnesschallenge.model.room.entity.Exercise;
 
 public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
 

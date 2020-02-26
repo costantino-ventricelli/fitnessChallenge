@@ -1,9 +1,11 @@
-package it.fitnesschallenge.model.room;
+package it.fitnesschallenge.model.room.reference.entity;
 
 import androidx.room.Embedded;
 import androidx.room.Relation;
 
 import java.util.List;
+
+import it.fitnesschallenge.model.room.entity.PersonalExercise;
 
 public class PersonalExerciseWithExecution {
 

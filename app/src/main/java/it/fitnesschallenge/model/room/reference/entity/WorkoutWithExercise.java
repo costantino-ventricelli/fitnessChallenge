@@ -1,10 +1,14 @@
-package it.fitnesschallenge.model.room;
+package it.fitnesschallenge.model.room.reference.entity;
 
 import androidx.room.Embedded;
 import androidx.room.Junction;
 import androidx.room.Relation;
 
 import java.util.List;
+
+import it.fitnesschallenge.model.room.entity.PersonalExercise;
+import it.fitnesschallenge.model.room.entity.PersonalExerciseWorkoutCrossReference;
+import it.fitnesschallenge.model.room.entity.Workout;
 
 public class WorkoutWithExercise {
 
@@ -16,6 +20,10 @@ public class WorkoutWithExercise {
             associateBy = @Junction(PersonalExerciseWorkoutCrossReference.class)
     )
     private List<PersonalExercise> personalExerciseList;
+
+    public WorkoutWithExercise() {
+        // Required empty constructor
+    }
 
     public Workout getWorkout() {
         return workout;

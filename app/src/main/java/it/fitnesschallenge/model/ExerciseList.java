@@ -7,7 +7,7 @@ import java.util.List;
 
 import it.fitnesschallenge.HomeActivity;
 import it.fitnesschallenge.R;
-import it.fitnesschallenge.model.room.Exercise;
+import it.fitnesschallenge.model.room.entity.Exercise;
 
 public class ExerciseList {
 

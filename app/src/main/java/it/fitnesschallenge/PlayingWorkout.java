@@ -4,7 +4,6 @@ package it.fitnesschallenge;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.view.LayoutInflater;
@@ -18,7 +17,7 @@ import android.widget.TextView;
 
 import com.google.android.material.button.MaterialButton;
 
-import it.fitnesschallenge.model.room.Exercise;
+import it.fitnesschallenge.model.room.entity.Exercise;
 import it.fitnesschallenge.model.view.PlayingWorkoutModelView;
 
 

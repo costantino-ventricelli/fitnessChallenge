@@ -4,7 +4,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.nfc.NdefMessage;
-import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -19,12 +18,10 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.snackbar.Snackbar;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import it.fitnesschallenge.model.room.Exercise;
+import it.fitnesschallenge.model.room.entity.Exercise;
 import it.fitnesschallenge.model.view.HomeViewModel;
 
 import static it.fitnesschallenge.model.SharedConstance.HOME_FRAGMENT;

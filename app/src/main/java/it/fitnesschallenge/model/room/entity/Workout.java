@@ -2,10 +2,11 @@
  * Questa classe definisce l'entità workout, in uno schema E-R sarebbe la relazione alla quale si
  * fa riferimento per accedere ad una serie di dati ad essa collegata
  */
-package it.fitnesschallenge.model.room;
+package it.fitnesschallenge.model.room.entity;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import java.util.Date;
@@ -22,6 +23,11 @@ public class Workout {
     private Date startDate;
     @ColumnInfo(name = "end_date")
     private Date endDate;
+
+    @Ignore
+    public Workout() {
+        //Required empty constructor
+    }
 
     public Workout(boolean isActive, Date startDate, Date endDate) {
         this.isActive = isActive;
@@ -51,5 +57,13 @@ public class Workout {
 
     public void setActive(boolean active) {
         isActive = active;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 }

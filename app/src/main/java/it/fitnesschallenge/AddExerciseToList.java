@@ -18,22 +18,20 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.text.NumberFormat;
 import java.util.List;
 
 import it.fitnesschallenge.adapter.AddAdapter;
-import it.fitnesschallenge.model.room.Exercise;
-import it.fitnesschallenge.model.room.PersonalExercise;
+import it.fitnesschallenge.model.room.entity.Exercise;
+import it.fitnesschallenge.model.room.entity.PersonalExercise;
 import it.fitnesschallenge.model.view.AddExerciseToListModel;
 import it.fitnesschallenge.model.view.CreationViewModel;
 

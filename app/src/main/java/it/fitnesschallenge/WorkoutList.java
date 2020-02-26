@@ -7,9 +7,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,11 +27,13 @@ import java.util.Calendar;
 import java.util.List;
 
 import it.fitnesschallenge.model.User;
-import it.fitnesschallenge.model.room.Workout;
+import it.fitnesschallenge.model.room.entity.Workout;
+import it.fitnesschallenge.model.room.reference.entity.WorkoutWithExercise;
 import it.fitnesschallenge.model.view.PlayingWorkoutModelView;
 
 public class WorkoutList extends Fragment {
 
+    private static final String TAG = "WorkoutList";
     private static final String FIREBASE_USER = "firebaseUser";
 
     private PlayingWorkoutModelView mViewModel;
@@ -73,27 +75,26 @@ public class WorkoutList extends Fragment {
         mViewModel.setActiveWorkoutFromLocal().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
-                final List<Workout> workoutList = new ArrayList<>();
+                final List<WorkoutWithExercise> workoutList = new ArrayList<>();
                 if (!aBoolean) {
+                    Log.d(TAG, "Non sono stati individuati workout nel DB");
                     mDatabase.collection("user/" + mUser.getUsername() + "/workout")
                             .get()
                             .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                 @Override
                                 public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                    Log.d(TAG, "Ho letto da Firebase nuovi workout");
                                     for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
-                                        workoutList.add(queryDocumentSnapshot.toObject(Workout.class));
-                                        /* TODO: verificare i workout attivi, se ci sono prendere il più recente
-                                         * scriverlo nel DB locale e settare gli altri ad inattivi sia
-                                         * in locale sia su Firebase
-                                         */
+                                        workoutList.add(queryDocumentSnapshot.toObject(WorkoutWithExercise.class));
                                         checkWorkoutList(workoutList);
+                                        Log.d(TAG, "Individuato workout per l'utente");
                                     }
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
-
+                                    Log.d(TAG, "Qualcosa è andato storto nella lettura del workout");
                                 }
                             });
                 }
@@ -102,15 +103,56 @@ public class WorkoutList extends Fragment {
         return view;
     }
 
-    private void checkWorkoutList(List<Workout> workouts) {
+    /**
+     * Questo metodo verifica se i workout prelevati da Firestore sono attivi o sono da disattivare
+     * se il metdo individua un allenamento da lasciare attivo lo passa a write il localDB che lo
+     * scriverà sul DB locale.
+     *
+     * @param workouts contiene una lista dei workout con i relativi esercizi
+     */
+    private void checkWorkoutList(List<WorkoutWithExercise> workouts) {
+        Log.d(TAG, "Verifico i workout ricevuti da Firebase");
         Calendar calendar = Calendar.getInstance();
-        for (Workout workout : workouts) {
+        Log.d(TAG, "Data sistema: " + calendar.getTime().toString());
+        for (WorkoutWithExercise workoutWithExercise : workouts) {
+            Workout workout = workoutWithExercise.getWorkout();
             if (workout.isActive()) {
-                if (workout.getEndDate().after(calendar.getTime()))
+                Log.d(TAG, "Individuato workout attivo");
+                if (workout.getEndDate().before(calendar.getTime())) {
                     //Questi sono i wokout da disattivare
                     workout.setActive(false);
+                    Log.d(TAG, "Individuato workout scaduto");
+                    Log.d(TAG, "Data scadenza workout: " + workout.getEndDate().toString());
+                } else {
+                    //Setto l'id del workout selezionato
+                    Log.d(TAG, "Individuato workout non scaduto");
+                    mViewModel.setWorkoutId(workout.getWorkOutId());
+                    writeInLocalDB(workoutWithExercise);
+                }
             }
         }
+    }
+
+    /**
+     * Questo metodo viene richiamato quando viene prelevato un workout dal DB Firestore e bisogna
+     * inserirlo in locale, quindi con il workoutId del ViewModel
+     */
+    private void writeInLocalDB(WorkoutWithExercise workoutWithExercise) {
+        Log.d(TAG, "Scrivo un nuovo workout nel database locale");
+        mViewModel.writeWorkoutWithExercise(workoutWithExercise);
+        mViewModel.getWorkoutId().observe(getViewLifecycleOwner(), new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer integer) {
+                //FIXME: sincronizzare le chiavi primarie del PersonalExerciseId
+                mViewModel.setWorkoutList();
+            }
+        });
+        mViewModel.getWorkoutWithExercise().observe(getViewLifecycleOwner(), new Observer<WorkoutWithExercise>() {
+            @Override
+            public void onChanged(WorkoutWithExercise workoutWithExercise) {
+                Log.d(TAG, "Nuovo DB individuato");
+            }
+        });
     }
 
 }

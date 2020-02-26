@@ -13,8 +13,8 @@ import java.util.Date;
 import java.util.List;
 
 import it.fitnesschallenge.model.room.FitnessChallengeRepository;
-import it.fitnesschallenge.model.room.PersonalExercise;
-import it.fitnesschallenge.model.room.WorkoutWithExercise;
+import it.fitnesschallenge.model.room.entity.PersonalExercise;
+import it.fitnesschallenge.model.room.reference.entity.WorkoutWithExercise;
 
 public class CreationViewModel extends AndroidViewModel {
 

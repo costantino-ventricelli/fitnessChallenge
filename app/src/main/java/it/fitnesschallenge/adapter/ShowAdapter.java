@@ -1,8 +1,6 @@
 package it.fitnesschallenge.adapter;
 
-import android.app.Activity;
 import android.app.Application;
-import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,9 +20,9 @@ import java.util.Collections;
 import java.util.List;
 
 import it.fitnesschallenge.R;
-import it.fitnesschallenge.model.room.Exercise;
+import it.fitnesschallenge.model.room.entity.Exercise;
 import it.fitnesschallenge.model.room.FitnessChallengeRepository;
-import it.fitnesschallenge.model.room.PersonalExercise;
+import it.fitnesschallenge.model.room.entity.PersonalExercise;
 
 public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder>
         implements ItemTouchHelperCallBack.ItemTouchHelperContract {

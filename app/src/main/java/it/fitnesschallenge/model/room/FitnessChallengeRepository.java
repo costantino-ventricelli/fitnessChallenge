@@ -11,12 +11,25 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
+import it.fitnesschallenge.model.room.data.access.object.ExerciseDAO;
+import it.fitnesschallenge.model.room.data.access.object.PersonalExerciseDAO;
+import it.fitnesschallenge.model.room.data.access.object.PersonalExerciseWorkoutCrossReferenceDAO;
+import it.fitnesschallenge.model.room.data.access.object.WorkoutDAO;
+import it.fitnesschallenge.model.room.data.access.object.WorkoutWithExerciseDAO;
+import it.fitnesschallenge.model.room.entity.Exercise;
+import it.fitnesschallenge.model.room.entity.PersonalExercise;
+import it.fitnesschallenge.model.room.entity.PersonalExerciseWorkoutCrossReference;
+import it.fitnesschallenge.model.room.entity.Workout;
+import it.fitnesschallenge.model.room.reference.entity.WorkoutWithExercise;
+
 
 public class FitnessChallengeRepository {
 
     private ExerciseDAO exerciseDAO;
     private WorkoutDAO workoutDAO;
     private WorkoutWithExerciseDAO workoutWithExerciseDAO;
+    private PersonalExerciseDAO personalExerciseDAO;
+    private PersonalExerciseWorkoutCrossReferenceDAO personalExerciseWorkoutCrossReferenceDAO;
     private LiveData<List<Exercise>> listExercise;
     private LiveData<WorkoutWithExercise> workoutWithExerciseList;
     private LiveData<Workout> workoutLiveData;
@@ -27,6 +40,8 @@ public class FitnessChallengeRepository {
         exerciseDAO = database.getExerciseDAO();
         workoutWithExerciseDAO = database.getWorkoutWithExerciseDAO();
         workoutDAO = database.getWorkoutDAO();
+        personalExerciseDAO = database.getPersonalExerciseDAO();
+        personalExerciseWorkoutCrossReferenceDAO = database.getPersonalExerciseWorkoutCrossRederenceDAO();
     }
 
     public LiveData<List<Exercise>> getListExercise() {
@@ -51,5 +66,15 @@ public class FitnessChallengeRepository {
 
     public LiveData<Exercise> getExercise(int exerciseId) {
         return exerciseDAO.selectExercise(exerciseId);
+    }
+
+    public void insertWorkoutWithExercise(WorkoutWithExercise workoutWithExercise) {
+        workoutDAO.insertWorkout(workoutWithExercise.getWorkout());
+        personalExerciseDAO.insertPersonalExercise(workoutWithExercise.getPersonalExerciseList());
+        for (PersonalExercise personalExercise : workoutWithExercise.getPersonalExerciseList()) {
+            personalExerciseWorkoutCrossReferenceDAO.createReference(new PersonalExerciseWorkoutCrossReference(
+                    workoutWithExercise.getWorkout().getWorkOutId(),
+                    personalExercise.getExerciseId()));
+        }
     }
 }
