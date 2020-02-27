@@ -10,20 +10,20 @@ import androidx.room.Index;
 public class PersonalExerciseWorkoutCrossReference {
 
     @ColumnInfo(name = "workout_id")
-    private int workoutId;
+    private long workoutId;
     @ColumnInfo(name = "exercise_id")
-    private int exerciseId;
+    private long exerciseId;
 
-    public PersonalExerciseWorkoutCrossReference(int workoutId, int exerciseId) {
+    public PersonalExerciseWorkoutCrossReference(long workoutId, long exerciseId) {
         this.workoutId = workoutId;
         this.exerciseId = exerciseId;
     }
 
-    public int getWorkoutId() {
+    public long getWorkoutId() {
         return workoutId;
     }
 
-    public int getExerciseId() {
+    public long getExerciseId() {
         return exerciseId;
     }
 }

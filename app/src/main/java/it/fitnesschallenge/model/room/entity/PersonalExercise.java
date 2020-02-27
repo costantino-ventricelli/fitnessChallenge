@@ -13,7 +13,7 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "personal_exercise")
 public class PersonalExercise implements Parcelable {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "personal_exercise_id")
     private int personalExerciseId;
     @ColumnInfo(name = "exercise_id")

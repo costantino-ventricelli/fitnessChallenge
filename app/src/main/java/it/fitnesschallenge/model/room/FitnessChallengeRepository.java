@@ -6,24 +6,28 @@
 package it.fitnesschallenge.model.room;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
+import java.util.Date;
 import java.util.List;
 
-import it.fitnesschallenge.model.room.data.access.object.ExerciseDAO;
-import it.fitnesschallenge.model.room.data.access.object.PersonalExerciseDAO;
-import it.fitnesschallenge.model.room.data.access.object.PersonalExerciseWorkoutCrossReferenceDAO;
-import it.fitnesschallenge.model.room.data.access.object.WorkoutDAO;
-import it.fitnesschallenge.model.room.data.access.object.WorkoutWithExerciseDAO;
+import it.fitnesschallenge.model.room.dao.ExerciseDAO;
+import it.fitnesschallenge.model.room.dao.PersonalExerciseDAO;
+import it.fitnesschallenge.model.room.dao.PersonalExerciseWorkoutCrossReferenceDAO;
+import it.fitnesschallenge.model.room.dao.WorkoutDAO;
+import it.fitnesschallenge.model.room.dao.WorkoutWithExerciseDAO;
 import it.fitnesschallenge.model.room.entity.Exercise;
 import it.fitnesschallenge.model.room.entity.PersonalExercise;
 import it.fitnesschallenge.model.room.entity.PersonalExerciseWorkoutCrossReference;
 import it.fitnesschallenge.model.room.entity.Workout;
 import it.fitnesschallenge.model.room.reference.entity.WorkoutWithExercise;
 
-
 public class FitnessChallengeRepository {
+
+    private static final String TAG = "FitnessChallengeReposit";
 
     private ExerciseDAO exerciseDAO;
     private WorkoutDAO workoutDAO;
@@ -31,7 +35,7 @@ public class FitnessChallengeRepository {
     private PersonalExerciseDAO personalExerciseDAO;
     private PersonalExerciseWorkoutCrossReferenceDAO personalExerciseWorkoutCrossReferenceDAO;
     private LiveData<List<Exercise>> listExercise;
-    private LiveData<WorkoutWithExercise> workoutWithExerciseList;
+    private MutableLiveData<WorkoutWithExercise> workoutWithExerciseList;
     private LiveData<Workout> workoutLiveData;
     private LiveData<List<Workout>> workoutList;
 
@@ -42,6 +46,7 @@ public class FitnessChallengeRepository {
         workoutDAO = database.getWorkoutDAO();
         personalExerciseDAO = database.getPersonalExerciseDAO();
         personalExerciseWorkoutCrossReferenceDAO = database.getPersonalExerciseWorkoutCrossRederenceDAO();
+        workoutWithExerciseList = new MutableLiveData<>();
     }
 
     public LiveData<List<Exercise>> getListExercise() {
@@ -49,8 +54,9 @@ public class FitnessChallengeRepository {
         return listExercise;
     }
 
-    public LiveData<WorkoutWithExercise> getWorkoutWithExerciseList(int workoutId) {
-        workoutWithExerciseList = workoutWithExerciseDAO.getWorkoutWithExercise(workoutId);
+    public MutableLiveData<WorkoutWithExercise> getWorkoutWithExerciseList(long workoutId) {
+        WorkoutWithExercise temp = workoutWithExerciseDAO.getWorkoutWithExercise(workoutId).getValue();
+        workoutWithExerciseList = new MutableLiveData<>(workoutWithExerciseDAO.getWorkoutWithExercise(workoutId).getValue());
         return workoutWithExerciseList;
     }
 
@@ -68,13 +74,21 @@ public class FitnessChallengeRepository {
         return exerciseDAO.selectExercise(exerciseId);
     }
 
-    public void insertWorkoutWithExercise(WorkoutWithExercise workoutWithExercise) {
-        workoutDAO.insertWorkout(workoutWithExercise.getWorkout());
-        personalExerciseDAO.insertPersonalExercise(workoutWithExercise.getPersonalExerciseList());
-        for (PersonalExercise personalExercise : workoutWithExercise.getPersonalExerciseList()) {
+    public LiveData<Long> getWorkoutIdWithStartDate(Date date) {
+        Log.d(TAG, "Start date: " + date.toString());
+        return workoutDAO.getWorkoutStartDate(date);
+    }
+
+    public long insertWorkoutWithExercise(WorkoutWithExercise workoutWithExercise) {
+        long workoutId = workoutDAO.insertWorkout(workoutWithExercise.getWorkout());
+        long[] exerciseIds = personalExerciseDAO.insertPersonalExercise(workoutWithExercise.getPersonalExerciseList());
+        Log.d(TAG, "Workout id: " + workoutId);
+        for (long exerciseId : exerciseIds) {
+            Log.d(TAG, "Exercise id: " + exerciseId);
             personalExerciseWorkoutCrossReferenceDAO.createReference(new PersonalExerciseWorkoutCrossReference(
-                    workoutWithExercise.getWorkout().getWorkOutId(),
-                    personalExercise.getExerciseId()));
+                    workoutId,
+                    exerciseId));
         }
+        return workoutId;
     }
 }

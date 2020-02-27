@@ -100,6 +100,12 @@ public class WorkoutList extends Fragment {
                 }
             }
         });
+        mViewModel.getWorkoutId().observe(getViewLifecycleOwner(), new Observer<Long>() {
+            @Override
+            public void onChanged(Long aLong) {
+                Log.d(TAG, "Dovrebbe attivarsi quando il workout è staro memorizzato in locale");
+            }
+        });
         return view;
     }
 
@@ -126,7 +132,6 @@ public class WorkoutList extends Fragment {
                 } else {
                     //Setto l'id del workout selezionato
                     Log.d(TAG, "Individuato workout non scaduto");
-                    mViewModel.setWorkoutId(workout.getWorkOutId());
                     writeInLocalDB(workoutWithExercise);
                 }
             }
@@ -139,11 +144,10 @@ public class WorkoutList extends Fragment {
      */
     private void writeInLocalDB(WorkoutWithExercise workoutWithExercise) {
         Log.d(TAG, "Scrivo un nuovo workout nel database locale");
-        mViewModel.writeWorkoutWithExercise(workoutWithExercise);
-        mViewModel.getWorkoutId().observe(getViewLifecycleOwner(), new Observer<Integer>() {
+        mViewModel.writeWorkoutWithExercise(workoutWithExercise, getViewLifecycleOwner());
+        mViewModel.getWorkoutId().observe(getViewLifecycleOwner(), new Observer<Long>() {
             @Override
-            public void onChanged(Integer integer) {
-                //FIXME: sincronizzare le chiavi primarie del PersonalExerciseId
+            public void onChanged(Long aLong) {
                 mViewModel.setWorkoutList();
             }
         });

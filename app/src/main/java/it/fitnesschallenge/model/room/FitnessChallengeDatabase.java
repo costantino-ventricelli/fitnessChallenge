@@ -20,18 +20,18 @@ import java.util.List;
 
 import it.fitnesschallenge.R;
 import it.fitnesschallenge.model.ExerciseList;
-import it.fitnesschallenge.model.room.data.access.object.ExerciseDAO;
-import it.fitnesschallenge.model.room.data.access.object.PersonalExerciseDAO;
-import it.fitnesschallenge.model.room.data.access.object.PersonalExerciseWorkoutCrossReferenceDAO;
-import it.fitnesschallenge.model.room.data.access.object.WorkoutDAO;
-import it.fitnesschallenge.model.room.data.access.object.WorkoutWithExerciseDAO;
+import it.fitnesschallenge.model.room.dao.WorkoutDAO;
+import it.fitnesschallenge.model.room.dao.ExerciseDAO;
+import it.fitnesschallenge.model.room.dao.PersonalExerciseDAO;
+import it.fitnesschallenge.model.room.dao.PersonalExerciseWorkoutCrossReferenceDAO;
+import it.fitnesschallenge.model.room.dao.WorkoutWithExerciseDAO;
 import it.fitnesschallenge.model.room.entity.Exercise;
 import it.fitnesschallenge.model.room.entity.PersonalExercise;
 import it.fitnesschallenge.model.room.entity.PersonalExerciseWorkoutCrossReference;
 import it.fitnesschallenge.model.room.entity.Workout;
 
 @Database(entities = {Exercise.class, Workout.class, PersonalExerciseWorkoutCrossReference.class, PersonalExercise.class},
-        version = 15, exportSchema = false)
+        version = 16, exportSchema = false)
 @TypeConverters({Converter.class})
 public abstract class FitnessChallengeDatabase extends RoomDatabase {
 
@@ -90,4 +90,6 @@ public abstract class FitnessChallengeDatabase extends RoomDatabase {
              return null;
          }
      }
+
+    //TODO: aggiungere  metodi di migrazione
 }

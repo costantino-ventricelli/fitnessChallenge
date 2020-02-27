@@ -7,11 +7,14 @@ package it.fitnesschallenge.model.view;
 
 import android.app.Application;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +29,8 @@ import it.fitnesschallenge.model.room.reference.entity.WorkoutWithExercise;
 
 public class PlayingWorkoutModelView extends AndroidViewModel {
 
+    private static final String TAG = "PlayingWorkoutModelView";
+
     // Questo array conterrà tutte le esecuzioni degli esercizi dell'allenamento
     private ArrayList<ExerciseExecution> mExerciseExecutionList;
     /*
@@ -37,20 +42,21 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
     private ListIterator<PersonalExercise> mPersonalExerciseListIterator;
     // Questo array contiene tutti gi esercizi legati al workout
     private ArrayList<PersonalExercise> mPersonalExerciseList;
-    private LiveData<WorkoutWithExercise> mWorkoutWithExercise;
+    private MutableLiveData<WorkoutWithExercise> mWorkoutWithExercise;
     private MutableLiveData<List<ExerciseExecution>> mExerciseExecution;
     // Questo è il collegamento al repository locale
     private FitnessChallengeRepository mRepository;
     // Questo contiene l'id dell'allenamento attuale
-    private int mWorkoutId;
+    private MutableLiveData<Long> mWorkoutId;
 
     public PlayingWorkoutModelView(@NonNull Application application) {
         super(application);
         mRepository = new FitnessChallengeRepository(application);
-        mWorkoutId = -1;
+        mWorkoutId = new MutableLiveData<>(-1L);
         mPersonalExerciseListIterator = null;
         mExerciseExecutionList = new ArrayList<>();
         mExerciseExecution = new MutableLiveData<>();
+        mWorkoutWithExercise = new MutableLiveData<>();
 
         /*
          Questa inizializzazione preleva tutti gli esercizi dal DB locale, per gestire poi le info
@@ -68,8 +74,11 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
      * @return il valore di ritorno indica se l'operazione è stata effettuata con successo.
      */
     public boolean setWorkoutList() {
-        if (mWorkoutId != -1) {
-            mWorkoutWithExercise = mRepository.getWorkoutWithExerciseList(mWorkoutId);
+        //FIXME: problema con il prelievo del workout con gli esercizi
+        if (mWorkoutId.getValue() != -1) {
+            Log.d(TAG, "workoutId: " + mWorkoutId.getValue());
+            mWorkoutWithExercise = mRepository.getWorkoutWithExerciseList(mWorkoutId.getValue());
+            Log.d(TAG, "mWorkoutWithExerciseList: " + mWorkoutWithExercise.getValue().toString());
             mPersonalExerciseList = (ArrayList<PersonalExercise>) mWorkoutWithExercise.getValue().getPersonalExerciseList();
             mPersonalExerciseListIterator = mPersonalExerciseList.listIterator();
         }
@@ -127,9 +136,9 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
         if (workoutList != null)
             for (Workout workout : workoutList) {
                 if (workout.isActive())
-                    mWorkoutId = workout.getWorkOutId();
+                    mWorkoutId.setValue((long) workout.getWorkOutId());
             }
-        return new MutableLiveData<>(mWorkoutId != -1);
+        return new MutableLiveData<>(mWorkoutId.getValue() != -1);
     }
 
     /**
@@ -146,8 +155,9 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
      *
      * @param workoutId contiene l'id del workout prelevato.
      */
-    public void setWorkoutId(int workoutId) {
-        this.mWorkoutId = workoutId;
+    private void setWorkoutId(long workoutId) {
+        Log.d(TAG, "Setto l'id del workout precedente " + mWorkoutId.getValue() + " successivo: " + workoutId);
+        this.mWorkoutId.setValue(workoutId);
     }
 
     /**
@@ -155,32 +165,65 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
      *
      * @param workoutWithExercise contiene il workout con la lista degli esercizi da memorizzare
      */
-    public void writeWorkoutWithExercise(WorkoutWithExercise workoutWithExercise) {
-        InsertWorkoutWithExercise insertWorkoutWithExercise = new InsertWorkoutWithExercise(mRepository);
-        insertWorkoutWithExercise.execute(workoutWithExercise);
+    public void writeWorkoutWithExercise(final WorkoutWithExercise workoutWithExercise, final LifecycleOwner owner) {
+        mRepository.getWorkoutIdWithStartDate(workoutWithExercise.getWorkout().getStartDate()).observe(owner,
+                new Observer<Long>() {
+                    @Override
+                    public void onChanged(Long aLong) {
+                        Log.d(TAG, "WorkoutId: " + aLong);
+                        if (aLong == null) {
+                            Log.d(TAG, "Inserisco il nuovo workout");
+                            InsertWorkoutWithExercise insertWorkoutWithExercise = new InsertWorkoutWithExercise(mRepository);
+                            insertWorkoutWithExercise.execute(workoutWithExercise);
+                            insertWorkoutWithExercise.getInsertedId().observe(owner, new Observer<Long>() {
+                                @Override
+                                public void onChanged(Long aLong) {
+                                    Log.d(TAG, "Rilevato inserimento del nuovo id");
+                                    setWorkoutId(aLong);
+                                }
+                            });
+                        } else
+                            setWorkoutId(aLong);
+                    }
+                });
     }
 
-    public MutableLiveData<Integer> getWorkoutId() {
-        return new MutableLiveData<>(mWorkoutId);
+    public MutableLiveData<Long> getWorkoutId() {
+        return mWorkoutId;
     }
 
     /**
      * L'inserimento di nuovi workout con esercizi devono essere inseriti in maniera asincrona perchè
      * l'inserimento non utilizza i LiveData quindi dobbiamo essere noi a gestire il multithreading
+     * inoltre abbiamo fatto in modo da ottenere l'id del workout inserito, così possiamo utilizzarlo
+     * in seguito per altre operazioni, la sincronizzazione tra processi è ottenuta con i live data,
+     * tra l'async task e l'UI process
      */
-    static class InsertWorkoutWithExercise extends AsyncTask<WorkoutWithExercise, Void, Void> {
+    static class InsertWorkoutWithExercise extends AsyncTask<WorkoutWithExercise, Void, Long> {
 
         private FitnessChallengeRepository mRepository;
+        private MutableLiveData<Long> mInsertedId;
 
         InsertWorkoutWithExercise(FitnessChallengeRepository fitnessChallengeRepository) {
             mRepository = fitnessChallengeRepository;
+            mInsertedId = new MutableLiveData<>();
+        }
+
+        MutableLiveData<Long> getInsertedId() {
+            return mInsertedId;
         }
 
         @Override
-        protected Void doInBackground(WorkoutWithExercise... workoutWithExercises) {
+        protected void onPostExecute(Long aLong) {
+            super.onPostExecute(aLong);
+            Log.d(TAG, "Id inserito: " + aLong);
+            mInsertedId.setValue(aLong);
+        }
+
+        @Override
+        protected Long doInBackground(WorkoutWithExercise... workoutWithExercises) {
             WorkoutWithExercise workoutWithExercise = workoutWithExercises[0];
-            mRepository.insertWorkoutWithExercise(workoutWithExercise);
-            return null;
+            return mRepository.insertWorkoutWithExercise(workoutWithExercise);
         }
     }
 
