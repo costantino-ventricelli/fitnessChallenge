@@ -35,7 +35,7 @@ public class FitnessChallengeRepository {
     private PersonalExerciseDAO personalExerciseDAO;
     private PersonalExerciseWorkoutCrossReferenceDAO personalExerciseWorkoutCrossReferenceDAO;
     private LiveData<List<Exercise>> listExercise;
-    private MutableLiveData<WorkoutWithExercise> workoutWithExerciseList;
+    private LiveData<WorkoutWithExercise> workoutWithExerciseList;
     private LiveData<Workout> workoutLiveData;
     private LiveData<List<Workout>> workoutList;
 
@@ -54,10 +54,13 @@ public class FitnessChallengeRepository {
         return listExercise;
     }
 
-    public MutableLiveData<WorkoutWithExercise> getWorkoutWithExerciseList(long workoutId) {
-        WorkoutWithExercise temp = workoutWithExerciseDAO.getWorkoutWithExercise(workoutId).getValue();
-        workoutWithExerciseList = new MutableLiveData<>(workoutWithExerciseDAO.getWorkoutWithExercise(workoutId).getValue());
+    public LiveData<WorkoutWithExercise> getWorkoutWithExerciseList(long workoutId) {
+        workoutWithExerciseList = workoutWithExerciseDAO.getWorkoutWithExercise(workoutId);
         return workoutWithExerciseList;
+    }
+
+    public List<PersonalExercise> getPersonalExerciseList(long workoutId) {
+        return workoutWithExerciseDAO.getPersonalExerciseList(workoutId);
     }
 
     public LiveData<Workout> getWorkoutLiveData(int workoutId) {

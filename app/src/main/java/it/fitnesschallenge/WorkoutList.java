@@ -27,6 +27,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import it.fitnesschallenge.model.User;
+import it.fitnesschallenge.model.room.entity.PersonalExercise;
 import it.fitnesschallenge.model.room.entity.Workout;
 import it.fitnesschallenge.model.room.reference.entity.WorkoutWithExercise;
 import it.fitnesschallenge.model.view.PlayingWorkoutModelView;
@@ -100,12 +101,6 @@ public class WorkoutList extends Fragment {
                 }
             }
         });
-        mViewModel.getWorkoutId().observe(getViewLifecycleOwner(), new Observer<Long>() {
-            @Override
-            public void onChanged(Long aLong) {
-                Log.d(TAG, "Dovrebbe attivarsi quando il workout è staro memorizzato in locale");
-            }
-        });
         return view;
     }
 
@@ -154,7 +149,8 @@ public class WorkoutList extends Fragment {
         mViewModel.getWorkoutWithExercise().observe(getViewLifecycleOwner(), new Observer<WorkoutWithExercise>() {
             @Override
             public void onChanged(WorkoutWithExercise workoutWithExercise) {
-                Log.d(TAG, "Nuovo DB individuato");
+                Log.d(TAG, "Workout con esercizi prelevato dal DB");
+                
             }
         });
     }

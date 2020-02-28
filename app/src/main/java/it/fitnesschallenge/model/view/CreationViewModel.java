@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import it.fitnesschallenge.model.room.FitnessChallengeRepository;
 import it.fitnesschallenge.model.room.entity.PersonalExercise;
 import it.fitnesschallenge.model.room.reference.entity.WorkoutWithExercise;
 
@@ -136,11 +135,6 @@ public class CreationViewModel extends AndroidViewModel {
 
     public LiveData<ArrayList<Integer>> getLiveDataSteps(){
         return mLiveDataSteps;
-    }
-
-    public LiveData<WorkoutWithExercise> getWorkoutWithExercise(int workoutId){
-        FitnessChallengeRepository repository = new FitnessChallengeRepository(getApplication());
-        return repository.getWorkoutWithExerciseList(workoutId);
     }
 
     public void resetLiveData() {

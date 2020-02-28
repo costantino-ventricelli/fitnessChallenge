@@ -75,13 +75,8 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
      */
     public boolean setWorkoutList() {
         //FIXME: problema con il prelievo del workout con gli esercizi
-        if (mWorkoutId.getValue() != -1) {
-            Log.d(TAG, "workoutId: " + mWorkoutId.getValue());
-            mWorkoutWithExercise = mRepository.getWorkoutWithExerciseList(mWorkoutId.getValue());
-            Log.d(TAG, "mWorkoutWithExerciseList: " + mWorkoutWithExercise.getValue().toString());
-            mPersonalExerciseList = (ArrayList<PersonalExercise>) mWorkoutWithExercise.getValue().getPersonalExerciseList();
-            mPersonalExerciseListIterator = mPersonalExerciseList.listIterator();
-        }
+        if (mWorkoutId.getValue() != -1)
+            mWorkoutWithExercise.setValue(mRepository.getWorkoutWithExerciseList(mWorkoutId.getValue()).getValue());
         return mPersonalExerciseListIterator != null;
     }
 
@@ -146,7 +141,7 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
      *
      * @return ritorna il workout con la lista degli esercizi individuati
      */
-    public LiveData<WorkoutWithExercise> getWorkoutWithExercise() {
+    public MutableLiveData<WorkoutWithExercise> getWorkoutWithExercise() {
         return mWorkoutWithExercise;
     }
 
@@ -226,5 +221,4 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
             return mRepository.insertWorkoutWithExercise(workoutWithExercise);
         }
     }
-
 }

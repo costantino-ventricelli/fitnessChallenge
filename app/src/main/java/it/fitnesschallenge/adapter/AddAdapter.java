@@ -112,6 +112,11 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
         private int finalHeight;
         private int startHeight;
 
+        /**
+         * @param itemView                layout dell'oggetto in lista
+         * @param mOnClickListener        listener del AddAdapter.OnClickListener
+         * @param mOnSelectedItemListener
+         */
         ViewHolder(@NonNull final View itemView, final OnClickListener mOnClickListener,
                    final OnSelectItemListener mOnSelectedItemListener) {
             super(itemView);
@@ -142,8 +147,8 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
             MaterialCheckBox selectedCheckBox = itemView.findViewById(R.id.select_exercise_check);
             View divider = itemView.findViewById(R.id.add_card_divider);
             /*
-            * La gestione dei click sui pulsanti avviene qiu infatti vengono richiamti i metodi sopra
-            * descritti per gestire il click dall'esterno
+             * La gestione dei click sui pulsanti avviene qiu infatti vengono richiamti i metodi sopra
+             * descritti per gestire il click dall'esterno
              */
             expandCollapseButton.setOnClickListener(new View.OnClickListener() {
                 @Override
