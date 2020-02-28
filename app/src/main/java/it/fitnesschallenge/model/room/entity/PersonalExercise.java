@@ -21,6 +21,8 @@ public class PersonalExercise implements Parcelable {
     private int exerciseId;
     private int steps;
     private int repetition;
+    @ColumnInfo(name = "cool_down")
+    private long coolDown;
     @Ignore
     private boolean isDeleted;
 
@@ -34,16 +36,18 @@ public class PersonalExercise implements Parcelable {
         this.exerciseId = exerciseId;
     }
 
-    public PersonalExercise(int exerciseId, int steps, int repetition) {
+    public PersonalExercise(int exerciseId, int steps, int repetition, long coolDown) {
         this.exerciseId = exerciseId;
         this.repetition = repetition;
         this.steps = steps;
+        this.coolDown = coolDown;
         this.isDeleted = false;
     }
 
     public PersonalExercise(Parcel in){
         this.steps = in.readInt();
         this.repetition = in.readInt();
+        this.coolDown = in.readLong();
         if (in.readInt() == 0)
             this.isDeleted = true;
         else
@@ -82,6 +86,14 @@ public class PersonalExercise implements Parcelable {
         this.personalExerciseId = personalExerciseId;
     }
 
+    public long getCoolDown() {
+        return coolDown;
+    }
+
+    public void setCoolDown(long coolDown) {
+        this.coolDown = coolDown;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -91,6 +103,7 @@ public class PersonalExercise implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(steps);
         dest.writeInt(repetition);
+        dest.writeLong(coolDown);
         if (isDeleted)
             dest.writeInt(1);
         else

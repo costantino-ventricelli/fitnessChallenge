@@ -99,4 +99,8 @@
     <string name="last_time">Last time</string>
     <string name="_22_gen_2020">22 gen 2020</string>
     <string name="information">Information</string>
+    <string name="set_cool_down">Set cool down</string>
+    <string name="timer_picker">Timer picker</string>
+    <string name="_00">00</string>
+    <string name="colons">:</string>
 </resources>

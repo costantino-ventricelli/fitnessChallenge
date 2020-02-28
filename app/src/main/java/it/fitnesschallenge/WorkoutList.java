@@ -150,7 +150,7 @@ public class WorkoutList extends Fragment {
             @Override
             public void onChanged(WorkoutWithExercise workoutWithExercise) {
                 Log.d(TAG, "Workout con esercizi prelevato dal DB");
-                
+
             }
         });
     }

@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -111,11 +112,12 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
         private ImageView exerciseImage;
         private int finalHeight;
         private int startHeight;
+        private MaterialButton setCoolDown;
 
         /**
          * @param itemView                layout dell'oggetto in lista
          * @param mOnClickListener        listener del AddAdapter.OnClickListener
-         * @param mOnSelectedItemListener
+         * @param mOnSelectedItemListener listener del AddAdapter.OnSelectedItemListener
          */
         ViewHolder(@NonNull final View itemView, final OnClickListener mOnClickListener,
                    final OnSelectItemListener mOnSelectedItemListener) {
@@ -141,6 +143,7 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
             exerciseTitle = itemView.findViewById(R.id.add_exercise_title);
             exerciseImage = itemView.findViewById(R.id.add_exercise_img);
             exerciseDescription = itemView.findViewById(R.id.add_exercise_description);
+            setCoolDown = itemView.findViewById(R.id.add_exercise_pick_time_button);
             TextInputLayout exerciseSeries = itemView.findViewById(R.id.exercise_series);
             TextInputLayout exerciseRepetition = itemView.findViewById(R.id.exercise_repetition);
             ImageButton expandCollapseButton = itemView.findViewById(R.id.card_expander_collapse_arrow);
@@ -171,6 +174,12 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
                             != RecyclerView.NO_POSITION)
                         //qui abbiamo la gestione dell'onSelectedItemListener
                         mOnSelectedItemListener.onSelectItemListener(itemView, getAdapterPosition());
+                }
+            });
+            setCoolDown.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
                 }
             });
         }

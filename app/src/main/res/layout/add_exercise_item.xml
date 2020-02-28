@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/item_card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -105,13 +106,12 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="@dimen/small_distance"
             android:layout_marginEnd="@dimen/small_distance"
             android:visibility="visible"
             app:layout_constraintEnd_toStartOf="@+id/card_expander_collapse_arrow"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/add_exercise_img"
-            app:layout_constraintTop_toBottomOf="@+id/exercise_repetition" />
+            app:layout_constraintTop_toBottomOf="@+id/add_exercise_pick_time_button" />
 
         <View
             android:id="@+id/add_card_divider"
@@ -123,5 +123,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/add_exercise_img"
             app:layout_constraintTop_toBottomOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:id="@+id/add_exercise_pick_time_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/set_cool_down"
+            app:layout_constraintStart_toStartOf="@+id/exercise_repetition"
+            app:layout_constraintTop_toBottomOf="@+id/exercise_repetition" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
