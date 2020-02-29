@@ -21,7 +21,9 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 import it.fitnesschallenge.R;
 import it.fitnesschallenge.model.room.entity.Exercise;
@@ -32,6 +34,7 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
 
     private OnClickListener mOnClickListener;
     private OnSelectItemListener mOnSelectedItemListener;
+    private OnClickTimerListener mOnClickTimerListener;
     private List<Exercise> mList;
 
     public AddAdapter(List<Exercise> mList) {
@@ -45,7 +48,7 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
                 .inflate(R.layout.add_exercise_item, parent, false);
         Log.d(TAG, "Creo il ViewHolder");
         //qui avviene l'assegnazione dei listener al ViewHolder
-        return new ViewHolder(view, mOnClickListener, mOnSelectedItemListener);
+        return new ViewHolder(view, mOnClickListener, mOnSelectedItemListener, mOnClickTimerListener);
     }
 
     @Override
@@ -55,6 +58,20 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
         holder.exerciseDescription.setText(mList.get(position).getExerciseDescription());
         holder.exerciseImage.setImageResource(mList.get(position).getImageReference());
         holder.cardView.setTag(mList.get(position).getExerciseId());
+    }
+
+    /**
+     * Questa funzione permette di cambiare il valore del testo nel bottone che apre il dialog per
+     * impostare il timer, così da fornire un feedback istantaneo all'utente
+     *
+     * @param holder contiene l'holder di quell particolare item
+     * @param time   contiene il tempo settato per il timer
+     */
+    public void setCoolDownTime(RecyclerView.ViewHolder holder, long time) {
+        ViewHolder thisViewHolder = (ViewHolder) holder;
+        StringBuilder builder = new StringBuilder(NumberFormat.getInstance(Locale.getDefault()).format(time));
+        builder.append("''");
+        thisViewHolder.setCoolDown.setText(builder.toString());
     }
 
     @Override
@@ -89,6 +106,10 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
         void onSelectItemListener(View view, int position);
     }
 
+    public interface OnClickTimerListener {
+        void onTimerListener(int position);
+    }
+
     /**
      * Questi due metodi di set permettono di settare il listener dall'activity o fragment chiamante
      * @param onClickListener permette di ottenere un riferimento a questa classe tramite il chiamante
@@ -102,7 +123,11 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
         this.mOnSelectedItemListener = onSelectedItemListener;
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    public void setOnClickTimerListener(OnClickTimerListener onClickTimerListener) {
+        this.mOnClickTimerListener = onClickTimerListener;
+    }
+
+    static class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView exerciseTitle;
         private CardView cardView;
@@ -120,7 +145,7 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
          * @param mOnSelectedItemListener listener del AddAdapter.OnSelectedItemListener
          */
         ViewHolder(@NonNull final View itemView, final OnClickListener mOnClickListener,
-                   final OnSelectItemListener mOnSelectedItemListener) {
+                   final OnSelectItemListener mOnSelectedItemListener, final OnClickTimerListener mSetTimerListener) {
             super(itemView);
             Log.d(TAG, "Setto il layout degli oggetti nella RecyclerView");
             modified = false;
@@ -179,7 +204,7 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
             setCoolDown.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    mSetTimerListener.onTimerListener(getAdapterPosition());
                 }
             });
         }

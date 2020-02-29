@@ -16,4 +16,5 @@
     <dimen name="border_radius">10dp</dimen>
     <dimen name="card_elevation">8dp</dimen>
     <dimen name="multiline_distance">4dp</dimen>
+    <dimen name="timer_setter_size">34sp</dimen>
 </resources>

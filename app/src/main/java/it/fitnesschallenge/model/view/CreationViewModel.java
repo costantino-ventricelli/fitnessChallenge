@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 import it.fitnesschallenge.model.room.entity.PersonalExercise;
-import it.fitnesschallenge.model.room.reference.entity.WorkoutWithExercise;
+import it.fitnesschallenge.model.room.entity.reference.WorkoutWithExercise;
 
 public class CreationViewModel extends AndroidViewModel {
 
@@ -138,18 +138,22 @@ public class CreationViewModel extends AndroidViewModel {
     }
 
     public void resetLiveData() {
-        mLiveDataProgress.setValue(null);
         mListSteps = new ArrayList<>();
-        mLiveDataSteps.setValue(null);
-        mEmail.setValue(null);
-        mGoal.setValue(null);
-        mStartDate.setValue(null);
-        mFinishDate.setValue(null);
-        mWorkoutWithExercise.setValue(null);
-        mWorkoutId.setValue(null);
-        mPersonalExerciseList.setValue(null);
-        mIsError.setValue(null);
+        mListSteps.add(1);
+        mLiveDataSteps = new MutableLiveData<>();
+        mGoal = new MutableLiveData<>();
+        mEmail = new MutableLiveData<>();
+        mStartDate = new MutableLiveData<>();
+        mLiveDataProgress = new MutableLiveData<>();
+        mWorkoutWithExercise = new MutableLiveData<>();
+        mWorkoutId = new MutableLiveData<>();
+        mPersonalExerciseList = new MutableLiveData<>();
+        mFinishDate = new MutableLiveData<>();
         mError = false;
+        mIsError = new MutableLiveData<>(false);
+
+        setWorkoutId(-1);
+        setLiveDataSteps();
     }
 
     public boolean isError() {

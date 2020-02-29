@@ -103,4 +103,6 @@
     <string name="timer_picker">Timer picker</string>
     <string name="_00">00</string>
     <string name="colons">:</string>
+    <string name="set_timer">Set timer</string>
+    <string name="cool_down">Cool down</string>
 </resources>

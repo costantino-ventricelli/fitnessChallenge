@@ -27,4 +27,6 @@ public final class SharedConstance {
     public static final String ENTER_FRAGMENT = "enterFragment";
     public static final String GYM_HOME_FRAGMENT = "gymHomeFragment";
     public static final String PLAYING_WORKOUT = "playingWorkout";
+    public static final String SELECTED_TIMER = "selectedTimer";
+    public static final String POSITION_IN_ADAPTER = "positionInAdapter";
 }

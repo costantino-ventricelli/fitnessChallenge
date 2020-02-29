@@ -1,4 +1,4 @@
-package it.fitnesschallenge;
+package it.fitnesschallenge.timepicker;
 
 import android.view.View;
 

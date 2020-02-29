@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/exercise_list"
     android:layout_width="match_parent"
-    android:layout_height="120dp"
+    android:layout_height="140dp"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -56,6 +56,30 @@
             android:text="@string/repetition_set"
             android:textSize="@dimen/caption" />
 
+        <TextView
+            android:id="@+id/exercise_item_timer_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/exercise_item_number"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="@dimen/small_distance"
+            android:layout_marginEnd="@dimen/margin"
+            android:layout_toEndOf="@id/add_exercise_img"
+            android:text="@string/cool_down"
+            android:textSize="@dimen/caption" />
+
+        <TextView
+            android:id="@+id/exercise_item_timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/exercise_item_timer_label"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="@dimen/margin"
+            android:layout_toEndOf="@id/add_exercise_img"
+            android:text="@string/cool_down"
+            android:textSize="@dimen/caption" />
+
         <ImageButton
             android:id="@+id/exercise_item_action"
             android:layout_width="wrap_content"
@@ -86,5 +110,6 @@
             android:layout_alignParentBottom="true"
             android:layout_toEndOf="@id/add_exercise_img"
             android:background="?android:attr/listDivider" />
+
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

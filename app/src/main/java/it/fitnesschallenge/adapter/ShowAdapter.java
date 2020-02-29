@@ -15,9 +15,12 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.textfield.TextInputLayout;
+
 import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import it.fitnesschallenge.R;
 import it.fitnesschallenge.model.room.entity.Exercise;
@@ -128,6 +131,7 @@ public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder>
                 builder.append("/");
                 builder.append(NumberFormat.getInstance().format(personalExercise.getSteps()));
                 holder.mSetNumberTextView.setText(builder.toString());
+                holder.mCoolDown.setText(NumberFormat.getInstance(Locale.getDefault()).format(personalExercise.getCoolDown()));
                 holder.mCardView.setTag(exercise.getExerciseName());
                 if (personalExercise.isDeleted())
                     holder.mActionButton.setImageResource(R.drawable.ic_undo);
@@ -149,6 +153,7 @@ public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder>
         private TextView mSetNumberTextView;
         private View mCardView;
         private ImageButton mActionButton;
+        private TextView mCoolDown;
 
         ViewHolder(@NonNull View itemView, final OnClickListener actionClickListener) {
             super(itemView);
@@ -158,6 +163,7 @@ public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder>
             mTitleTextView = itemView.findViewById(R.id.add_exercise_title);
             mSetNumberTextView = itemView.findViewById(R.id.exercise_item_number);
             mActionButton = itemView.findViewById(R.id.exercise_item_action);
+            mCoolDown = itemView.findViewById(R.id.exercise_item_timer);
             //Qui vengono collegati i metodi di call back con gli oggetti a cui appartengono
             mActionButton.setOnClickListener(new View.OnClickListener() {
                 @Override

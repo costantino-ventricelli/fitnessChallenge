@@ -27,9 +27,8 @@ import java.util.Calendar;
 import java.util.List;
 
 import it.fitnesschallenge.model.User;
-import it.fitnesschallenge.model.room.entity.PersonalExercise;
 import it.fitnesschallenge.model.room.entity.Workout;
-import it.fitnesschallenge.model.room.reference.entity.WorkoutWithExercise;
+import it.fitnesschallenge.model.room.entity.reference.WorkoutWithExercise;
 import it.fitnesschallenge.model.view.PlayingWorkoutModelView;
 
 public class WorkoutList extends Fragment {

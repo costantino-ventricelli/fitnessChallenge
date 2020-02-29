@@ -25,7 +25,7 @@ import it.fitnesschallenge.model.room.entity.ExerciseExecution;
 import it.fitnesschallenge.model.room.FitnessChallengeRepository;
 import it.fitnesschallenge.model.room.entity.PersonalExercise;
 import it.fitnesschallenge.model.room.entity.Workout;
-import it.fitnesschallenge.model.room.reference.entity.WorkoutWithExercise;
+import it.fitnesschallenge.model.room.entity.reference.WorkoutWithExercise;
 
 public class PlayingWorkoutModelView extends AndroidViewModel {
 

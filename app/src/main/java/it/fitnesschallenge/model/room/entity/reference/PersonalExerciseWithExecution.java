@@ -1,4 +1,4 @@
-package it.fitnesschallenge.model.room.reference.entity;
+package it.fitnesschallenge.model.room.entity.reference;
 
 import androidx.room.Embedded;
 import androidx.room.Relation;

@@ -48,10 +48,7 @@ public class PersonalExercise implements Parcelable {
         this.steps = in.readInt();
         this.repetition = in.readInt();
         this.coolDown = in.readLong();
-        if (in.readInt() == 0)
-            this.isDeleted = true;
-        else
-            this.isDeleted = false;
+        this.isDeleted = in.readInt() == 0;
     }
 
     public int getExerciseId() {
