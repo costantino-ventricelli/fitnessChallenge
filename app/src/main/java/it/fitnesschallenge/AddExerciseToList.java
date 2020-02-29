@@ -407,19 +407,19 @@ public class AddExerciseToList extends Fragment {
                  * default in caso non ne siano stai settati di nuovi
                  */
                 Log.d(TAG, "Cool down: " + personalExercise.getCoolDown());
-                if (personalExercise.getRepetition() != 0
-                        && personalExercise.getSteps() != 0
-                        && personalExercise.getCoolDown() != 0) {
-                    series.getEditText().setText(NumberFormat.getInstance().format(
-                            personalExercise.getSteps()
-                    ));
+                if (personalExercise.getRepetition() != 0)
                     repetitions.getEditText().setText(NumberFormat.getInstance().format(
                             personalExercise.getRepetition()
                     ));
+                if (personalExercise.getSteps() != 0)
+                    series.getEditText().setText(NumberFormat.getInstance().format(
+                            personalExercise.getSteps()
+                    ));
+                if (personalExercise.getCoolDown() != 0L)
                     setTimer.setText(NumberFormat.getInstance(Locale.getDefault()).format(
                             personalExercise.getCoolDown()
                     ));
-                }
+                //FIXME: se si effettuano modifiche all'esercizio non bisogna riselezionarlo, UX fa schifo
             }
         }
     }
