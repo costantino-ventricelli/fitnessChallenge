@@ -27,7 +27,7 @@ public class AddExerciseToListModel extends AndroidViewModel {
     public AddExerciseToListModel(@NonNull Application application) {
         super(application);
         FitnessChallengeRepository repository = new FitnessChallengeRepository(application);
-        mExerciseList = repository.getListExercise();
+        mExerciseList = repository.getListExerciseLiveData();
         mPersonalExerciseLiveData = new MutableLiveData<>();
         mPersonalExerciseList = new ArrayList<>();
         mAddAdapter = null;

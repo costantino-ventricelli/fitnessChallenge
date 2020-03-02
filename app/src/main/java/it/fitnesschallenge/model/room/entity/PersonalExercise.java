@@ -122,6 +122,8 @@ public class PersonalExercise implements Parcelable {
     public boolean equals(@Nullable Object obj) {
         if (obj instanceof PersonalExercise) {
             return ((PersonalExercise) obj).getExerciseId() == this.exerciseId;
+        } else if (obj instanceof Exercise) {
+            return ((Exercise) obj).getExerciseId() == this.exerciseId;
         } else
             return false;
     }

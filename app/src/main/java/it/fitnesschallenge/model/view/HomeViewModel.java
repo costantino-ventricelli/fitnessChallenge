@@ -20,7 +20,7 @@ public class HomeViewModel extends AndroidViewModel {
     public HomeViewModel(@NonNull Application application) {
         super(application);
         FitnessChallengeRepository fitnessChallengeRepository = new FitnessChallengeRepository(application);
-        exerciseList = fitnessChallengeRepository.getListExercise();
+        exerciseList = fitnessChallengeRepository.getListExerciseLiveData();
         Log.d(TAG, "Repository creato");
     }
 

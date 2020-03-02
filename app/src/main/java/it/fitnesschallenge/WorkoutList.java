@@ -6,8 +6,13 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +21,7 @@ import android.view.ViewGroup;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -26,10 +32,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import it.fitnesschallenge.adapter.ItemTouchHelperCallBack;
+import it.fitnesschallenge.adapter.ShowAdapter;
 import it.fitnesschallenge.model.User;
 import it.fitnesschallenge.model.room.entity.Workout;
 import it.fitnesschallenge.model.room.entity.reference.WorkoutWithExercise;
 import it.fitnesschallenge.model.view.PlayingWorkoutModelView;
+
+import static it.fitnesschallenge.model.SharedConstance.PLAYING_WORKOUT;
 
 public class WorkoutList extends Fragment {
 
@@ -38,9 +48,11 @@ public class WorkoutList extends Fragment {
 
     private PlayingWorkoutModelView mViewModel;
     private User mUser;
-    private FirebaseUser mFirestoreUser;
+    private FirebaseUser mFireStoreUser;
     private FirebaseAuth mAuth;
     private FirebaseFirestore mDatabase;
+    private RecyclerView mRecyclerView;
+    private ShowAdapter mShowAdapter;
 
     public WorkoutList() {
         // Required empty public constructor
@@ -60,8 +72,8 @@ public class WorkoutList extends Fragment {
         if (getArguments() != null)
             mUser = getArguments().getParcelable(FIREBASE_USER);
         mAuth = FirebaseAuth.getInstance();
-        mFirestoreUser = mAuth.getCurrentUser();
-        if (mFirestoreUser != null)
+        mFireStoreUser = mAuth.getCurrentUser();
+        if (mFireStoreUser != null)
             mDatabase = FirebaseFirestore.getInstance();
     }
 
@@ -70,8 +82,48 @@ public class WorkoutList extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_workout_list, container, false);
+        mRecyclerView = view.findViewById(R.id.workout_list_recycler_view);
+
+        FloatingActionButton floatingActionButton = view.findViewById(R.id.start_workout_FAB);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PlayingWorkout playingWorkout = new PlayingWorkout();
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
+                        R.anim.enter_from_rigth, R.anim.exit_from_left);
+                transaction.replace(R.id.fragmentContainer, playingWorkout, PLAYING_WORKOUT)
+                        .addToBackStack(PLAYING_WORKOUT)
+                        .commit();
+            }
+        });
 
         mViewModel = ViewModelProviders.of(getActivity()).get(PlayingWorkoutModelView.class);
+        /*
+         * Verifico se le informazioni sono già state prelevate dal DB, se sono già disponibili nel
+         * ViewModel, gli Observer non verranno mai notificati, quindi si aggiunge un controllo
+         * manuale.
+         */
+        if (mViewModel.getPersonalExerciseList() != null)
+            setRecyclerView();
+        else {
+            setObserver();
+        }
+        /*
+         * Setto i parametri che definiscono l'utente nel ViewModel, in modo da renderli reperibili
+         * mentre l'utente effettua il workout
+         */
+        setUserConsistence();
+        return view;
+    }
+
+    /**
+     * Set observer crea gli observer al ViewModel nel caso in cui il fragment venga chiamato per la
+     * prima volta, in quanto è necessario prelevare i dati dal DB essendo che il ViewModel è legato
+     * alla MainActivity.
+     */
+    private void setObserver() {
         mViewModel.setActiveWorkoutFromLocal().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
@@ -100,7 +152,6 @@ public class WorkoutList extends Fragment {
                 }
             }
         });
-        return view;
     }
 
     /**
@@ -142,16 +193,40 @@ public class WorkoutList extends Fragment {
         mViewModel.getWorkoutId().observe(getViewLifecycleOwner(), new Observer<Long>() {
             @Override
             public void onChanged(Long aLong) {
-                mViewModel.setWorkoutList();
+                mViewModel.setWorkoutList(getViewLifecycleOwner());
             }
         });
         mViewModel.getWorkoutWithExercise().observe(getViewLifecycleOwner(), new Observer<WorkoutWithExercise>() {
             @Override
             public void onChanged(WorkoutWithExercise workoutWithExercise) {
                 Log.d(TAG, "Workout con esercizi prelevato dal DB");
-
+                setRecyclerView();
             }
         });
     }
 
+    /**
+     * Quseto metodo imposta la recyclerView e il TouchHelper che permette il DragAndDrop degli
+     * elementi nella View.
+     */
+    private void setRecyclerView() {
+        mShowAdapter = new ShowAdapter(mViewModel.getPersonalExerciseList(),
+                getActivity().getApplication(), getViewLifecycleOwner());
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.setAdapter(mShowAdapter);
+        ItemTouchHelper.Callback callback = new ItemTouchHelperCallBack(mShowAdapter);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(mRecyclerView);
+    }
+
+    /**
+     * In questo metodo vengono salvati nel ViewModel i dati appartenenti all'utente e i dati che
+     * permettono la connessione remota a FireBase, per sincronizzare il Workout al termine dello stesso.
+     */
+    private void setUserConsistence() {
+        mViewModel.setAuth(mAuth);
+        mViewModel.setFireStoreUser(mFireStoreUser);
+        mViewModel.setDatabase(mDatabase);
+        mViewModel.setUser(mUser);
+    }
 }

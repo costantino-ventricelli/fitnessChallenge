@@ -31,7 +31,7 @@ import it.fitnesschallenge.model.room.entity.PersonalExerciseWorkoutCrossReferen
 import it.fitnesschallenge.model.room.entity.Workout;
 
 @Database(entities = {Exercise.class, Workout.class, PersonalExerciseWorkoutCrossReference.class, PersonalExercise.class},
-        version = 17, exportSchema = false)
+        version = 18, exportSchema = false)
 @TypeConverters({Converter.class})
 public abstract class FitnessChallengeDatabase extends RoomDatabase {
 

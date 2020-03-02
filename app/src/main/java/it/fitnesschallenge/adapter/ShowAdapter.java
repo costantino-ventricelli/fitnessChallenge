@@ -15,8 +15,6 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.textfield.TextInputLayout;
-
 import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.List;
@@ -146,7 +144,7 @@ public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder>
         return mList.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView mImageView;
         private TextView mTitleTextView;

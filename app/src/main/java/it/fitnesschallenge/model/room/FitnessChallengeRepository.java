@@ -49,7 +49,7 @@ public class FitnessChallengeRepository {
         workoutWithExerciseList = new MutableLiveData<>();
     }
 
-    public LiveData<List<Exercise>> getListExercise() {
+    public LiveData<List<Exercise>> getListExerciseLiveData() {
         listExercise = exerciseDAO.selectAllExercise();
         return listExercise;
     }

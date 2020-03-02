@@ -16,10 +16,15 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
+import it.fitnesschallenge.model.User;
 import it.fitnesschallenge.model.room.entity.Exercise;
 import it.fitnesschallenge.model.room.entity.ExerciseExecution;
 import it.fitnesschallenge.model.room.FitnessChallengeRepository;
@@ -37,17 +42,28 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
      Questo array conterrà tutti gli esercizi del DB per ottenere info su di essi durante l'esecuzione
      dell'allenamento.
     */
-    private ArrayList<Exercise> mExerciseArrayList;
+    private List<Exercise> mExerciseList;
     // Questo è l'iteratore legato a PersonalExercise che permetterà di scorrere la lista degli esercizi
     private ListIterator<PersonalExercise> mPersonalExerciseListIterator;
     // Questo array contiene tutti gi esercizi legati al workout
     private ArrayList<PersonalExercise> mPersonalExerciseList;
-    private MutableLiveData<WorkoutWithExercise> mWorkoutWithExercise;
+    /*
+     * Questo LiveData permette di notificare all'activity chiamante che il workout e gli esercizi sono
+     * stati prelevati
+     */
+    private MutableLiveData<WorkoutWithExercise> mWorkoutWithExerciseLiveData;
     private MutableLiveData<List<ExerciseExecution>> mExerciseExecution;
     // Questo è il collegamento al repository locale
     private FitnessChallengeRepository mRepository;
     // Questo contiene l'id dell'allenamento attuale
     private MutableLiveData<Long> mWorkoutId;
+    private WorkoutWithExercise mWorkoutWithExercise;
+
+    // Queste variabili permettono di mantenere attivo l'utente mentre esegue il workout
+    private User mUser;
+    private FirebaseUser mFireStoreUser;
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore mDatabase;
 
     public PlayingWorkoutModelView(@NonNull Application application) {
         super(application);
@@ -56,28 +72,45 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
         mPersonalExerciseListIterator = null;
         mExerciseExecutionList = new ArrayList<>();
         mExerciseExecution = new MutableLiveData<>();
-        mWorkoutWithExercise = new MutableLiveData<>();
-
-        /*
-         Questa inizializzazione preleva tutti gli esercizi dal DB locale, per gestire poi le info
-         necessarie per ogni esercizio in fase di esecuzione
-        */
-        LiveData<List<Exercise>> mExerciseList = mRepository.getListExercise();
-        mExerciseArrayList = (ArrayList<Exercise>) mExerciseList.getValue();
+        mWorkoutWithExerciseLiveData = new MutableLiveData<>();
     }
 
     /**
      * Questo metodo dovrebbe essere richiamato dopo setActiveWorkout, in quanto permette di prelevare
      * la lista degli esercizi dal DB locale e impostare il ListIterator per muoversi all'interno
      * della lista.
-     *
-     * @return il valore di ritorno indica se l'operazione è stata effettuata con successo.
      */
-    public boolean setWorkoutList() {
-        //FIXME: problema con il prelievo del workout con gli esercizi
-        if (mWorkoutId.getValue() != -1)
-            mWorkoutWithExercise.setValue(mRepository.getWorkoutWithExerciseList(mWorkoutId.getValue()).getValue());
-        return mPersonalExerciseListIterator != null;
+    public void setWorkoutList(LifecycleOwner lifecycleOwner) {
+        /*
+         Questa inizializzazione preleva tutti gli esercizi dal DB locale, per gestire poi le info
+         necessarie per ogni esercizio in fase di esecuzione
+        */
+        if (mExerciseList == null)
+            mRepository.getListExerciseLiveData().observe(lifecycleOwner, new Observer<List<Exercise>>() {
+                @Override
+                public void onChanged(List<Exercise> exercises) {
+                    mExerciseList = exercises;
+                    Log.d(TAG, "Lista esercizi acquisita");
+                }
+            });
+        if (mWorkoutId.getValue() != -1) {
+            mRepository.getWorkoutWithExerciseList(mWorkoutId.getValue()).observe(lifecycleOwner, new Observer<WorkoutWithExercise>() {
+                @Override
+                public void onChanged(WorkoutWithExercise workoutWithExercise) {
+                    Log.d(TAG, "Observer di WorkoutWithExercise");
+                    mWorkoutWithExercise = workoutWithExercise;
+                    Log.d(TAG, "WorkoutWithExercise: " + workoutWithExercise.getPersonalExerciseList().toString());
+                    mPersonalExerciseList = (ArrayList<PersonalExercise>) mWorkoutWithExercise.getPersonalExerciseList();
+                    Log.d(TAG, "Nella lista degli esercizio ci sono: " + mPersonalExerciseList.size() + " elementi\n" +
+                            "Lista: " + mPersonalExerciseList.toString());
+                    mPersonalExerciseListIterator = mPersonalExerciseList.listIterator();
+                    Log.d(TAG, "Settato l'iteratore e la lista degli esercizi personale\n" +
+                            "Primo inidice puntato dall'iteratore: " + mPersonalExerciseListIterator.nextIndex() + "\n" +
+                            "Primo elemento teorico puntato dall'iteratore: " + mPersonalExerciseList.get(mPersonalExerciseListIterator.nextIndex()).getExerciseId());
+                    mWorkoutWithExerciseLiveData.setValue(mWorkoutWithExercise);
+                }
+            });
+        }
     }
 
     public void setExerciseExecution(ExerciseExecution exerciseExecution) {
@@ -88,11 +121,12 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
     /**
      * Questo metodo verifica la presenza di altri esercizi e successivamente restituisce l'erercizio
      * successivo
-     * @return restituisce un LiveData contenente il prossimo esercizio
+     * @return restituisce il prossimo esercizio
      */
-    public LiveData<PersonalExercise> getNextExercise() {
+    public PersonalExercise getNextExercise() {
+        Log.d(TAG, "Prelevo esercizio successivo");
         if (mPersonalExerciseListIterator.hasNext())
-            return new MutableLiveData<>(mPersonalExerciseListIterator.next());
+            return mPersonalExerciseListIterator.next();
         else
             return null;
     }
@@ -100,11 +134,29 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
     /**
      * Questo metodo è identico a getNextExercise solo che restituisce l'esercizio precendente
      */
-    public LiveData<PersonalExercise> getPrevExercise() {
+    public PersonalExercise getPrevExercise() {
+        Log.d(TAG, "Prelevo esercizio precedente");
         if (mPersonalExerciseListIterator.hasPrevious())
-            return new MutableLiveData<>(mPersonalExerciseListIterator.previous());
+            return mPersonalExerciseListIterator.previous();
         else
             return null;
+    }
+
+    public boolean thereIsNext() {
+        return mPersonalExerciseListIterator.hasNext();
+    }
+
+    public boolean thereIsPrev() {
+        return mPersonalExerciseListIterator.hasPrevious();
+    }
+
+    /**
+     * Questo metodo ritorna semplicemente la lista degli esercizi necessari a creare la RecyclerView
+     *
+     * @return un ArrayList contenente gli esercizi selezionati dal DB che dovranno verrannno eseguiti
+     */
+    public ArrayList<PersonalExercise> getPersonalExerciseList() {
+        return mPersonalExerciseList;
     }
 
     /**
@@ -113,10 +165,10 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
      *                         quale è l'esercizio in esecuzione (VEDERE METODO EQUALS DI EXERCISE)
      * @return il valore di ritorno è un live data contente le informazioni riguardanti un esercizo
      */
-    public LiveData<Exercise> getExerciseInformation(PersonalExercise personalExercise) {
-        return new MutableLiveData<>(mExerciseArrayList.get(
-                mExerciseArrayList.indexOf(new Exercise(personalExercise))
-        ));
+    public MutableLiveData<Exercise> getExerciseInformation(PersonalExercise personalExercise) {
+        MutableLiveData<Exercise> mutableLiveData = new MutableLiveData<>();
+        mutableLiveData.setValue(mExerciseList.get(mPersonalExerciseList.indexOf(personalExercise)));
+        return mutableLiveData;
     }
 
 
@@ -142,7 +194,7 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
      * @return ritorna il workout con la lista degli esercizi individuati
      */
     public MutableLiveData<WorkoutWithExercise> getWorkoutWithExercise() {
-        return mWorkoutWithExercise;
+        return mWorkoutWithExerciseLiveData;
     }
 
     /**
@@ -183,8 +235,44 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
                 });
     }
 
+    /**
+     * Questo metodo permette di ottenere il riferimento all'id del workout selezionato
+     * @return LiveData contente l'id del workout attutale.
+     */
     public MutableLiveData<Long> getWorkoutId() {
         return mWorkoutId;
+    }
+
+    public User getUser() {
+        return mUser;
+    }
+
+    public void setUser(User mUser) {
+        this.mUser = mUser;
+    }
+
+    public FirebaseUser getFireStoreUser() {
+        return mFireStoreUser;
+    }
+
+    public void setFireStoreUser(FirebaseUser mFireStoreUser) {
+        this.mFireStoreUser = mFireStoreUser;
+    }
+
+    public FirebaseAuth getAuth() {
+        return mAuth;
+    }
+
+    public void setAuth(FirebaseAuth mAuth) {
+        this.mAuth = mAuth;
+    }
+
+    public FirebaseFirestore getDatabase() {
+        return mDatabase;
+    }
+
+    public void setDatabase(FirebaseFirestore mDatabase) {
+        this.mDatabase = mDatabase;
     }
 
     /**
@@ -192,7 +280,7 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
      * l'inserimento non utilizza i LiveData quindi dobbiamo essere noi a gestire il multithreading
      * inoltre abbiamo fatto in modo da ottenere l'id del workout inserito, così possiamo utilizzarlo
      * in seguito per altre operazioni, la sincronizzazione tra processi è ottenuta con i live data,
-     * tra l'async task e l'UI process
+     * tra l'async task e l'UI thread
      */
     static class InsertWorkoutWithExercise extends AsyncTask<WorkoutWithExercise, Void, Long> {
 
