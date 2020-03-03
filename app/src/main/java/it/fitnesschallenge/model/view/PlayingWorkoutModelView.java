@@ -44,7 +44,7 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
     */
     private List<Exercise> mExerciseList;
     // Questo è l'iteratore legato a PersonalExercise che permetterà di scorrere la lista degli esercizi
-    private ListIterator<PersonalExercise> mPersonalExerciseListIterator;
+    private int mPersonalExerciseListIterator;
     // Questo array contiene tutti gi esercizi legati al workout
     private ArrayList<PersonalExercise> mPersonalExerciseList;
     /*
@@ -58,6 +58,8 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
     // Questo contiene l'id dell'allenamento attuale
     private MutableLiveData<Long> mWorkoutId;
     private WorkoutWithExercise mWorkoutWithExercise;
+    // Questa variabile contiene l'esercizio in esecuzione
+    private PersonalExercise mCurrentExercise;
 
     // Queste variabili permettono di mantenere attivo l'utente mentre esegue il workout
     private User mUser;
@@ -69,7 +71,7 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
         super(application);
         mRepository = new FitnessChallengeRepository(application);
         mWorkoutId = new MutableLiveData<>(-1L);
-        mPersonalExerciseListIterator = null;
+        mPersonalExerciseListIterator = -1;
         mExerciseExecutionList = new ArrayList<>();
         mExerciseExecution = new MutableLiveData<>();
         mWorkoutWithExerciseLiveData = new MutableLiveData<>();
@@ -77,8 +79,7 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
 
     /**
      * Questo metodo dovrebbe essere richiamato dopo setActiveWorkout, in quanto permette di prelevare
-     * la lista degli esercizi dal DB locale e impostare il ListIterator per muoversi all'interno
-     * della lista.
+     * la lista degli esercizi dal DB locale.
      */
     public void setWorkoutList(LifecycleOwner lifecycleOwner) {
         /*
@@ -103,14 +104,43 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
                     mPersonalExerciseList = (ArrayList<PersonalExercise>) mWorkoutWithExercise.getPersonalExerciseList();
                     Log.d(TAG, "Nella lista degli esercizio ci sono: " + mPersonalExerciseList.size() + " elementi\n" +
                             "Lista: " + mPersonalExerciseList.toString());
-                    mPersonalExerciseListIterator = mPersonalExerciseList.listIterator();
-                    Log.d(TAG, "Settato l'iteratore e la lista degli esercizi personale\n" +
-                            "Primo inidice puntato dall'iteratore: " + mPersonalExerciseListIterator.nextIndex() + "\n" +
-                            "Primo elemento teorico puntato dall'iteratore: " + mPersonalExerciseList.get(mPersonalExerciseListIterator.nextIndex()).getExerciseId());
                     mWorkoutWithExerciseLiveData.setValue(mWorkoutWithExercise);
                 }
             });
         }
+    }
+
+    /**
+     * Questo metodo setta il ListIterator all'inizizo della lista degli esercizi, facendo così
+     * possiamo gestire il reset della lista.
+     */
+    public void setListIterator() {
+        mPersonalExerciseListIterator = -1;
+        Log.d(TAG, "Settato l'iteratore e la lista degli esercizi personale\n" +
+                "Primo inidice puntato dall'iteratore: " + mPersonalExerciseListIterator);
+    }
+
+    /**
+     * Questo metodo verifica se l'iteratore di lista è stato inizializzato
+     *
+     * @return ritorna true se l'operatore è nullo, false se non lo è.
+     */
+    public boolean isIteratorNull() {
+        return mPersonalExerciseListIterator == -1;
+    }
+
+    /**
+     * Current exercise mi permette di mantenere in memoria quale è l'esercizio selezionato, nel caso
+     * in cui il Fragment venga distrutto.
+     *
+     * @return ritorna l'esercizio attuale.
+     */
+    public PersonalExercise getCurrentExercise() {
+        return mCurrentExercise;
+    }
+
+    public void setCurrentExercise(PersonalExercise mCurrentExercise) {
+        this.mCurrentExercise = mCurrentExercise;
     }
 
     public void setExerciseExecution(ExerciseExecution exerciseExecution) {
@@ -124,30 +154,52 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
      * @return restituisce il prossimo esercizio
      */
     public PersonalExercise getNextExercise() {
-        Log.d(TAG, "Prelevo esercizio successivo");
-        if (mPersonalExerciseListIterator.hasNext())
-            return mPersonalExerciseListIterator.next();
-        else
-            return null;
+        PersonalExercise personalExercise = null;
+        if (thereIsNext()) {
+            mPersonalExerciseListIterator++;
+            personalExercise = mPersonalExerciseList.get(mPersonalExerciseListIterator);
+        }
+        return personalExercise;
     }
 
     /**
      * Questo metodo è identico a getNextExercise solo che restituisce l'esercizio precendente
      */
     public PersonalExercise getPrevExercise() {
-        Log.d(TAG, "Prelevo esercizio precedente");
-        if (mPersonalExerciseListIterator.hasPrevious())
-            return mPersonalExerciseListIterator.previous();
-        else
-            return null;
+        PersonalExercise personalExercise = null;
+        if (thereIsPrev()) {
+            mPersonalExerciseListIterator--;
+            personalExercise = mPersonalExerciseList.get(mPersonalExerciseListIterator);
+        }
+        return personalExercise;
     }
 
+    /**
+     * Questi due metodi sono principalmente per debug, per capire come di si sposta l'indice dell'
+     * iteratore
+     *
+     * @return ritorna l'indice successivo
+     */
+    public int getNextIndex() {
+        return mPersonalExerciseListIterator;
+    }
+
+    /**
+     * Questo metodo verifica l'indice può andare in OutOfBounds
+     * @return ritorna true se c'è un successivo
+     */
     public boolean thereIsNext() {
-        return mPersonalExerciseListIterator.hasNext();
+        Log.d(TAG, "thereIsNext: mPersonalExerciseListIterator: " + (mPersonalExerciseListIterator + 1));
+        return (mPersonalExerciseListIterator + 1) <= (mPersonalExerciseList.size() - 1);
     }
 
+    /**
+     * Questo metodo verifica l'indice può andare in OutOfBounds
+     * @return ritorna true se c'è un precedente
+     */
     public boolean thereIsPrev() {
-        return mPersonalExerciseListIterator.hasPrevious();
+        Log.d(TAG, "thereIsPrev: mPersonalExerciseListIterator: " + (mPersonalExerciseListIterator));
+        return (mPersonalExerciseListIterator) > 0;
     }
 
     /**
@@ -243,18 +295,36 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
         return mWorkoutId;
     }
 
+    /**
+     * Questo metodo permette di ottenere le informazioni sull'utente loggato in FireBase
+     * @return la classe che descrive l'utente
+     */
     public User getUser() {
         return mUser;
     }
 
+    /**
+     * Questo metodo permette di memorizzare le informazioni che l'utente ha inserito alla registrazione
+     * @param mUser viene passata esattamente un istanza della Classe User che è stata prelevata da FireBase
+     */
     public void setUser(User mUser) {
         this.mUser = mUser;
     }
 
+    /**
+     * Questo metodo permette di ottenere le informazioni sull'utente loggato in FireBase, diverso dal
+     * precedente utente perchè questa classe permette di effettuare operazioni sul DB firebase
+     * @return ritorna l'utente collegato in FireBase.
+     */
     public FirebaseUser getFireStoreUser() {
         return mFireStoreUser;
     }
 
+    /**
+     * Questo metodo permette di settare le informazioni necessarie per collegarsi con FireBase.
+     * @param mFireStoreUser prende un istanza dell'Utente memorizzata sul dispositivo e permette di
+     *                       accedere a FireBase.
+     */
     public void setFireStoreUser(FirebaseUser mFireStoreUser) {
         this.mFireStoreUser = mFireStoreUser;
     }

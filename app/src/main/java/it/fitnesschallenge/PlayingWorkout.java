@@ -1,8 +1,14 @@
+/**
+ * Questo Fragment contiente l'intelligenza e le informazioni necessarie all'utente per eseguire il
+ * workout step-by-step, una volta terminato il workout questo fragment eseguirà le istruzioni necessarie
+ * ad effettuare la sincronizzazione con il FireBase.
+ */
 package it.fitnesschallenge;
-
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -37,6 +43,7 @@ public class PlayingWorkout extends Fragment {
     private static final String TAG = "PlayingWorkout";
     private static final short PREVIOUSLY = 1;
     private static final short NEXT = 2;
+    private static final short INIT = 3;
 
     private ImageButton mNext;
     private ImageButton mPrev;
@@ -63,7 +70,6 @@ public class PlayingWorkout extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        //FIXME: ogni volta che navigo tra i fragment viene richiesto l'esercizio successivo
         View view = inflater.inflate(R.layout.fragment_playing_workout, container, false);
 
         MaterialButton stopButton = view.findViewById(R.id.playing_workout_stop_workout);
@@ -88,10 +94,26 @@ public class PlayingWorkout extends Fragment {
          */
         setUserConsistence();
         // Prelevo il primo esercizio da eseguire nel ViewModel
-        getCurrentExercise(NEXT);
+        getCurrentExercise(INIT);
+
+        mNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getCurrentExercise(NEXT);
+            }
+        });
+        mPrev.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getCurrentExercise(PREVIOUSLY);
+            }
+        });
         return view;
     }
 
+    /**
+     * Questo metodo preleva dal ViewModel le informazioni relative all'utente.
+     */
     private void setUserConsistence() {
         mAuth = mViewModel.getAuth();
         mFireStoreUser = mViewModel.getFireStoreUser();
@@ -99,17 +121,44 @@ public class PlayingWorkout extends Fragment {
         mDatabase = mViewModel.getDatabase();
     }
 
+    /**
+     * Questo metodo permette di ottenere l'esercizio corrente, in base al tipo di operazione richiesta
+     *
+     * @param witch contiene il tipo di operazione da esegure:
+     *              PREVIOUSLY: indica che si sta selezionando l'esercio precedente
+     *              NEXT: indica che si sta selezionando l'esercizio successivo
+     *              INIT: indica che l'operazione è quella di inizializzazione iniziale
+     */
     private void getCurrentExercise(short witch) {
-        setNavigationButton();
-        if (witch == PREVIOUSLY)
-            mCurrentExercise = mViewModel.getPrevExercise();
-        else if (witch == NEXT)
-            mCurrentExercise = mViewModel.getNextExercise();
+        if (!mViewModel.isIteratorNull())
+            Log.d(TAG, "Indice esercizio successivo prima dell'aggiornamento: " + mViewModel.getNextIndex());
         else
-            Toast.makeText(getContext(), "WTF?", Toast.LENGTH_LONG).show();
+            Log.d(TAG, "Inizializzazione esercizio successivo prima dell'aggiornamento: 0");
+        if (witch == PREVIOUSLY) {
+            mCurrentExercise = mViewModel.getPrevExercise();
+        } else if (witch == NEXT) {
+            mCurrentExercise = mViewModel.getNextExercise();
+        } else if (witch == INIT) {
+            if (mViewModel.isIteratorNull()) {
+                Log.d(TAG, "Prelievo il primo esercizio");
+                mViewModel.setListIterator();
+                mCurrentExercise = mViewModel.getNextExercise();
+            } else {
+                Log.d(TAG, "Ripristino l'esercizio");
+                mCurrentExercise = mViewModel.getCurrentExercise();
+            }
+        }
+
+        Log.d(TAG, "Indice esercizio successivo dopo l'aggiornamento: " + mViewModel.getNextIndex());
+        setNavigationButton(witch);
+        mViewModel.setCurrentExercise(mCurrentExercise);
         setUI(witch);
     }
 
+    /**
+     * SetUi contiene tutte le istruzioni necessarie a mostrare l'esercizio corrente all'utente
+     * @param witch indica che tipo di operazione eseguire
+     */
     private void setUI(final short witch) {
         mViewModel.getExerciseInformation(mCurrentExercise).observe(getViewLifecycleOwner(), new Observer<Exercise>() {
             @Override
@@ -123,43 +172,54 @@ public class PlayingWorkout extends Fragment {
                  * TODO: bisogna capire a che serie dell'esercizio ci troviamo, probabilmente dovremo
                  *       creare una classe che tenga in considerazione lo stato di svolgimento attuale
                  */
-                if (witch == NEXT) {
+                if (witch == NEXT || witch == INIT) {
                     int currentProgress = mProgressBar.getProgress();
+                    Log.d(TAG, "Next or Init current progress: " + currentProgress);
                     currentProgress += (100 /
                             mViewModel.getPersonalExerciseList().size());
                     mProgressValue.setText(NumberFormat.getInstance(Locale.getDefault()).format(currentProgress));
                     mProgressBar.setProgress(currentProgress);
                 } else if (witch == PREVIOUSLY) {
                     int currentProgress = mProgressBar.getProgress();
+                    Log.d(TAG, "Previously current progress: " + currentProgress);
                     currentProgress -= (100 /
                             mViewModel.getPersonalExerciseList().size());
                     mProgressValue.setText(NumberFormat.getInstance(Locale.getDefault()).format(currentProgress));
-                    mProgressBar.setProgress(currentProgress - (100 /
-                            mViewModel.getPersonalExerciseList().size()));
-                } else
-                    Toast.makeText(getContext(), "WTF?", Toast.LENGTH_LONG).show();
+                    mProgressBar.setProgress(currentProgress);
+                }
             }
         });
     }
 
-    private void setNavigationButton() {
-        if (mViewModel.thereIsPrev()) {
-            Log.d(TAG, "C'è un precedente");
-            mPrev.setVisibility(View.VISIBLE);
-            mPrevText.setVisibility(View.VISIBLE);
-        } else {
-            Log.d(TAG, "Non c'è un precedente");
+    /**
+     * Questo metodo consente di verificare quali tasti di navigazione mostrare all'utente
+     * se l'esercizio è il primo allora mostrerà solo il pusante di successivo, e così via.
+     *
+     * @param witch indica che tipo di operazione stiamo eseguendo.
+     */
+    private void setNavigationButton(int witch) {
+        if (witch == INIT) {
+            /*
+             * FIXME: questa viene chiamata da onCreateView, quindi quando si richiama il Fragment
+             *        avviene un errore di visualizzazione
+             */
             mPrev.setVisibility(View.GONE);
             mPrevText.setVisibility(View.GONE);
-        }
-        if (mViewModel.thereIsNext()) {
-            Log.d(TAG, "C'è un successivo");
-            mNext.setVisibility(View.VISIBLE);
-            mNextText.setVisibility(View.VISIBLE);
         } else {
-            Log.d(TAG, "Non c'è un successivo");
-            mNext.setVisibility(View.GONE);
-            mNextText.setVisibility(View.GONE);
+            if (mViewModel.thereIsPrev()) {
+                mPrev.setVisibility(View.VISIBLE);
+                mPrevText.setVisibility(View.VISIBLE);
+            } else {
+                mPrev.setVisibility(View.GONE);
+                mPrevText.setVisibility(View.GONE);
+            }
+            if (mViewModel.thereIsNext()) {
+                mNext.setVisibility(View.VISIBLE);
+                mNextText.setVisibility(View.VISIBLE);
+            } else {
+                mNext.setVisibility(View.GONE);
+                mNextText.setVisibility(View.GONE);
+            }
         }
     }
 }
