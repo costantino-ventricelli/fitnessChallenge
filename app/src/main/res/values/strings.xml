@@ -106,4 +106,8 @@
     <string name="set_timer">Set timer</string>
     <string name="cool_down">Cool down</string>
     <string name="my_workout">My workout</string>
+    <string name="breathe_in_rhythm">Breathe in rhythm</string>
+    <string name="time_in_seconds">Time in seconds</string>
+    <string name="remaining_time">Remaining time</string>
+    <string name="delete_timer">Delete timer</string>
 </resources>

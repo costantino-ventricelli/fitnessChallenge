@@ -10,6 +10,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -36,6 +38,8 @@ import it.fitnesschallenge.model.User;
 import it.fitnesschallenge.model.room.entity.Exercise;
 import it.fitnesschallenge.model.room.entity.PersonalExercise;
 import it.fitnesschallenge.model.view.PlayingWorkoutModelView;
+
+import static it.fitnesschallenge.model.SharedConstance.TIMER_FRAGMENT;
 
 
 public class PlayingWorkout extends Fragment {
@@ -108,6 +112,26 @@ public class PlayingWorkout extends Fragment {
                 getCurrentExercise(PREVIOUSLY);
             }
         });
+        stopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getSupportFragmentManager().popBackStackImmediate();
+            }
+        });
+
+        startTimer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Timer timer = new Timer();
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
+                        R.anim.enter_from_rigth, R.anim.exit_from_left)
+                        .replace(R.id.fragmentContainer, timer, TIMER_FRAGMENT)
+                        .addToBackStack(TIMER_FRAGMENT)
+                        .commit();
+            }
+        });
         return view;
     }
 
@@ -150,16 +174,18 @@ public class PlayingWorkout extends Fragment {
         }
 
         Log.d(TAG, "Indice esercizio successivo dopo l'aggiornamento: " + mViewModel.getNextIndex());
-        setNavigationButton(witch);
+        setNavigationButton();
         mViewModel.setCurrentExercise(mCurrentExercise);
         setUI(witch);
     }
 
     /**
      * SetUi contiene tutte le istruzioni necessarie a mostrare l'esercizio corrente all'utente
+     *
      * @param witch indica che tipo di operazione eseguire
      */
     private void setUI(final short witch) {
+        final int progress = 100 / mViewModel.getPersonalExerciseList().size();
         mViewModel.getExerciseInformation(mCurrentExercise).observe(getViewLifecycleOwner(), new Observer<Exercise>() {
             @Override
             public void onChanged(Exercise exercise) {
@@ -173,19 +199,11 @@ public class PlayingWorkout extends Fragment {
                  *       creare una classe che tenga in considerazione lo stato di svolgimento attuale
                  */
                 if (witch == NEXT || witch == INIT) {
-                    int currentProgress = mProgressBar.getProgress();
-                    Log.d(TAG, "Next or Init current progress: " + currentProgress);
-                    currentProgress += (100 /
-                            mViewModel.getPersonalExerciseList().size());
-                    mProgressValue.setText(NumberFormat.getInstance(Locale.getDefault()).format(currentProgress));
-                    mProgressBar.setProgress(currentProgress);
+                    mProgressValue.setText(NumberFormat.getInstance(Locale.getDefault()).format(progress * mViewModel.getNextIndex()));
+                    mProgressBar.setProgress(progress * mViewModel.getNextIndex());
                 } else if (witch == PREVIOUSLY) {
-                    int currentProgress = mProgressBar.getProgress();
-                    Log.d(TAG, "Previously current progress: " + currentProgress);
-                    currentProgress -= (100 /
-                            mViewModel.getPersonalExerciseList().size());
-                    mProgressValue.setText(NumberFormat.getInstance(Locale.getDefault()).format(currentProgress));
-                    mProgressBar.setProgress(currentProgress);
+                    mProgressValue.setText(NumberFormat.getInstance(Locale.getDefault()).format(progress * mViewModel.getPrevIndex()));
+                    mProgressBar.setProgress(progress * mViewModel.getPrevIndex());
                 }
             }
         });
@@ -194,32 +212,21 @@ public class PlayingWorkout extends Fragment {
     /**
      * Questo metodo consente di verificare quali tasti di navigazione mostrare all'utente
      * se l'esercizio è il primo allora mostrerà solo il pusante di successivo, e così via.
-     *
-     * @param witch indica che tipo di operazione stiamo eseguendo.
      */
-    private void setNavigationButton(int witch) {
-        if (witch == INIT) {
-            /*
-             * FIXME: questa viene chiamata da onCreateView, quindi quando si richiama il Fragment
-             *        avviene un errore di visualizzazione
-             */
+    private void setNavigationButton() {
+        if (mViewModel.thereIsPrev()) {
+            mPrev.setVisibility(View.VISIBLE);
+            mPrevText.setVisibility(View.VISIBLE);
+        } else {
             mPrev.setVisibility(View.GONE);
             mPrevText.setVisibility(View.GONE);
+        }
+        if (mViewModel.thereIsNext()) {
+            mNext.setVisibility(View.VISIBLE);
+            mNextText.setVisibility(View.VISIBLE);
         } else {
-            if (mViewModel.thereIsPrev()) {
-                mPrev.setVisibility(View.VISIBLE);
-                mPrevText.setVisibility(View.VISIBLE);
-            } else {
-                mPrev.setVisibility(View.GONE);
-                mPrevText.setVisibility(View.GONE);
-            }
-            if (mViewModel.thereIsNext()) {
-                mNext.setVisibility(View.VISIBLE);
-                mNextText.setVisibility(View.VISIBLE);
-            } else {
-                mNext.setVisibility(View.GONE);
-                mNextText.setVisibility(View.GONE);
-            }
+            mNext.setVisibility(View.GONE);
+            mNextText.setVisibility(View.GONE);
         }
     }
 }

@@ -22,7 +22,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 
 import it.fitnesschallenge.model.User;
 import it.fitnesschallenge.model.room.entity.Exercise;
@@ -175,13 +174,21 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
     }
 
     /**
-     * Questi due metodi sono principalmente per debug, per capire come di si sposta l'indice dell'
-     * iteratore
+     * Questo metodo resituisce l'indice successivo a quello attualmente puntato dall indice.
      *
      * @return ritorna l'indice successivo
      */
     public int getNextIndex() {
-        return mPersonalExerciseListIterator;
+        return mPersonalExerciseListIterator + 1;
+    }
+
+    /**
+     * Questo metodo restituisce l'indice precedente a quello attualmente puntato dall'indice.
+     *
+     * @return ritorna l'indice precendente
+     */
+    public int getPrevIndex() {
+        return mPersonalExerciseListIterator - 1;
     }
 
     /**
