@@ -89,7 +89,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin"
-        android:text="00:00"
+        android:text="@string/_00_00"
         android:textSize="@dimen/headline"
         app:layout_constraintEnd_toEndOf="@+id/timer_fragment_remaining_time_label"
         app:layout_constraintStart_toStartOf="@+id/timer_fragment_remaining_time_label"
