@@ -18,8 +18,10 @@ public class App extends Application {
         super.onCreate();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel serviceChannel = new NotificationChannel(
-                    CHANNEL_ID, "Timer", NotificationManager.IMPORTANCE_DEFAULT
+                    CHANNEL_ID, "Timer", NotificationManager.IMPORTANCE_HIGH
             );
+
+            serviceChannel.setSound(null, null);
 
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(serviceChannel);
