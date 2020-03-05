@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.util.Log;
@@ -11,7 +12,6 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.lifecycle.MutableLiveData;
 
 import java.util.Locale;
 
@@ -23,27 +23,26 @@ public class TimerService extends Service {
     private static final int NOTIFICATION_ID = 1;
 
     private long mTimeLeftInMillis;
+    private boolean isTimerRunning;
+    private final IBinder binder = new RunServiceBinder();
     private NotificationManagerCompat mNotificationCompactManager;
     private NotificationCompat.Builder mNotificationCompactBuilder;
     private Notification mNotification;
-    private MutableLiveData<Long> mRemainingTime;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        mRemainingTime = new MutableLiveData<>();
         Log.d(TAG, "Creo il service");
+        isTimerRunning = false;
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        Log.d(TAG, "Bind tra activity e service");
+        return binder;
     }
 
-    public MutableLiveData<Long> getRemainingTime() {
-        return mRemainingTime;
-    }
 
     @Override
     public int onStartCommand(final Intent intent, int flags, int startId) {
@@ -51,6 +50,7 @@ public class TimerService extends Service {
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
                 0, notificationIntent, 0);
         mTimeLeftInMillis = 5000;
+        isTimerRunning = true;
         mNotificationCompactManager = NotificationManagerCompat.from(this);
 
         mNotificationCompactBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
@@ -63,26 +63,38 @@ public class TimerService extends Service {
 
         startForeground(NOTIFICATION_ID, mNotification);
 
-        CountDownTimer countDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
+        new CountDownTimer(mTimeLeftInMillis, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 mTimeLeftInMillis = millisUntilFinished;
-                mRemainingTime.setValue(mTimeLeftInMillis);
-                int minutes = (int) (mTimeLeftInMillis / 1000) / 60;
-                int seconds = (int) (mTimeLeftInMillis / 1000) % 60;
-                mNotificationCompactBuilder.setContentText(String.format(
-                        Locale.getDefault(), "%02d:%02d", minutes, seconds
-                ));
+                mNotificationCompactBuilder.setContentText(getRemainingTimeInString());
                 mNotification = mNotificationCompactBuilder.build();
                 mNotificationCompactManager.notify(NOTIFICATION_ID, mNotification);
             }
 
             @Override
             public void onFinish() {
-                Log.d(TAG, "onFinish count down");
                 stopService(intent);
             }
         }.start();
-        return START_NOT_STICKY;
+        return START_STICKY;
+    }
+
+    public boolean isTimerRunning() {
+        return isTimerRunning;
+    }
+
+    public String getRemainingTimeInString() {
+        int minutes = (int) (mTimeLeftInMillis / 1000) / 60;
+        int seconds = (int) (mTimeLeftInMillis / 1000) % 60;
+        return String.format(
+                Locale.getDefault(), "%02d:%02d", minutes, seconds
+        );
+    }
+
+    public class RunServiceBinder extends Binder {
+        TimerService getService() {
+            return TimerService.this;
+        }
     }
 }
