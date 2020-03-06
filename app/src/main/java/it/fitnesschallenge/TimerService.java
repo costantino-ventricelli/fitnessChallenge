@@ -16,6 +16,8 @@ import androidx.core.app.NotificationManagerCompat;
 import java.util.Locale;
 
 import static it.fitnesschallenge.App.CHANNEL_ID;
+import static it.fitnesschallenge.model.SharedConstance.CONVERSION_SEC_IN_MILLIS;
+import static it.fitnesschallenge.model.SharedConstance.TIME_FOR_TIMER;
 
 public class TimerService extends Service {
 
@@ -28,6 +30,8 @@ public class TimerService extends Service {
     private NotificationManagerCompat mNotificationCompactManager;
     private NotificationCompat.Builder mNotificationCompactBuilder;
     private Notification mNotification;
+    private PendingIntent mPendingIntent;
+    private CountDownTimer mCountDownTimer;
 
     @Override
     public void onCreate() {
@@ -47,25 +51,18 @@ public class TimerService extends Service {
     @Override
     public int onStartCommand(final Intent intent, int flags, int startId) {
         Intent notificationIntent = new Intent(this, HomeActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,
+        mPendingIntent = PendingIntent.getActivity(this,
                 0, notificationIntent, 0);
-        mTimeLeftInMillis = 5000;
+        mTimeLeftInMillis = intent.getLongExtra(TIME_FOR_TIMER, 0);
+        return START_STICKY;
+    }
+
+    public void startTimer() {
         isTimerRunning = true;
-        mNotificationCompactManager = NotificationManagerCompat.from(this);
-
-        mNotificationCompactBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_timer)
-                .setContentTitle("Remaining time")
-                .setContentText("1:20");
-        mNotification = mNotificationCompactBuilder.build();
-
-        mNotificationCompactManager.notify(NOTIFICATION_ID, mNotification);
-
-        startForeground(NOTIFICATION_ID, mNotification);
-
-        new CountDownTimer(mTimeLeftInMillis, 1000) {
+        mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
+                Log.d(TAG, "Tempo rimanente: " + mTimeLeftInMillis);
                 mTimeLeftInMillis = millisUntilFinished;
                 mNotificationCompactBuilder.setContentText(getRemainingTimeInString());
                 mNotification = mNotificationCompactBuilder.build();
@@ -74,10 +71,34 @@ public class TimerService extends Service {
 
             @Override
             public void onFinish() {
-                stopService(intent);
+                stopSelf();
+                cancelNotify();
             }
         }.start();
-        return START_STICKY;
+    }
+
+    private void pauseTimer() {
+        if (mCountDownTimer != null)
+            mCountDownTimer.cancel();
+    }
+
+    public void createNotify() {
+        mNotificationCompactManager = NotificationManagerCompat.from(this);
+
+        mNotificationCompactBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_timer)
+                .setContentTitle("Remaining time")
+                .setContentText(getRemainingTimeInString())
+                .setContentIntent(mPendingIntent);
+        mNotification = mNotificationCompactBuilder.build();
+
+        mNotificationCompactManager.notify(NOTIFICATION_ID, mNotification);
+
+        startForeground(NOTIFICATION_ID, mNotification);
+    }
+
+    private void cancelNotify() {
+        mNotificationCompactManager.cancel(NOTIFICATION_ID);
     }
 
     public boolean isTimerRunning() {
@@ -85,14 +106,14 @@ public class TimerService extends Service {
     }
 
     public String getRemainingTimeInString() {
-        int minutes = (int) (mTimeLeftInMillis / 1000) / 60;
-        int seconds = (int) (mTimeLeftInMillis / 1000) % 60;
+        int minutes = (int) (mTimeLeftInMillis / CONVERSION_SEC_IN_MILLIS) / 60;
+        int seconds = (int) (mTimeLeftInMillis / CONVERSION_SEC_IN_MILLIS) % 60;
         return String.format(
                 Locale.getDefault(), "%02d:%02d", minutes, seconds
         );
     }
 
-    public class RunServiceBinder extends Binder {
+    class RunServiceBinder extends Binder {
         TimerService getService() {
             return TimerService.this;
         }
