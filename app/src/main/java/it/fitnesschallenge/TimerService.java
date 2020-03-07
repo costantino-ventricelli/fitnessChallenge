@@ -4,6 +4,9 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.CountDownTimer;
 import android.os.IBinder;
@@ -72,6 +75,10 @@ public class TimerService extends Service {
             @Override
             public void onFinish() {
                 stopSelf();
+                Uri defaultUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+                Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(),
+                        defaultUri);
+                ringtone.play();
                 cancelNotify();
             }
         }.start();

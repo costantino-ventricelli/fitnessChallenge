@@ -92,6 +92,7 @@ public class Timer extends Fragment {
         @Override
         public void onServiceDisconnected(ComponentName name) {
             Log.d(TAG, "Servizio scollegato");
+            //TODO: dopo aver scollegato il servizio richiamo handler per permettere di zittire il timer
             mServiceBound = false;
         }
     };
