@@ -25,6 +25,8 @@ import it.fitnesschallenge.model.room.entity.Exercise;
 import it.fitnesschallenge.model.room.FitnessChallengeRepository;
 import it.fitnesschallenge.model.room.entity.PersonalExercise;
 
+import static it.fitnesschallenge.model.SharedConstance.CONVERSION_SEC_IN_MILLIS;
+
 public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder>
         implements ItemTouchHelperCallBack.ItemTouchHelperContract {
 
@@ -129,7 +131,7 @@ public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder>
                 builder.append("/");
                 builder.append(NumberFormat.getInstance().format(personalExercise.getSteps()));
                 holder.mSetNumberTextView.setText(builder.toString());
-                holder.mCoolDown.setText(NumberFormat.getInstance(Locale.getDefault()).format(personalExercise.getCoolDown()));
+                holder.mCoolDown.setText(PersonalExercise.getCoolDownString(personalExercise.getCoolDown() * CONVERSION_SEC_IN_MILLIS));
                 holder.mCardView.setTag(exercise.getExerciseName());
                 if (personalExercise.isDeleted())
                     holder.mActionButton.setImageResource(R.drawable.ic_undo);

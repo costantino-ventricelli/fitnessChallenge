@@ -39,6 +39,7 @@ import it.fitnesschallenge.model.room.entity.Exercise;
 import it.fitnesschallenge.model.room.entity.PersonalExercise;
 import it.fitnesschallenge.model.view.PlayingWorkoutModelView;
 
+import static it.fitnesschallenge.model.SharedConstance.CONVERSION_SEC_IN_MILLIS;
 import static it.fitnesschallenge.model.SharedConstance.TIMER_FRAGMENT;
 
 
@@ -191,9 +192,7 @@ public class PlayingWorkout extends Fragment {
             public void onChanged(Exercise exercise) {
                 mExerciseTitle.setText(exercise.getExerciseName());
                 mExerciseImage.setImageResource(exercise.getImageReference());
-                mTimeTimer.setText(new StringBuilder().append(NumberFormat
-                        .getInstance(Locale.getDefault())
-                        .format(mCurrentExercise.getCoolDown())).append("''").toString());
+                mTimeTimer.setText(PersonalExercise.getCoolDownString(mCurrentExercise.getCoolDown() * CONVERSION_SEC_IN_MILLIS));
                 /*
                  * TODO: bisogna capire a che serie dell'esercizio ci troviamo, probabilmente dovremo
                  *       creare una classe che tenga in considerazione lo stato di svolgimento attuale

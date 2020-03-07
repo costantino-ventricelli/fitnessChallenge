@@ -24,6 +24,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.lang.ref.WeakReference;
 import java.util.Locale;
 
+import it.fitnesschallenge.model.room.entity.PersonalExercise;
 import it.fitnesschallenge.model.view.PlayingWorkoutModelView;
 
 import static it.fitnesschallenge.model.SharedConstance.CONVERSION_SEC_IN_MILLIS;
@@ -72,11 +73,23 @@ public class Timer extends Fragment {
         mStopPlayButton = view.findViewById(R.id.timer_play_pause);
         mTimeOfTimerInMillis = mViewModel.getCurrentExercise().getCoolDown() * CONVERSION_SEC_IN_MILLIS;
         Log.d(TAG, "Tempo per il timer ricevuto: " + mTimeOfTimerInMillis);
+
         if (mTimeOfTimerInMillis > 0)
             setRemainingTime();
         else
             mNewTimeTimer.setVisibility(View.VISIBLE);
         mUpdateTimeHandler.sendEmptyMessage(MSG_UPDATE_TIME);
+
+        mStopPlayButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mStopPlayButton.getContentDescription().equals(
+                        getContext().getString(R.string.stop_timer))) {
+                    Log.d(TAG, "Stop ringtone");
+                    mTimerService.stopRingtone();
+                }
+            }
+        });
         return view;
     }
 
@@ -104,13 +117,15 @@ public class Timer extends Fragment {
 
     private void updateTimerUi() {
         if (mTimerService != null)
-            mRemainingTime.setText(mTimerService.getRemainingTimeInString());
+            mRemainingTime.setText(PersonalExercise
+                    .getCoolDownString(mTimerService.getRemainingTime()));
     }
 
     private void stopTimerUi() {
         mStopPlayButton.setImageDrawable(getContext()
                 .getResources()
-                .getDrawable(R.drawable.ic_stop));
+                .getDrawable(R.drawable.ic_stop_48dp));
+        mStopPlayButton.setContentDescription(getString(R.string.stop_timer));
     }
 
     /**

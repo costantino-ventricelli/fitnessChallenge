@@ -18,6 +18,8 @@ import androidx.core.app.NotificationManagerCompat;
 
 import java.util.Locale;
 
+import it.fitnesschallenge.model.room.entity.PersonalExercise;
+
 import static it.fitnesschallenge.App.CHANNEL_ID;
 import static it.fitnesschallenge.model.SharedConstance.CONVERSION_SEC_IN_MILLIS;
 import static it.fitnesschallenge.model.SharedConstance.TIME_FOR_TIMER;
@@ -35,6 +37,7 @@ public class TimerService extends Service {
     private Notification mNotification;
     private PendingIntent mPendingIntent;
     private CountDownTimer mCountDownTimer;
+    private Ringtone mRingtone;
 
     @Override
     public void onCreate() {
@@ -67,7 +70,7 @@ public class TimerService extends Service {
             public void onTick(long millisUntilFinished) {
                 Log.d(TAG, "Tempo rimanente: " + mTimeLeftInMillis);
                 mTimeLeftInMillis = millisUntilFinished;
-                mNotificationCompactBuilder.setContentText(getRemainingTimeInString());
+                mNotificationCompactBuilder.setContentText(PersonalExercise.getCoolDownString(mTimeLeftInMillis));
                 mNotification = mNotificationCompactBuilder.build();
                 mNotificationCompactManager.notify(NOTIFICATION_ID, mNotification);
             }
@@ -75,18 +78,24 @@ public class TimerService extends Service {
             @Override
             public void onFinish() {
                 stopSelf();
+                Log.d(TAG, "Start ringtone");
                 Uri defaultUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-                Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(),
+                mRingtone = RingtoneManager.getRingtone(getApplicationContext(),
                         defaultUri);
-                ringtone.play();
+                mRingtone.play();
                 cancelNotify();
             }
         }.start();
     }
 
-    private void pauseTimer() {
+    public void pauseTimer() {
         if (mCountDownTimer != null)
             mCountDownTimer.cancel();
+    }
+
+    public void stopRingtone() {
+        if (mRingtone != null)
+            mRingtone.stop();
     }
 
     public void createNotify() {
@@ -95,7 +104,7 @@ public class TimerService extends Service {
         mNotificationCompactBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_timer)
                 .setContentTitle("Remaining time")
-                .setContentText(getRemainingTimeInString())
+                .setContentText(PersonalExercise.getCoolDownString(mTimeLeftInMillis))
                 .setContentIntent(mPendingIntent);
         mNotification = mNotificationCompactBuilder.build();
 
@@ -112,12 +121,8 @@ public class TimerService extends Service {
         return isTimerRunning;
     }
 
-    public String getRemainingTimeInString() {
-        int minutes = (int) (mTimeLeftInMillis / CONVERSION_SEC_IN_MILLIS) / 60;
-        int seconds = (int) (mTimeLeftInMillis / CONVERSION_SEC_IN_MILLIS) % 60;
-        return String.format(
-                Locale.getDefault(), "%02d:%02d", minutes, seconds
-        );
+    public long getRemainingTime() {
+        return mTimeLeftInMillis;
     }
 
     class RunServiceBinder extends Binder {

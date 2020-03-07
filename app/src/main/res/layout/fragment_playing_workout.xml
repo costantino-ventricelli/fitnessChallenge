@@ -30,7 +30,7 @@
         android:layout_centerHorizontal="true"
         android:elevation="10dp"
         app:cornerRadius="20dp"
-        app:icon="@drawable/ic_stop"
+        app:icon="@drawable/ic_stop_24dp"
         app:iconGravity="end"
         app:iconTint="@android:color/black" />
 

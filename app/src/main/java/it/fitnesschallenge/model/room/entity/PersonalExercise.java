@@ -11,6 +11,10 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import java.util.Locale;
+
+import static it.fitnesschallenge.model.SharedConstance.CONVERSION_SEC_IN_MILLIS;
+
 @Entity(tableName = "personal_exercise")
 public class PersonalExercise implements Parcelable {
 
@@ -81,6 +85,15 @@ public class PersonalExercise implements Parcelable {
 
     public void setPersonalExerciseId(int personalExerciseId) {
         this.personalExerciseId = personalExerciseId;
+    }
+
+    @Ignore
+    public static String getCoolDownString(long mTimeLeftInMillis) {
+        int minutes = (int) (mTimeLeftInMillis / CONVERSION_SEC_IN_MILLIS) / 60;
+        int seconds = (int) (mTimeLeftInMillis / CONVERSION_SEC_IN_MILLIS) % 60;
+        return String.format(
+                Locale.getDefault(), "%02d:%02d", minutes, seconds
+        );
     }
 
     public long getCoolDown() {
