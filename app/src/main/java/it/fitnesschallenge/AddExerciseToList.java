@@ -71,7 +71,7 @@ public class AddExerciseToList extends Fragment {
                 "\t mRecyclerView: " + (mRecyclerView == null ? "null" : mRecyclerView.toString()) + "\n" +
                 "\t mAddAdapter: " + (mAddAdapter == null ? "null" : mAddAdapter.toString()) + "\n" +
                 "\t mExerciseList: " + (mExerciseList == null ? "null" : mExerciseList.toString()) + "\n");
-        FloatingActionButton saveButton = view.findViewById(R.id.add_exercise_FAB);
+        FloatingActionButton saveButton = view.findViewById(R.id.save_button_FAB);
         mRecyclerView = view.findViewById(R.id.adding_exercise_list);
         mViewModel = ViewModelProviders.of(getActivity()).get(AddExerciseToListModel.class);
         /*

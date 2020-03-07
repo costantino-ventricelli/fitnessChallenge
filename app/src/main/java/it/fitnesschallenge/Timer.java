@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputLayout;
@@ -31,12 +32,14 @@ import static it.fitnesschallenge.model.SharedConstance.TIME_FOR_TIMER;
 public class Timer extends Fragment {
 
     private static final String TAG = "Timer";
-    private final static int MSG_UPDATE_TIME = 0;
+    private static final int MSG_UPDATE_TIME = 0;
+    private static final int MSG_TIMER_FINISH = 1;
 
     private long mTimeOfTimerInMillis;
     private PlayingWorkoutModelView mViewModel;
     private TextView mRemainingTime;
     private TextInputLayout mNewTimeTimer;
+    private ImageButton mStopPlayButton;
     private TimerService mTimerService;
     private boolean mServiceBound;
     private Handler mUpdateTimeHandler = new UIUpdateHandler(this);
@@ -66,6 +69,7 @@ public class Timer extends Fragment {
         mViewModel = ViewModelProviders.of(getActivity()).get(PlayingWorkoutModelView.class);
         mRemainingTime = view.findViewById(R.id.timer_fragment_remaining_time);
         mNewTimeTimer = view.findViewById(R.id.timer_fragment_new_timer);
+        mStopPlayButton = view.findViewById(R.id.timer_play_pause);
         mTimeOfTimerInMillis = mViewModel.getCurrentExercise().getCoolDown() * CONVERSION_SEC_IN_MILLIS;
         Log.d(TAG, "Tempo per il timer ricevuto: " + mTimeOfTimerInMillis);
         if (mTimeOfTimerInMillis > 0)
@@ -93,6 +97,7 @@ public class Timer extends Fragment {
         public void onServiceDisconnected(ComponentName name) {
             Log.d(TAG, "Servizio scollegato");
             //TODO: dopo aver scollegato il servizio richiamo handler per permettere di zittire il timer
+            mUpdateTimeHandler.sendEmptyMessage(MSG_TIMER_FINISH);
             mServiceBound = false;
         }
     };
@@ -100,6 +105,12 @@ public class Timer extends Fragment {
     private void updateTimerUi() {
         if (mTimerService != null)
             mRemainingTime.setText(mTimerService.getRemainingTimeInString());
+    }
+
+    private void stopTimerUi() {
+        mStopPlayButton.setImageDrawable(getContext()
+                .getResources()
+                .getDrawable(R.drawable.ic_stop));
     }
 
     /**
@@ -119,6 +130,9 @@ public class Timer extends Fragment {
             if (MSG_UPDATE_TIME == message.what) {
                 reference.get().updateTimerUi();
                 sendEmptyMessageDelayed(MSG_UPDATE_TIME, UPDATE_RATE_MS);
+            } else if (MSG_TIMER_FINISH == message.what) {
+                reference.get().stopTimerUi();
+                sendEmptyMessage(MSG_TIMER_FINISH);
             }
         }
     }
