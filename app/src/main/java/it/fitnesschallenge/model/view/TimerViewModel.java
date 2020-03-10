@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 
 import androidx.lifecycle.AndroidViewModel;
 
-import it.fitnesschallenge.TimerService;
+import it.fitnesschallenge.service.TimerService;
 
 public class TimerViewModel extends AndroidViewModel {
 

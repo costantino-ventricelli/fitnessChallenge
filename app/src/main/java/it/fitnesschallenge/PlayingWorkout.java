@@ -66,6 +66,7 @@ public class PlayingWorkout extends Fragment {
     private FirebaseUser mFireStoreUser;
     private FirebaseAuth mAuth;
     private FirebaseFirestore mDatabase;
+    private Timer mTimer;
 
     public PlayingWorkout() {
         // Required empty public constructor
@@ -123,12 +124,12 @@ public class PlayingWorkout extends Fragment {
         startTimer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Timer timer = new Timer();
+                mTimer = new Timer();
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
                         R.anim.enter_from_rigth, R.anim.exit_from_left)
-                        .replace(R.id.fragmentContainer, timer, TIMER_FRAGMENT)
+                        .replace(R.id.fragmentContainer, mTimer, TIMER_FRAGMENT)
                         .addToBackStack(TIMER_FRAGMENT)
                         .commit();
             }

@@ -2,7 +2,7 @@
  * Questa classe è il Service in se, contiene il timer e i metodi per gestire la notifica di foreground
  * qui si crea il collegamento con il fragment e di conseguenza con l'handler che gestisce la UI.
  */
-package it.fitnesschallenge;
+package it.fitnesschallenge.service;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -21,6 +21,8 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 
+import it.fitnesschallenge.HomeActivity;
+import it.fitnesschallenge.R;
 import it.fitnesschallenge.model.room.entity.PersonalExercise;
 
 import static it.fitnesschallenge.App.CHANNEL_ID;
@@ -30,6 +32,7 @@ public class TimerService extends Service {
 
     private static final String TAG = "TimerService";
     private static final int NOTIFICATION_ID = 1;
+    private static final String ACTION_STOP_SERVICE = "actionStopService";
 
     private long mTimeLeftInMillis;
     private final IBinder binder = new RunServiceBinder();
@@ -40,10 +43,16 @@ public class TimerService extends Service {
     private CountDownTimer mCountDownTimer;
     private Intent thisService;
     private Ringtone mRingtone;
+    private boolean mTimerIsFinish;
+    private boolean mTimerIsStopped;
+    private boolean mTimerIsRunning;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        mTimerIsFinish = false;
+        mTimerIsStopped = false;
+        mTimerIsRunning = false;
         Log.d(TAG, "Creo il service");
     }
 
@@ -70,6 +79,8 @@ public class TimerService extends Service {
      */
     @Override
     public int onStartCommand(final Intent intent, int flags, int startId) {
+        if (ACTION_STOP_SERVICE.equals(intent.getAction()))
+            cancelTimer();
         Intent notificationIntent = new Intent(this, HomeActivity.class);
         mPendingIntent = PendingIntent.getActivity(this,
                 0, notificationIntent, 0);
@@ -87,7 +98,7 @@ public class TimerService extends Service {
         mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                Log.d(TAG, "Tempo rimanente: " + mTimeLeftInMillis);
+                mTimerIsRunning = true;
                 mTimeLeftInMillis = millisUntilFinished;
                 //NotificationCompactBuilder permette di modificare la notifica senza distruggerla.
                 mNotificationCompactBuilder.setContentText(PersonalExercise.getCoolDownString(mTimeLeftInMillis));
@@ -111,6 +122,9 @@ public class TimerService extends Service {
                         defaultUri);
                 mRingtone.play();
                 stopSelf();
+                cancelNotify();
+                mTimerIsFinish = true;
+                mTimerIsRunning = false;
             }
         }.start();
     }
@@ -123,6 +137,7 @@ public class TimerService extends Service {
     public long pauseTimer() {
         if (mCountDownTimer != null)
             mCountDownTimer.cancel();
+        mTimerIsRunning = false;
         return mTimeLeftInMillis;
     }
 
@@ -138,10 +153,25 @@ public class TimerService extends Service {
      * Cancella il timer.
      */
     public void cancelTimer() {
+        stopRingtone();
         if (mCountDownTimer != null)
             mCountDownTimer.cancel();
+        mTimerIsRunning = false;
+        mTimerIsStopped = true;
         cancelNotify();
         stopSelf();
+    }
+
+    public boolean isTimerFinish() {
+        return mTimerIsFinish;
+    }
+
+    public boolean isTimerStopped() {
+        return mTimerIsStopped;
+    }
+
+    public boolean isTimerRunning() {
+        return mTimerIsRunning;
     }
 
     /**
@@ -150,16 +180,20 @@ public class TimerService extends Service {
      * dal SO quando viene premuto il pulsante sulla notifica.
      */
     public void createNotify() {
+        Intent stopIntent = new Intent(this, TimerService.class);
+        stopIntent.setAction(ACTION_STOP_SERVICE);
+
+        PendingIntent stopPendingIntent = PendingIntent.getService(this,
+                0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         mNotificationCompactManager = NotificationManagerCompat.from(this);
 
-        /*
-         * TODO: introdurre i bottoni sulla notifica con i relativi broadcast reciver.
-         * {@link = "https://www.youtube.com/watch?v=CZ575BuLBo4"}
-         */
         mNotificationCompactBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_timer)
-                .setContentTitle("Remaining time")
+                .setContentTitle(getString(R.string.remaining_time))
                 .setContentText(PersonalExercise.getCoolDownString(mTimeLeftInMillis))
+                .addAction(R.drawable.ic_stop_24dp,
+                        getString(R.string.stop_timer),
+                        stopPendingIntent)
                 .setContentIntent(mPendingIntent);
         mNotification = mNotificationCompactBuilder.build();
 
@@ -167,6 +201,7 @@ public class TimerService extends Service {
 
         startForeground(NOTIFICATION_ID, mNotification);
     }
+
 
     /**
      * Cancella la notifica.
@@ -196,8 +231,8 @@ public class TimerService extends Service {
     /**
      * Questa classe implementa il binder tra Service e Chiamante.
      */
-    class RunServiceBinder extends Binder {
-        TimerService getService() {
+    public class RunServiceBinder extends Binder {
+        public TimerService getService() {
             return TimerService.this;
         }
     }

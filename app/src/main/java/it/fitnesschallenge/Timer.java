@@ -13,7 +13,6 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -35,6 +34,7 @@ import java.lang.ref.WeakReference;
 import it.fitnesschallenge.model.room.entity.PersonalExercise;
 import it.fitnesschallenge.model.view.PlayingWorkoutModelView;
 import it.fitnesschallenge.model.view.TimerViewModel;
+import it.fitnesschallenge.service.TimerService;
 
 import static it.fitnesschallenge.model.SharedConstance.CONVERSION_SEC_IN_MILLIS;
 import static it.fitnesschallenge.model.SharedConstance.TIME_FOR_TIMER;
@@ -64,6 +64,7 @@ public class Timer extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         /*
+         * TODO: Aggiungere controllo su tempo inizialmente inserito
          * {@link = https://gist.github.com/mjohnsullivan/403149218ecb480e7759}
          */
         View view = inflater.inflate(R.layout.fragment_timer, container, false);
@@ -81,7 +82,6 @@ public class Timer extends Fragment {
             setRemainingTime();
         else
             mNewTimeTimer.setVisibility(View.VISIBLE);
-        mUpdateTimeHandler.sendEmptyMessage(MSG_UPDATE_TIME);
 
         mStopPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,24 +113,9 @@ public class Timer extends Fragment {
             @Override
             public void onClick(View v) {
                 mTimerService.cancelTimer();
-                mTimerService = null;
-                getActivity().getSupportFragmentManager().popBackStackImmediate();
             }
         });
         return view;
-    }
-
-    /**
-     * Questo override permette di verificare che se il Service è già legato al fragment così da non
-     * crearne un altro.
-     */
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null) {
-            Log.d(TAG, "Prelevo il precendente stato");
-            mServiceBound = savedInstanceState.getBoolean("IS_SERVICE_BOUND");
-        }
     }
 
     /**
@@ -171,22 +156,28 @@ public class Timer extends Fragment {
                     Log.d(TAG, "Timer precendete inesistente");
                     TimerService.RunServiceBinder binder = (TimerService.RunServiceBinder) service;
                     mTimerService = binder.getService();
-                    /*
-                     * Qui verifichiamo che il tempo passato al timer sia effettivamente un tempo
-                     * corretto in millisecondi.
-                     */
-                    if (mTimeOfTimerInMillis > 0) {
+                } else {
+                    Log.d(TAG, "Recupero timer precendente");
+                    mTimerService = mTimerViewModel.getTimerService();
+                }
+                /*
+                 * Qui verifichiamo che il tempo passato al timer sia effettivamente un tempo
+                 * corretto in millisecondi.
+                 */
+                if (mTimeOfTimerInMillis > 0) {
+                    if (!mTimerService.isTimerRunning()) {
+                        Log.d(TAG, "Nessun timer in count down");
                         mTimerService.startTimer();
                         mTimerService.createNotify();
-                        mStopPlayButton.setImageDrawable(
-                                getContext()
-                                        .getResources()
-                                        .getDrawable(R.drawable.ic_pause_circle_filled));
-                        mStopPlayButton.setContentDescription(getString(R.string.pause_timer));
                     }
+                    mStopPlayButton.setImageDrawable(
+                            getContext()
+                                    .getResources()
+                                    .getDrawable(R.drawable.ic_pause_circle_filled));
+                    mStopPlayButton.setContentDescription(getString(R.string.pause_timer));
                     mServiceBound = true;
-                } else
-                    mTimerService = mTimerViewModel.getTimerService();
+                    mUpdateTimeHandler.sendEmptyMessage(MSG_UPDATE_TIME);
+                }
             }
 
             @Override
@@ -249,16 +240,26 @@ public class Timer extends Fragment {
          * MSG_UPDATE_TIME: viene richiamato ogni tick del timer
          * MSG_TIMER_FINISH: viene richiamato quando il cont down è terminato e bisogna impostare la
          * UI in modo da interromperre la "suoneria" di feedback.
-         * @param message
+         *
+         * @param message Il messaggio che deve essere valutato.
          */
         @Override
         public void handleMessage(@NonNull Message message) {
-            if (MSG_UPDATE_TIME == message.what) {
+            if (MSG_UPDATE_TIME == message.what && reference.get() != null) {
+                Log.d(TAG, "Update message.");
                 reference.get().updateTimerUi();
-                sendEmptyMessageDelayed(MSG_UPDATE_TIME, UPDATE_RATE_MS);
-            } else if (MSG_TIMER_FINISH == message.what) {
-                reference.get().stopTimerUi();
-                sendEmptyMessage(MSG_TIMER_FINISH);
+                if (reference.get().mTimerService.isTimerRunning())
+                    sendEmptyMessageDelayed(MSG_UPDATE_TIME, UPDATE_RATE_MS);
+            } else if (MSG_TIMER_FINISH == message.what && reference.get() != null) {
+                if (reference.get().mTimerService.isTimerFinish()) {
+                    Log.d(TAG, "Finish message.");
+                    reference.get().stopTimerUi();
+                } else if (reference.get().mTimerService.isTimerStopped()) {
+                    Log.d(TAG, "Stop message.");
+                    reference.get().mTimerService = null;
+                    reference.get().getActivity().getSupportFragmentManager().popBackStackImmediate();
+                    reference.clear();
+                }
             }
         }
     }
@@ -274,9 +275,10 @@ public class Timer extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        Log.d(TAG, "Chiamato onPause");
+        Log.d(TAG, "Salvo il timer: " + mTimerService);
         mTimerViewModel.setTimerService(mTimerService);
         getActivity().unbindService(mConnection);
         mServiceBound = false;
+        mTimerViewModel.setServiceBound(mServiceBound);
     }
 }
