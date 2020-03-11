@@ -7,7 +7,9 @@
  */
 package it.fitnesschallenge;
 
+import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -26,6 +28,8 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
@@ -73,15 +77,23 @@ public class Timer extends Fragment {
         PlayingWorkoutModelView mViewModel = ViewModelProviders.of(getActivity()).get(PlayingWorkoutModelView.class);
         mTimerViewModel = ViewModelProviders.of(getActivity()).get(TimerViewModel.class);
         mRemainingTime = view.findViewById(R.id.timer_fragment_remaining_time);
-        mNewTimeTimer = view.findViewById(R.id.timer_fragment_new_timer);
         mStopPlayButton = view.findViewById(R.id.timer_play_pause);
-        mTimeOfTimerInMillis = mViewModel.getCurrentExercise().getCoolDown() * CONVERSION_SEC_IN_MILLIS;
-        Log.d(TAG, "Tempo per il timer ricevuto: " + mTimeOfTimerInMillis);
-
-        if (mTimeOfTimerInMillis > 0)
+        try {
+            mTimeOfTimerInMillis = mViewModel.getCurrentExercise().getCoolDown() * CONVERSION_SEC_IN_MILLIS;
+            Log.d(TAG, "Tempo per il timer ricevuto: " + mTimeOfTimerInMillis);
             setRemainingTime();
-        else
-            mNewTimeTimer.setVisibility(View.VISIBLE);
+        } catch (NullPointerException ex) {
+            MaterialAlertDialogBuilder materialAlertDialogBuilder = new MaterialAlertDialogBuilder(getContext())
+                    .setTitle("ERROR")
+                    .setMessage("You are not executing any exercise, timer can't start in this condition")
+                    .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            getActivity().getSupportFragmentManager().popBackStackImmediate();
+                        }
+                    });
+            materialAlertDialogBuilder.show();
+        }
 
         mStopPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,11 +112,14 @@ public class Timer extends Fragment {
                     mStopPlayButton.setContentDescription(getString(R.string.play_timer));
                 } else if (mStopPlayButton.getContentDescription().equals(
                         getContext().getString(R.string.play_timer))) {
-                    mTimerService.startTimer();
-                    mStopPlayButton.setImageResource(R.drawable.ic_pause_circle_filled);
-                    mStopPlayButton.setContentDescription(
-                            getContext().getString(R.string.pause_timer)
-                    );
+                    if (checkNewTimerInsert()) {
+                        mNewTimeTimer.setVisibility(View.GONE);
+                        mTimerService.startTimer();
+                        mStopPlayButton.setImageResource(R.drawable.ic_pause_circle_filled);
+                        mStopPlayButton.setContentDescription(
+                                getContext().getString(R.string.pause_timer)
+                        );
+                    }
                 }
             }
         });
@@ -128,12 +143,36 @@ public class Timer extends Fragment {
         Log.d(TAG, "Avvio fragment e servizio connesso");
         mConnection = createConnection();
         if (!mTimerViewModel.isServiceBound()) {
+            createService();
+        }
+    }
+
+    private void createService() {
+        if (mTimeOfTimerInMillis > 0) {
             Log.d(TAG, "Creo nuovo intent");
+            Log.d(TAG, "Tempo inserito in millis: " + mTimeOfTimerInMillis);
             Intent serviceIntent = new Intent(getContext(), TimerService.class);
             serviceIntent.putExtra(TIME_FOR_TIMER, mTimeOfTimerInMillis);
             getActivity().startService(serviceIntent);
             getActivity().bindService(serviceIntent, mConnection, 0);
         }
+    }
+
+    /**
+     * Questo metodo verifica che sia stato inserito in long come tempo per il timer in secondi.
+     */
+    private boolean checkNewTimerInsert() {
+        if (mNewTimeTimer.getVisibility() == View.VISIBLE) {
+            try {
+                mTimeOfTimerInMillis = Long.parseLong(mNewTimeTimer.getEditText().getText().toString().trim());
+                createService();
+                return true;
+            } catch (NumberFormatException ex) {
+                Snackbar.make(getView(), "Insert a valid number of seconds for the timer", Snackbar.LENGTH_LONG).show();
+                return false;
+            }
+        } else
+            return true;
     }
 
     /**
@@ -143,6 +182,7 @@ public class Timer extends Fragment {
      * @return ritorna l'istanza della connessione
      */
     private ServiceConnection createConnection() {
+        Log.d(TAG, "createConnection");
         return new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
@@ -277,7 +317,11 @@ public class Timer extends Fragment {
         super.onPause();
         Log.d(TAG, "Salvo il timer: " + mTimerService);
         mTimerViewModel.setTimerService(mTimerService);
-        getActivity().unbindService(mConnection);
+        try {
+            getActivity().unbindService(mConnection);
+        } catch (IllegalArgumentException ex) {
+            Log.d(TAG, "Eccezione sollevata, nessun servizio collegato");
+        }
         mServiceBound = false;
         mTimerViewModel.setServiceBound(mServiceBound);
     }

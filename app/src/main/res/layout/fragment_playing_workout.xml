@@ -74,12 +74,12 @@
                     android:id="@+id/next_exercise"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
                     android:layout_marginEnd="@dimen/margin"
                     android:layout_marginBottom="@dimen/small_distance"
                     android:backgroundTint="@android:color/transparent"
                     android:contentDescription="@string/next_exercise"
                     android:src="@drawable/ic_keyboard_arrow_right"
-                    android:layout_marginTop="4dp"
                     app:layout_constraintBottom_toTopOf="@+id/next_exercise_label"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/playing_workout_last_time_label" />

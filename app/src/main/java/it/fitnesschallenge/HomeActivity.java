@@ -9,11 +9,16 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -26,6 +31,7 @@ import it.fitnesschallenge.model.view.HomeViewModel;
 
 import static it.fitnesschallenge.model.SharedConstance.HOME_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.LAST_FRAGMENT;
+import static it.fitnesschallenge.model.SharedConstance.TIMER_FRAGMENT;
 
 
 public class HomeActivity extends AppCompatActivity{
@@ -52,6 +58,7 @@ public class HomeActivity extends AppCompatActivity{
             }
         });
         mBottomNavigation = findViewById(R.id.bottom_navigation);
+        mBottomNavigation.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
         mBackButton = findViewById(R.id.btn_back);
         mBackButton.setVisibility(View.GONE);
         mContext = this;
@@ -88,6 +95,50 @@ public class HomeActivity extends AppCompatActivity{
             }
         });
     }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener = new
+            BottomNavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                    Fragment selectedFragment = null;
+                    String selectedFragmentTag = null;
+                    FragmentManager manager = getSupportFragmentManager();
+                    FragmentTransaction transaction;
+                    transaction = manager.beginTransaction();
+                    transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
+                            R.anim.enter_from_rigth, R.anim.exit_from_left);
+                    switch (item.getItemId()) {
+                        case R.id.navigation_home:
+                            selectedFragment = new Home();
+                            selectedFragmentTag = HOME_FRAGMENT;
+                            break;
+                        case R.id.navigation_timer:
+                            selectedFragment = new Timer();
+                            selectedFragmentTag = TIMER_FRAGMENT;
+                            break;
+                        case R.id.navigation_profile:
+                            //empty for now
+                            break;
+                        case R.id.navigation_settings:
+                            //empty for now
+                            break;
+                    }
+                    try {
+                        if (!manager.findFragmentById(R.id.fragmentContainer).getTag().equals(selectedFragmentTag)) {
+                            Log.d(TAG, "Niente da modificare, si sta cercando di invocare lo stesso fragment");
+                            transaction.replace(R.id.fragmentContainer, selectedFragment, selectedFragmentTag)
+                                    .addToBackStack(selectedFragmentTag)
+                                    .commit();
+                            setCurrentFragment(selectedFragmentTag);
+                        }
+                    } catch (NullPointerException ex) {
+                        //FIXME: probabilmente c'è un modo per non far scattare questa eccezione
+                        Log.d(TAG, "Primo avvio dell'applicazione, nessun fragment impostato");
+                    }
+                    return true;
+                }
+            };
+
 
     public static void setCurrentFragment(String currentFragment) {
         Log.d(TAG, "SetCurrentFragment on: " + currentFragment);
