@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 import it.fitnesschallenge.model.room.dao.ExerciseDAO;
+import it.fitnesschallenge.model.room.dao.ExerciseExecutionDAO;
 import it.fitnesschallenge.model.room.dao.PersonalExerciseDAO;
 import it.fitnesschallenge.model.room.dao.PersonalExerciseWorkoutCrossReferenceDAO;
 import it.fitnesschallenge.model.room.dao.WorkoutDAO;
@@ -23,6 +24,7 @@ import it.fitnesschallenge.model.room.entity.Exercise;
 import it.fitnesschallenge.model.room.entity.PersonalExercise;
 import it.fitnesschallenge.model.room.entity.PersonalExerciseWorkoutCrossReference;
 import it.fitnesschallenge.model.room.entity.Workout;
+import it.fitnesschallenge.model.room.entity.reference.PersonalExerciseWithExecution;
 import it.fitnesschallenge.model.room.entity.reference.WorkoutWithExercise;
 
 public class FitnessChallengeRepository {
@@ -33,11 +35,13 @@ public class FitnessChallengeRepository {
     private WorkoutDAO workoutDAO;
     private WorkoutWithExerciseDAO workoutWithExerciseDAO;
     private PersonalExerciseDAO personalExerciseDAO;
+    private ExerciseExecutionDAO exerciseExecutionDAO;
     private PersonalExerciseWorkoutCrossReferenceDAO personalExerciseWorkoutCrossReferenceDAO;
     private LiveData<List<Exercise>> listExercise;
     private LiveData<WorkoutWithExercise> workoutWithExerciseList;
     private LiveData<Workout> workoutLiveData;
     private LiveData<List<Workout>> workoutList;
+    private LiveData<PersonalExerciseWithExecution> personalExerciseWithExecution;
 
     public FitnessChallengeRepository(Application application){
         FitnessChallengeDatabase database = FitnessChallengeDatabase.getInstance(application);
@@ -45,7 +49,8 @@ public class FitnessChallengeRepository {
         workoutWithExerciseDAO = database.getWorkoutWithExerciseDAO();
         workoutDAO = database.getWorkoutDAO();
         personalExerciseDAO = database.getPersonalExerciseDAO();
-        personalExerciseWorkoutCrossReferenceDAO = database.getPersonalExerciseWorkoutCrossRederenceDAO();
+        personalExerciseWorkoutCrossReferenceDAO = database.getPersonalExerciseWorkoutCrossReferenceDAO();
+        exerciseExecutionDAO = database.getExerciseExecutionDAO();
         workoutWithExerciseList = new MutableLiveData<>();
     }
 
@@ -80,6 +85,10 @@ public class FitnessChallengeRepository {
     public LiveData<Long> getWorkoutIdWithStartDate(Date date) {
         Log.d(TAG, "Start date: " + date.toString());
         return workoutDAO.getWorkoutStartDate(date);
+    }
+
+    public LiveData<PersonalExerciseWithExecution> getLastExecutionExecution(long personalExerciseId) {
+        return exerciseExecutionDAO.selectLastExerciseExecution(personalExerciseId);
     }
 
     public long insertWorkoutWithExercise(WorkoutWithExercise workoutWithExercise) {

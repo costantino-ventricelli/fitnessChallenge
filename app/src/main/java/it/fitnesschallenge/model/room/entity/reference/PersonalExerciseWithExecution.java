@@ -5,6 +5,7 @@ import androidx.room.Relation;
 
 import java.util.List;
 
+import it.fitnesschallenge.model.room.entity.ExerciseExecution;
 import it.fitnesschallenge.model.room.entity.PersonalExercise;
 
 public class PersonalExerciseWithExecution {
@@ -13,7 +14,7 @@ public class PersonalExerciseWithExecution {
     private PersonalExercise personalExercise;
     @Relation(parentColumn = "exercise_id",
             entityColumn = "exercise_id")
-    private List<PersonalExercise> personalExerciseList;
+    private List<ExerciseExecution> personalExerciseList;
 
     public PersonalExercise getPersonalExercise() {
         return personalExercise;
@@ -23,11 +24,11 @@ public class PersonalExerciseWithExecution {
         this.personalExercise = personalExercise;
     }
 
-    public List<PersonalExercise> getPersonalExerciseList() {
+    public List<ExerciseExecution> getPersonalExerciseList() {
         return personalExerciseList;
     }
 
-    public void setPersonalExerciseList(List<PersonalExercise> personalExerciseList) {
+    public void setPersonalExerciseList(List<ExerciseExecution> personalExerciseList) {
         this.personalExerciseList = personalExerciseList;
     }
 }

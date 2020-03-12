@@ -100,6 +100,10 @@ public class Timer extends Fragment {
             public void onClick(View v) {
                 if (mStopPlayButton.getContentDescription().equals(
                         getContext().getString(R.string.stop_timer))) {
+                    /*
+                     * Se il bottone si trova in questo stato, ovvero quello di permettere lo stop
+                     * del timer, avvia tutte le procedure affinchè il servizio venga chiuso.
+                     */
                     Log.d(TAG, "Stop ringtone");
                     mTimerService.stopRingtone();
                     mTimerService.cancelTimer();
@@ -107,22 +111,26 @@ public class Timer extends Fragment {
                     getActivity().getSupportFragmentManager().popBackStackImmediate();
                 } else if (mStopPlayButton.getContentDescription().equals(
                         getContext().getString(R.string.pause_timer))) {
+                    /*
+                     * In questo stato il bottone permette di mettere in pausa il timer
+                     */
                     mTimeOfTimerInMillis = mTimerService.pauseTimer();
                     mStopPlayButton.setImageResource(R.drawable.ic_play_circle_filled);
                     mStopPlayButton.setContentDescription(getString(R.string.play_timer));
                 } else if (mStopPlayButton.getContentDescription().equals(
                         getContext().getString(R.string.play_timer))) {
-                    if (checkNewTimerInsert()) {
-                        mNewTimeTimer.setVisibility(View.GONE);
-                        mTimerService.startTimer();
-                        mStopPlayButton.setImageResource(R.drawable.ic_pause_circle_filled);
-                        mStopPlayButton.setContentDescription(
-                                getContext().getString(R.string.pause_timer)
-                        );
-                    }
+                    /*
+                     * In questo stato il bottone permette di avviare il timer.
+                     */
+                    mTimerService.startTimer();
+                    mStopPlayButton.setImageResource(R.drawable.ic_pause_circle_filled);
+                    mStopPlayButton.setContentDescription(
+                            getContext().getString(R.string.pause_timer)
+                    );
                 }
             }
         });
+
 
         deleteTimer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,36 +151,15 @@ public class Timer extends Fragment {
         Log.d(TAG, "Avvio fragment e servizio connesso");
         mConnection = createConnection();
         if (!mTimerViewModel.isServiceBound()) {
-            createService();
-        }
-    }
-
-    private void createService() {
-        if (mTimeOfTimerInMillis > 0) {
-            Log.d(TAG, "Creo nuovo intent");
-            Log.d(TAG, "Tempo inserito in millis: " + mTimeOfTimerInMillis);
-            Intent serviceIntent = new Intent(getContext(), TimerService.class);
-            serviceIntent.putExtra(TIME_FOR_TIMER, mTimeOfTimerInMillis);
-            getActivity().startService(serviceIntent);
-            getActivity().bindService(serviceIntent, mConnection, 0);
-        }
-    }
-
-    /**
-     * Questo metodo verifica che sia stato inserito in long come tempo per il timer in secondi.
-     */
-    private boolean checkNewTimerInsert() {
-        if (mNewTimeTimer.getVisibility() == View.VISIBLE) {
-            try {
-                mTimeOfTimerInMillis = Long.parseLong(mNewTimeTimer.getEditText().getText().toString().trim());
-                createService();
-                return true;
-            } catch (NumberFormatException ex) {
-                Snackbar.make(getView(), "Insert a valid number of seconds for the timer", Snackbar.LENGTH_LONG).show();
-                return false;
+            if (mTimeOfTimerInMillis > 0) {
+                Log.d(TAG, "Creo nuovo intent");
+                Log.d(TAG, "Tempo inserito in millis: " + mTimeOfTimerInMillis);
+                Intent serviceIntent = new Intent(getContext(), TimerService.class);
+                serviceIntent.putExtra(TIME_FOR_TIMER, mTimeOfTimerInMillis);
+                getActivity().startService(serviceIntent);
+                getActivity().bindService(serviceIntent, mConnection, 0);
             }
-        } else
-            return true;
+        }
     }
 
     /**
@@ -205,17 +192,31 @@ public class Timer extends Fragment {
                  * corretto in millisecondi.
                  */
                 if (mTimeOfTimerInMillis > 0) {
+                    /*
+                     * Prima di avviare un qualsiasi timer verifico che non ci siano altri timer attivi.
+                     */
                     if (!mTimerService.isTimerRunning()) {
                         Log.d(TAG, "Nessun timer in count down");
                         mTimerService.startTimer();
                         mTimerService.createNotify();
                     }
+                    /*
+                     * Dopo aver avviato il timer cambio lo stato del bottone StopPlay, permettendo la
+                     * messa in pausa del timer.
+                     */
                     mStopPlayButton.setImageDrawable(
                             getContext()
                                     .getResources()
                                     .getDrawable(R.drawable.ic_pause_circle_filled));
                     mStopPlayButton.setContentDescription(getString(R.string.pause_timer));
+                    /*
+                     * Qui indico che il service e il Fragment sono connessi tra loro.
+                     */
                     mServiceBound = true;
+                    /*
+                     * Questo comando invia un messaggio all'handler, che iniza ad aggiornare la View
+                     * scalando il tempo residuo.
+                     */
                     mUpdateTimeHandler.sendEmptyMessage(MSG_UPDATE_TIME);
                 }
             }
@@ -289,6 +290,11 @@ public class Timer extends Fragment {
                 Log.d(TAG, "Update message.");
                 reference.get().updateTimerUi();
                 if (reference.get().mTimerService.isTimerRunning())
+                    /*
+                     * Questo comando innesca una ricorsività che però viene ritardata di 1000 ms,
+                     * e quindi permette di aggiornare la UI ogni secondo, la ricorsività è eseguita
+                     * fintanto che il timer sta scorrendo, altrimenti si blocca.
+                     */
                     sendEmptyMessageDelayed(MSG_UPDATE_TIME, UPDATE_RATE_MS);
             } else if (MSG_TIMER_FINISH == message.what && reference.get() != null) {
                 if (reference.get().mTimerService.isTimerFinish()) {

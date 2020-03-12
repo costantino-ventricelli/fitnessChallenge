@@ -20,18 +20,21 @@ import java.util.List;
 
 import it.fitnesschallenge.R;
 import it.fitnesschallenge.model.ExerciseList;
+import it.fitnesschallenge.model.room.dao.ExerciseExecutionDAO;
 import it.fitnesschallenge.model.room.dao.WorkoutDAO;
 import it.fitnesschallenge.model.room.dao.ExerciseDAO;
 import it.fitnesschallenge.model.room.dao.PersonalExerciseDAO;
 import it.fitnesschallenge.model.room.dao.PersonalExerciseWorkoutCrossReferenceDAO;
 import it.fitnesschallenge.model.room.dao.WorkoutWithExerciseDAO;
 import it.fitnesschallenge.model.room.entity.Exercise;
+import it.fitnesschallenge.model.room.entity.ExerciseExecution;
 import it.fitnesschallenge.model.room.entity.PersonalExercise;
 import it.fitnesschallenge.model.room.entity.PersonalExerciseWorkoutCrossReference;
 import it.fitnesschallenge.model.room.entity.Workout;
 
-@Database(entities = {Exercise.class, Workout.class, PersonalExerciseWorkoutCrossReference.class, PersonalExercise.class},
-        version = 18, exportSchema = false)
+@Database(entities = {Exercise.class, Workout.class, PersonalExerciseWorkoutCrossReference.class,
+        PersonalExercise.class, ExerciseExecution.class},
+        version = 19, exportSchema = false)
 @TypeConverters({Converter.class})
 public abstract class FitnessChallengeDatabase extends RoomDatabase {
 
@@ -42,9 +45,10 @@ public abstract class FitnessChallengeDatabase extends RoomDatabase {
     public abstract WorkoutDAO getWorkoutDAO();
     public abstract WorkoutWithExerciseDAO getWorkoutWithExerciseDAO();
 
+    public abstract ExerciseExecutionDAO getExerciseExecutionDAO();
     public abstract PersonalExerciseDAO getPersonalExerciseDAO();
 
-    public abstract PersonalExerciseWorkoutCrossReferenceDAO getPersonalExerciseWorkoutCrossRederenceDAO();
+    public abstract PersonalExerciseWorkoutCrossReferenceDAO getPersonalExerciseWorkoutCrossReferenceDAO();
 
 
     /**

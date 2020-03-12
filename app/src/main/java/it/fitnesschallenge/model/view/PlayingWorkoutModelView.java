@@ -29,6 +29,7 @@ import it.fitnesschallenge.model.room.entity.ExerciseExecution;
 import it.fitnesschallenge.model.room.FitnessChallengeRepository;
 import it.fitnesschallenge.model.room.entity.PersonalExercise;
 import it.fitnesschallenge.model.room.entity.Workout;
+import it.fitnesschallenge.model.room.entity.reference.PersonalExerciseWithExecution;
 import it.fitnesschallenge.model.room.entity.reference.WorkoutWithExercise;
 
 public class PlayingWorkoutModelView extends AndroidViewModel {
@@ -51,7 +52,7 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
      * stati prelevati
      */
     private MutableLiveData<WorkoutWithExercise> mWorkoutWithExerciseLiveData;
-    private MutableLiveData<List<ExerciseExecution>> mExerciseExecution;
+
     // Questo è il collegamento al repository locale
     private FitnessChallengeRepository mRepository;
     // Questo contiene l'id dell'allenamento attuale
@@ -59,6 +60,7 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
     private WorkoutWithExercise mWorkoutWithExercise;
     // Questa variabile contiene l'esercizio in esecuzione
     private PersonalExercise mCurrentExercise;
+    private LiveData<PersonalExerciseWithExecution> mExerciseExecution;
 
     // Queste variabili permettono di mantenere attivo l'utente mentre esegue il workout
     private User mUser;
@@ -142,10 +144,10 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
         this.mCurrentExercise = mCurrentExercise;
     }
 
-    public void setExerciseExecution(ExerciseExecution exerciseExecution) {
-        mExerciseExecutionList.add(exerciseExecution);
-        this.mExerciseExecution.setValue(mExerciseExecutionList);
+    public LiveData<PersonalExerciseWithExecution> getExerciseExecution() {
+        return mRepository.getLastExecutionExecution(mCurrentExercise.getPersonalExerciseId());
     }
+
 
     /**
      * Questo metodo verifica la presenza di altri esercizi e successivamente restituisce l'erercizio

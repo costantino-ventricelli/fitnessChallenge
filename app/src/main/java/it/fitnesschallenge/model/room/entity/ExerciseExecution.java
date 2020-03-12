@@ -1,25 +1,30 @@
 package it.fitnesschallenge.model.room.entity;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import java.util.Date;
 
-@Entity(tableName = "exercise_execution")
+@Entity(tableName = "exercise_execution", primaryKeys = {"exercise_id", "execution_date", "repetition"})
 public class ExerciseExecution {
 
-    @PrimaryKey
+    @NonNull
     @ColumnInfo(name = "exercise_id")
     private int exerciseId;
+    @NonNull
     @ColumnInfo(name = "execution_date")
     private Date executionDate;
     @ColumnInfo(name = "used_kilograms")
     private float usedKilograms;
+    @NonNull
+    private int repetition;
 
-    public ExerciseExecution(Date executionDate, float usedKilograms) {
+    public ExerciseExecution(Date executionDate, float usedKilograms, int repetition) {
         this.executionDate = executionDate;
         this.usedKilograms = usedKilograms;
+        this.repetition = repetition;
     }
 
     public int getExerciseId() {
@@ -44,5 +49,13 @@ public class ExerciseExecution {
 
     public void setUsedKilograms(float usedKilograms) {
         this.usedKilograms = usedKilograms;
+    }
+
+    public int getRepetition() {
+        return repetition;
+    }
+
+    public void setRepetition(int repetition) {
+        this.repetition = repetition;
     }
 }

@@ -32,11 +32,14 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.NumberFormat;
+import java.util.List;
 import java.util.Locale;
 
 import it.fitnesschallenge.model.User;
 import it.fitnesschallenge.model.room.entity.Exercise;
+import it.fitnesschallenge.model.room.entity.ExerciseExecution;
 import it.fitnesschallenge.model.room.entity.PersonalExercise;
+import it.fitnesschallenge.model.room.entity.reference.PersonalExerciseWithExecution;
 import it.fitnesschallenge.model.view.PlayingWorkoutModelView;
 
 import static it.fitnesschallenge.model.SharedConstance.CONVERSION_SEC_IN_MILLIS;
@@ -67,6 +70,7 @@ public class PlayingWorkout extends Fragment {
     private FirebaseAuth mAuth;
     private FirebaseFirestore mDatabase;
     private Timer mTimer;
+    private List<ExerciseExecution> mExerciseExecution;
 
     public PlayingWorkout() {
         // Required empty public constructor
@@ -178,6 +182,20 @@ public class PlayingWorkout extends Fragment {
         Log.d(TAG, "Indice esercizio successivo dopo l'aggiornamento: " + mViewModel.getNextIndex());
         setNavigationButton();
         mViewModel.setCurrentExercise(mCurrentExercise);
+
+        mViewModel.getExerciseExecution().observe(getViewLifecycleOwner(), new Observer<PersonalExerciseWithExecution>() {
+            @Override
+            public void onChanged(PersonalExerciseWithExecution personalExerciseWithExecution) {
+                Log.d(TAG, "Prelevata ultima esecuzione");
+                try {
+                    mExerciseExecution = personalExerciseWithExecution.getPersonalExerciseList();
+                } catch (NullPointerException ex) {
+                    Log.d(TAG, "Non ci sono esecuzioni precedenti");
+                    mExerciseExecution = null;
+                }
+            }
+        });
+
         setUI(witch);
     }
 
