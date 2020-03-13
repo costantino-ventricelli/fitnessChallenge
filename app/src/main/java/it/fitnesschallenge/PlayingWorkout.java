@@ -26,12 +26,17 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.dynamic.IFragmentWrapper;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.Format;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -42,6 +47,7 @@ import it.fitnesschallenge.model.room.entity.PersonalExercise;
 import it.fitnesschallenge.model.room.entity.reference.PersonalExerciseWithExecution;
 import it.fitnesschallenge.model.view.PlayingWorkoutModelView;
 
+import static it.fitnesschallenge.model.SharedConstance.ADD_WEIGHT;
 import static it.fitnesschallenge.model.SharedConstance.CONVERSION_SEC_IN_MILLIS;
 import static it.fitnesschallenge.model.SharedConstance.TIMER_FRAGMENT;
 
@@ -70,7 +76,7 @@ public class PlayingWorkout extends Fragment {
     private FirebaseAuth mAuth;
     private FirebaseFirestore mDatabase;
     private Timer mTimer;
-    private List<ExerciseExecution> mExerciseExecution;
+    private ExerciseExecution mExerciseExecution;
 
     public PlayingWorkout() {
         // Required empty public constructor
@@ -138,6 +144,49 @@ public class PlayingWorkout extends Fragment {
                         .commit();
             }
         });
+
+        infoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mViewModel.getExerciseExecution().observe(getViewLifecycleOwner(), new Observer<ExerciseExecution>() {
+                    @Override
+                    public void onChanged(ExerciseExecution personalExerciseExecution) {
+                        Log.d(TAG, "Prelevata ultima esecuzione");
+                        try {
+                            mExerciseExecution = personalExerciseExecution;
+                            //TODO:sostituire questo AltrertDialog con uno con custom layout
+                            MaterialAlertDialogBuilder materialAlertDialogBuilder = new MaterialAlertDialogBuilder(getContext())
+                                    .setTitle("Last execution")
+                                    .setMessage(new SimpleDateFormat("YYYY-MM-dd", Locale.getDefault()).format(
+                                            mExerciseExecution.getExecutionDate()
+                                    ));
+                            materialAlertDialogBuilder.show();
+                        } catch (NullPointerException ex) {
+                            Log.d(TAG, "Non ci sono esecuzioni precedenti");
+                            mExerciseExecution = null;
+                            MaterialAlertDialogBuilder materialAlertDialogBuilder = new MaterialAlertDialogBuilder(getContext())
+                                    .setTitle(R.string.ops)
+                                    .setMessage(R.string.there_is_not_previously_execution);
+                            materialAlertDialogBuilder.show();
+                        }
+                    }
+                });
+            }
+        });
+
+        addWeight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AddWeight addWeight = new AddWeight();
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
+                        R.anim.enter_from_rigth, R.anim.exit_from_left)
+                        .replace(R.id.fragmentContainer, addWeight, ADD_WEIGHT)
+                        .addToBackStack(ADD_WEIGHT)
+                        .commit();
+            }
+        });
         return view;
     }
 
@@ -182,19 +231,6 @@ public class PlayingWorkout extends Fragment {
         Log.d(TAG, "Indice esercizio successivo dopo l'aggiornamento: " + mViewModel.getNextIndex());
         setNavigationButton();
         mViewModel.setCurrentExercise(mCurrentExercise);
-
-        mViewModel.getExerciseExecution().observe(getViewLifecycleOwner(), new Observer<PersonalExerciseWithExecution>() {
-            @Override
-            public void onChanged(PersonalExerciseWithExecution personalExerciseWithExecution) {
-                Log.d(TAG, "Prelevata ultima esecuzione");
-                try {
-                    mExerciseExecution = personalExerciseWithExecution.getPersonalExerciseList();
-                } catch (NullPointerException ex) {
-                    Log.d(TAG, "Non ci sono esecuzioni precedenti");
-                    mExerciseExecution = null;
-                }
-            }
-        });
 
         setUI(witch);
     }

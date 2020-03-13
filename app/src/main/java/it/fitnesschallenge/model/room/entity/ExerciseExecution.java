@@ -5,9 +5,12 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import java.util.Date;
+import org.jetbrains.annotations.NotNull;
 
-@Entity(tableName = "exercise_execution", primaryKeys = {"exercise_id", "execution_date", "repetition"})
+import java.util.Date;
+import java.util.List;
+
+@Entity(tableName = "exercise_execution", primaryKeys = {"exercise_id", "execution_date"})
 public class ExerciseExecution {
 
     @NonNull
@@ -17,14 +20,11 @@ public class ExerciseExecution {
     @ColumnInfo(name = "execution_date")
     private Date executionDate;
     @ColumnInfo(name = "used_kilograms")
-    private float usedKilograms;
-    @NonNull
-    private int repetition;
+    private List<Float> usedKilograms;
 
-    public ExerciseExecution(Date executionDate, float usedKilograms, int repetition) {
+    public ExerciseExecution(@NonNull Date executionDate, List<Float> usedKilograms) {
         this.executionDate = executionDate;
         this.usedKilograms = usedKilograms;
-        this.repetition = repetition;
     }
 
     public int getExerciseId() {
@@ -39,23 +39,15 @@ public class ExerciseExecution {
         return executionDate;
     }
 
-    public void setExecutionDate(Date executionDate) {
+    public void setExecutionDate(@NotNull Date executionDate) {
         this.executionDate = executionDate;
     }
 
-    public float getUsedKilograms() {
+    public List<Float> getUsedKilograms() {
         return usedKilograms;
     }
 
-    public void setUsedKilograms(float usedKilograms) {
+    public void setUsedKilograms(List<Float> usedKilograms) {
         this.usedKilograms = usedKilograms;
-    }
-
-    public int getRepetition() {
-        return repetition;
-    }
-
-    public void setRepetition(int repetition) {
-        this.repetition = repetition;
     }
 }

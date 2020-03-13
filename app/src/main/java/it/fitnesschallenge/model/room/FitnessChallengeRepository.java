@@ -21,6 +21,7 @@ import it.fitnesschallenge.model.room.dao.PersonalExerciseWorkoutCrossReferenceD
 import it.fitnesschallenge.model.room.dao.WorkoutDAO;
 import it.fitnesschallenge.model.room.dao.WorkoutWithExerciseDAO;
 import it.fitnesschallenge.model.room.entity.Exercise;
+import it.fitnesschallenge.model.room.entity.ExerciseExecution;
 import it.fitnesschallenge.model.room.entity.PersonalExercise;
 import it.fitnesschallenge.model.room.entity.PersonalExerciseWorkoutCrossReference;
 import it.fitnesschallenge.model.room.entity.Workout;
@@ -87,7 +88,7 @@ public class FitnessChallengeRepository {
         return workoutDAO.getWorkoutStartDate(date);
     }
 
-    public LiveData<PersonalExerciseWithExecution> getLastExecutionExecution(long personalExerciseId) {
+    public LiveData<ExerciseExecution> getLastExecutionExecution(long personalExerciseId) {
         return exerciseExecutionDAO.selectLastExerciseExecution(personalExerciseId);
     }
 

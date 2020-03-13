@@ -31,4 +31,5 @@ public final class SharedConstance {
     public static final String POSITION_IN_ADAPTER = "positionInAdapter";
     public static final String TIME_FOR_TIMER = "timeForTimer";
     public final static int CONVERSION_SEC_IN_MILLIS = 1000;
+    public final static String ADD_WEIGHT = "addWeight";
 }

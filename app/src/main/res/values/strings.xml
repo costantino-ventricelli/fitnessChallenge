@@ -61,7 +61,7 @@
     <string name="next">next</string>
     <string name="training_goal">Training goal</string>
     <string name="starting_training_date">Starting training date</string>
-    <string name="date_pattern">YYYY-MM-DD</string>
+    <string name="date_pattern">YYYY-MM-dd</string>
     <string name="gain_muscle">GAIN MUSCLE</string>
     <string name="get_fit">GET FIT</string>
     <string name="title_goes_here">Title goes here</string>
@@ -113,4 +113,10 @@
     <string name="_00_00">00:00</string>
     <string name="stop_timer">Stop timer</string>
     <string name="pause_timer">Pause timer</string>
+    <string name="repetition">Repetition</string>
+    <string name="weight">Weight</string>
+    <string name="save">Save</string>
+    <string name="ops">Ops!!!</string>
+    <string name="there_is_not_previously_execution">There is not previously execution.</string>
+    <string name="used_kilograms">Used kilograms</string>
 </resources>

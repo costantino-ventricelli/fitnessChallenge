@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 import it.fitnesschallenge.R;
 import it.fitnesschallenge.model.room.entity.Exercise;

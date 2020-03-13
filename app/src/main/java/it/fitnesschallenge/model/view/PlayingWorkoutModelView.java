@@ -144,7 +144,7 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
         this.mCurrentExercise = mCurrentExercise;
     }
 
-    public LiveData<PersonalExerciseWithExecution> getExerciseExecution() {
+    public LiveData<ExerciseExecution> getExerciseExecution() {
         return mRepository.getLastExecutionExecution(mCurrentExercise.getPersonalExerciseId());
     }
 
