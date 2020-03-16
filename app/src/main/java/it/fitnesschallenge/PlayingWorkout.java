@@ -40,6 +40,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import it.fitnesschallenge.adapter.LastExecutionDialog;
 import it.fitnesschallenge.model.User;
 import it.fitnesschallenge.model.room.entity.Exercise;
 import it.fitnesschallenge.model.room.entity.ExerciseExecution;
@@ -155,12 +156,8 @@ public class PlayingWorkout extends Fragment {
                         try {
                             mExerciseExecution = personalExerciseExecution;
                             //TODO:sostituire questo AltrertDialog con uno con custom layout
-                            MaterialAlertDialogBuilder materialAlertDialogBuilder = new MaterialAlertDialogBuilder(getContext())
-                                    .setTitle("Last execution")
-                                    .setMessage(new SimpleDateFormat("YYYY-MM-dd", Locale.getDefault()).format(
-                                            mExerciseExecution.getExecutionDate()
-                                    ));
-                            materialAlertDialogBuilder.show();
+                            LastExecutionDialog lastExecutionDialog = new LastExecutionDialog(getContext(), mExerciseExecution);
+                            lastExecutionDialog.show();
                         } catch (NullPointerException ex) {
                             Log.d(TAG, "Non ci sono esecuzioni precedenti");
                             mExerciseExecution = null;

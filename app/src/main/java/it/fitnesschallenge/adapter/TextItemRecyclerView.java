@@ -8,33 +8,45 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Locale;
+
 import it.fitnesschallenge.R;
 
-public class TextItemRecyclerView extends RecyclerView.Adapter {
+public class TextItemRecyclerView extends RecyclerView.Adapter<TextItemRecyclerView.ViewHolder> {
+
+    private ArrayList<Float> mArrayList;
+
+    TextItemRecyclerView(ArrayList<Float> arrayList) {
+        this.mArrayList = arrayList;
+    }
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.standard_recycler_view_item, false);
+                .inflate(R.layout.standard_recycler_view_item, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        StringBuilder builder = new StringBuilder(NumberFormat.getInstance(Locale.getDefault()).format(mArrayList.get(position)));
+        builder.append(" Kg");
+        holder.mTextView.setText(builder.toString());
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return mArrayList.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView mTextView;
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
             mTextView = itemView.findViewById(R.id.text_repetition);
         }
