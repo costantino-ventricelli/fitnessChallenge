@@ -144,10 +144,26 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
         this.mCurrentExercise = mCurrentExercise;
     }
 
+    /**
+     * Restituisce il LiveData contente l'ultima esecuzione per quell'esercizio se non ci sono
+     * esecuzioni precedenti torna null.
+     *
+     * @return LiveDate contentente l'ultima esecuzione, altrimenti, se non ci sono esecuzioni precedenti
+     * torna null.
+     */
     public LiveData<ExerciseExecution> getExerciseExecution() {
         return mRepository.getLastExecutionExecution(mCurrentExercise.getPersonalExerciseId());
     }
 
+    /**
+     * Permette di salvare nel DB l'esecuzione di un esercizio, assieme alla data di esecuzuione
+     *
+     * @param exerciseExecution contitene i dati da inserire nel DB riguardo all'ultima esecuzione.
+     */
+    public void writeExerciseExecutionRoom(ExerciseExecution exerciseExecution) {
+        InsertExerciseExecution insertExerciseExecution = new InsertExerciseExecution(mRepository);
+        insertExerciseExecution.execute(exerciseExecution);
+    }
 
     /**
      * Questo metodo verifica la presenza di altri esercizi e successivamente restituisce l'erercizio
@@ -384,8 +400,26 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
 
         @Override
         protected Long doInBackground(WorkoutWithExercise... workoutWithExercises) {
-            WorkoutWithExercise workoutWithExercise = workoutWithExercises[0];
-            return mRepository.insertWorkoutWithExercise(workoutWithExercise);
+            return mRepository.insertWorkoutWithExercise(workoutWithExercises[0]);
+        }
+    }
+
+    /**
+     * Questa classe crea in Thread che si prenderà carico di inserire l'esecuzione dell'esercizio nel
+     * DB, in quanto ogni accesso al DB non può essere eseguita sull UI thread.
+     */
+    static class InsertExerciseExecution extends AsyncTask<ExerciseExecution, Void, Void> {
+
+        private FitnessChallengeRepository mRepository;
+
+        InsertExerciseExecution(FitnessChallengeRepository repository) {
+            this.mRepository = repository;
+        }
+
+        @Override
+        protected Void doInBackground(ExerciseExecution... exerciseExecutions) {
+            mRepository.insertExecution(exerciseExecutions[0]);
+            return null;
         }
     }
 }

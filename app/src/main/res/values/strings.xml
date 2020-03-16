@@ -114,9 +114,15 @@
     <string name="stop_timer">Stop timer</string>
     <string name="pause_timer">Pause timer</string>
     <string name="repetition">Repetition</string>
-    <string name="weight">Weight</string>
+    <string name="weight">Weight in Kg</string>
     <string name="save">Save</string>
     <string name="ops">Ops!!!</string>
     <string name="there_is_not_previously_execution">There is not previously execution.</string>
     <string name="used_kilograms">Used kilograms</string>
+    <string name="no_past_execution">No past execution</string>
+    <string name="last_execution">Last execution</string>
+    <plurals name="repetitionNumber">
+        <item quantity="one">First repetition</item>
+        <item quantity="other">%d repetition</item>
+    </plurals>
 </resources>

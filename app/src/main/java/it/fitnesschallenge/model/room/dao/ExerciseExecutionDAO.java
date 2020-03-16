@@ -15,7 +15,7 @@ import it.fitnesschallenge.model.room.entity.reference.PersonalExerciseWithExecu
 public interface ExerciseExecutionDAO {
 
     @Insert
-    void insertExecution(List<ExerciseExecution> exerciseExecution);
+    void insertExecution(ExerciseExecution exerciseExecution);
 
     @Transaction
     @Query("SELECT exercise_id, execution_date, used_kilograms FROM exercise_execution " +

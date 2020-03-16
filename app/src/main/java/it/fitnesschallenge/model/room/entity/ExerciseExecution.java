@@ -22,9 +22,10 @@ public class ExerciseExecution {
     @ColumnInfo(name = "used_kilograms")
     private List<Float> usedKilograms;
 
-    public ExerciseExecution(@NonNull Date executionDate, List<Float> usedKilograms) {
+    public ExerciseExecution(@NonNull Date executionDate, List<Float> usedKilograms, int exerciseId) {
         this.executionDate = executionDate;
         this.usedKilograms = usedKilograms;
+        this.exerciseId = exerciseId;
     }
 
     public int getExerciseId() {

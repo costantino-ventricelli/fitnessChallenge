@@ -104,4 +104,8 @@ public class FitnessChallengeRepository {
         }
         return workoutId;
     }
+
+    public void insertExecution(ExerciseExecution exerciseExecution) {
+        exerciseExecutionDAO.insertExecution(exerciseExecution);
+    }
 }
