@@ -155,7 +155,6 @@ public class PlayingWorkout extends Fragment {
                         Log.d(TAG, "Prelevata ultima esecuzione");
                         try {
                             mExerciseExecution = personalExerciseExecution;
-                            //TODO:sostituire questo AltrertDialog con uno con custom layout
                             LastExecutionDialog lastExecutionDialog = new LastExecutionDialog(getContext(), mExerciseExecution);
                             lastExecutionDialog.show();
                         } catch (NullPointerException ex) {

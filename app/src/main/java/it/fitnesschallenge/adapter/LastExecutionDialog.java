@@ -1,3 +1,7 @@
+/**
+ * Questa classe crea il dialog che mostra la lista dei pesi utilizzati l'ultima volta, assieme alla
+ * data di esecuzione dell'esercizio.
+ */
 package it.fitnesschallenge.adapter;
 
 import android.app.AlertDialog;

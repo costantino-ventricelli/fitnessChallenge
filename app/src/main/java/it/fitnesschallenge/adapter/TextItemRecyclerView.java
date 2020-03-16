@@ -1,3 +1,7 @@
+/**
+ * Questo adapter crea la lista di visualizzazione dei pesi utilizzati nell'utlima esecuzione, è un
+ * estenzione di Adapter standard senza particolari accorgimenti.
+ */
 package it.fitnesschallenge.adapter;
 
 import android.view.LayoutInflater;
