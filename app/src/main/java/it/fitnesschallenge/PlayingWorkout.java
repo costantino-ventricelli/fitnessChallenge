@@ -7,8 +7,6 @@ package it.fitnesschallenge;
 
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -24,20 +22,14 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.dynamic.IFragmentWrapper;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.text.Format;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 
 import it.fitnesschallenge.adapter.LastExecutionDialog;
@@ -45,12 +37,12 @@ import it.fitnesschallenge.model.User;
 import it.fitnesschallenge.model.room.entity.Exercise;
 import it.fitnesschallenge.model.room.entity.ExerciseExecution;
 import it.fitnesschallenge.model.room.entity.PersonalExercise;
-import it.fitnesschallenge.model.room.entity.reference.PersonalExerciseWithExecution;
 import it.fitnesschallenge.model.view.PlayingWorkoutModelView;
 
 import static it.fitnesschallenge.model.SharedConstance.ADD_WEIGHT;
 import static it.fitnesschallenge.model.SharedConstance.CONVERSION_SEC_IN_MILLIS;
 import static it.fitnesschallenge.model.SharedConstance.TIMER_FRAGMENT;
+import static it.fitnesschallenge.model.SharedConstance.UPLOAD_WORKOUT_ON_FIREBASE;
 
 
 public class PlayingWorkout extends Fragment {
@@ -79,6 +71,7 @@ public class PlayingWorkout extends Fragment {
     private FirebaseFirestore mDatabase;
     private Timer mTimer;
     private ExerciseExecution mExerciseExecution;
+    private MaterialButton mStopButton;
 
     public PlayingWorkout() {
         // Required empty public constructor
@@ -90,7 +83,7 @@ public class PlayingWorkout extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_playing_workout, container, false);
 
-        MaterialButton stopButton = view.findViewById(R.id.playing_workout_stop_workout);
+        mStopButton = view.findViewById(R.id.playing_workout_stop_workout);
         mExerciseTitle = view.findViewById(R.id.playing_workout_title);
         mExerciseImage = view.findViewById(R.id.playing_workout_image);
         mTimeTimer = view.findViewById(R.id.playing_workout_timer);
@@ -127,10 +120,20 @@ public class PlayingWorkout extends Fragment {
                 getCurrentExercise(PREVIOUSLY);
             }
         });
-        stopButton.setOnClickListener(new View.OnClickListener() {
+        mStopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().getSupportFragmentManager().popBackStackImmediate();
+                if (mStopButton.getContentDescription().equals(getContext().getString(R.string.finish_workout))) {
+                    UploadWorkoutOnFireBase uploadWorkoutOnFireBase = new UploadWorkoutOnFireBase();
+                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    FragmentTransaction transaction = fragmentManager.beginTransaction();
+                    transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
+                            R.anim.enter_from_rigth, R.anim.exit_from_left)
+                            .replace(R.id.fragmentContainer, uploadWorkoutOnFireBase, UPLOAD_WORKOUT_ON_FIREBASE)
+                            .addToBackStack(UPLOAD_WORKOUT_ON_FIREBASE)
+                            .commit();
+                } else
+                    getActivity().getSupportFragmentManager().popBackStackImmediate();
             }
         });
 
@@ -284,6 +287,9 @@ public class PlayingWorkout extends Fragment {
             mNext.setVisibility(View.VISIBLE);
             mNextText.setVisibility(View.VISIBLE);
         } else {
+            mStopButton.setContentDescription(getContext().getString(R.string.finish_workout));
+            mStopButton.setText(R.string.finish_workout);
+            mStopButton.setIconResource(R.drawable.ic_backup_24dp);
             mNext.setVisibility(View.GONE);
             mNextText.setVisibility(View.GONE);
         }

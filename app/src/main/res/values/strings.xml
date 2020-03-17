@@ -121,6 +121,10 @@
     <string name="used_kilograms">Used kilograms</string>
     <string name="no_past_execution">No past execution</string>
     <string name="last_execution">Last execution</string>
+    <string name="finish_workout">Finish</string>
+    <string name="uploading_your_workout">Uploading your workout...</string>
+    <string name="please_wait_a_few_moment">Please wait a few moment...</string>
+    <string name="upload_workout_image">Upload workout image</string>
     <plurals name="repetitionNumber">
         <item quantity="one">First repetition</item>
         <item quantity="other">%d repetition</item>
