@@ -25,7 +25,6 @@ import it.fitnesschallenge.model.room.entity.ExerciseExecution;
 import it.fitnesschallenge.model.room.entity.PersonalExercise;
 import it.fitnesschallenge.model.room.entity.PersonalExerciseWorkoutCrossReference;
 import it.fitnesschallenge.model.room.entity.Workout;
-import it.fitnesschallenge.model.room.entity.reference.PersonalExerciseWithExecution;
 import it.fitnesschallenge.model.room.entity.reference.WorkoutWithExercise;
 
 public class FitnessChallengeRepository {
@@ -38,11 +37,7 @@ public class FitnessChallengeRepository {
     private PersonalExerciseDAO personalExerciseDAO;
     private ExerciseExecutionDAO exerciseExecutionDAO;
     private PersonalExerciseWorkoutCrossReferenceDAO personalExerciseWorkoutCrossReferenceDAO;
-    private LiveData<List<Exercise>> listExercise;
     private LiveData<WorkoutWithExercise> workoutWithExerciseList;
-    private LiveData<Workout> workoutLiveData;
-    private LiveData<List<Workout>> workoutList;
-    private LiveData<PersonalExerciseWithExecution> personalExerciseWithExecution;
 
     public FitnessChallengeRepository(Application application){
         FitnessChallengeDatabase database = FitnessChallengeDatabase.getInstance(application);
@@ -56,8 +51,7 @@ public class FitnessChallengeRepository {
     }
 
     public LiveData<List<Exercise>> getListExerciseLiveData() {
-        listExercise = exerciseDAO.selectAllExercise();
-        return listExercise;
+        return exerciseDAO.selectAllExercise();
     }
 
     public LiveData<WorkoutWithExercise> getWorkoutWithExerciseList(long workoutId) {
@@ -69,14 +63,8 @@ public class FitnessChallengeRepository {
         return workoutWithExerciseDAO.getPersonalExerciseList(workoutId);
     }
 
-    public LiveData<Workout> getWorkoutLiveData(int workoutId) {
-        workoutLiveData = workoutDAO.getWorkout(workoutId);
-        return workoutLiveData;
-    }
-
     public LiveData<List<Workout>> getWorkoutList() {
-        workoutList = workoutDAO.getAllWorkOut();
-        return workoutList;
+        return workoutDAO.getAllWorkOut();
     }
 
     public LiveData<Exercise> getExercise(int exerciseId) {

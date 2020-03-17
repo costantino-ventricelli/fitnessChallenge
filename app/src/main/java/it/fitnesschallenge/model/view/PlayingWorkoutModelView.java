@@ -45,6 +45,7 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
     private List<Exercise> mExerciseList;
     // Questo è l'iteratore legato a PersonalExercise che permetterà di scorrere la lista degli esercizi
     private int mPersonalExerciseListIterator;
+    private int mCurrentSeries;
     // Questo array contiene tutti gi esercizi legati al workout
     private ArrayList<PersonalExercise> mPersonalExerciseList;
     /*
@@ -73,6 +74,7 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
         mRepository = new FitnessChallengeRepository(application);
         mWorkoutId = new MutableLiveData<>(-1L);
         mPersonalExerciseListIterator = -1;
+        mCurrentSeries = 1;
         mExerciseExecutionList = new ArrayList<>();
         mExerciseExecution = new MutableLiveData<>();
         mWorkoutWithExerciseLiveData = new MutableLiveData<>();
@@ -172,9 +174,18 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
      */
     public PersonalExercise getNextExercise() {
         PersonalExercise personalExercise = null;
-        if (thereIsNext()) {
-            mPersonalExerciseListIterator++;
+        if (mCurrentExercise == null || mCurrentSeries >= mCurrentExercise.getSteps()) {
+            Log.d(TAG, "L'esercizio corrente non è stato impostato, oppure sono finite le serie\n" +
+                    "mCurrentSeries: " + mCurrentSeries);
+            mCurrentSeries = 1;
+            if (thereIsNext()) {
+                mPersonalExerciseListIterator = getNextIndex();
+            }
             personalExercise = mPersonalExerciseList.get(mPersonalExerciseListIterator);
+        } else {
+            mCurrentSeries++;
+            personalExercise = mCurrentExercise;
+            Log.d(TAG, "Setto la serie successiva: " + mCurrentSeries);
         }
         return personalExercise;
     }
@@ -183,12 +194,22 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
      * Questo metodo è identico a getNextExercise solo che restituisce l'esercizio precendente
      */
     public PersonalExercise getPrevExercise() {
+        //TODO: il recupero dell'esercizio precedente non setta come si deve le serie.
         PersonalExercise personalExercise = null;
-        if (thereIsPrev()) {
-            mPersonalExerciseListIterator--;
+        if (mCurrentSeries >= mCurrentExercise.getSteps()) {
+            mCurrentSeries--;
+            personalExercise = mCurrentExercise;
+        } else {
+            if (thereIsPrev()) {
+                mPersonalExerciseListIterator = getPrevIndex();
+            }
             personalExercise = mPersonalExerciseList.get(mPersonalExerciseListIterator);
         }
         return personalExercise;
+    }
+
+    public int getCurrentSeries() {
+        return mCurrentSeries;
     }
 
     /**
@@ -243,6 +264,7 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
      * @return il valore di ritorno è un live data contente le informazioni riguardanti un esercizo
      */
     public MutableLiveData<Exercise> getExerciseInformation(PersonalExercise personalExercise) {
+        Log.d(TAG, "Prelevo le informazioni sull esercizio: " + personalExercise);
         MutableLiveData<Exercise> mutableLiveData = new MutableLiveData<>();
         mutableLiveData.setValue(mExerciseList.get(mPersonalExerciseList.indexOf(personalExercise)));
         return mutableLiveData;

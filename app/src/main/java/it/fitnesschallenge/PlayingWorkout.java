@@ -68,6 +68,7 @@ public class PlayingWorkout extends Fragment {
     private ImageView mExerciseImage;
     private TextView mTimeTimer;
     private TextView mCurrentRepetition;
+    private TextView mMaxRepetition;
     private PersonalExercise mCurrentExercise;
     private PlayingWorkoutModelView mViewModel;
     private ProgressBar mProgressBar;
@@ -95,6 +96,7 @@ public class PlayingWorkout extends Fragment {
         mTimeTimer = view.findViewById(R.id.playing_workout_timer);
         ImageButton startTimer = view.findViewById(R.id.playing_workout_start_timer);
         mCurrentRepetition = view.findViewById(R.id.playing_workout_repetition);
+        mMaxRepetition = view.findViewById(R.id.playing_workout_repetition_max);
         ImageButton infoButton = view.findViewById(R.id.playing_workout_info);
         Button addWeight = view.findViewById(R.id.playing_exercise_add_weigth);
         mNext = view.findViewById(R.id.next_exercise);
@@ -205,30 +207,30 @@ public class PlayingWorkout extends Fragment {
      *              INIT: indica che l'operazione è quella di inizializzazione iniziale
      */
     private void getCurrentExercise(short witch) {
+        PersonalExercise nextExercise = null;
         if (!mViewModel.isIteratorNull())
             Log.d(TAG, "Indice esercizio successivo prima dell'aggiornamento: " + mViewModel.getNextIndex());
         else
             Log.d(TAG, "Inizializzazione esercizio successivo prima dell'aggiornamento: 0");
         if (witch == PREVIOUSLY) {
-            mCurrentExercise = mViewModel.getPrevExercise();
+            nextExercise = mViewModel.getPrevExercise();
         } else if (witch == NEXT) {
-            mCurrentExercise = mViewModel.getNextExercise();
+            nextExercise = mViewModel.getNextExercise();
         } else if (witch == INIT) {
             if (mViewModel.isIteratorNull()) {
                 Log.d(TAG, "Prelievo il primo esercizio");
                 mViewModel.setListIterator();
-                mCurrentExercise = mViewModel.getNextExercise();
+                nextExercise = mViewModel.getNextExercise();
             } else {
                 Log.d(TAG, "Ripristino l'esercizio");
-                mCurrentExercise = mViewModel.getCurrentExercise();
+                nextExercise = mViewModel.getCurrentExercise();
             }
         }
 
         Log.d(TAG, "Indice esercizio successivo dopo l'aggiornamento: " + mViewModel.getNextIndex());
         setNavigationButton();
-        mViewModel.setCurrentExercise(mCurrentExercise);
 
-        setUI(witch);
+        setUI(witch, nextExercise);
     }
 
     /**
@@ -236,27 +238,34 @@ public class PlayingWorkout extends Fragment {
      *
      * @param witch indica che tipo di operazione eseguire
      */
-    private void setUI(final short witch) {
+    private void setUI(final short witch, PersonalExercise nextExercise) {
         final int progress = 100 / mViewModel.getPersonalExerciseList().size();
-        mViewModel.getExerciseInformation(mCurrentExercise).observe(getViewLifecycleOwner(), new Observer<Exercise>() {
-            @Override
-            public void onChanged(Exercise exercise) {
-                mExerciseTitle.setText(exercise.getExerciseName());
-                mExerciseImage.setImageResource(exercise.getImageReference());
-                mTimeTimer.setText(PersonalExercise.getCoolDownString(mCurrentExercise.getCoolDown() * CONVERSION_SEC_IN_MILLIS));
-                /*
-                 * TODO: bisogna capire a che serie dell'esercizio ci troviamo, probabilmente dovremo
-                 *       creare una classe che tenga in considerazione lo stato di svolgimento attuale
-                 */
-                if (witch == NEXT || witch == INIT) {
-                    mProgressValue.setText(NumberFormat.getInstance(Locale.getDefault()).format(progress * mViewModel.getNextIndex()));
-                    mProgressBar.setProgress(progress * mViewModel.getNextIndex());
-                } else if (witch == PREVIOUSLY) {
-                    mProgressValue.setText(NumberFormat.getInstance(Locale.getDefault()).format(progress * mViewModel.getPrevIndex()));
-                    mProgressBar.setProgress(progress * mViewModel.getPrevIndex());
+        if (mCurrentExercise == null || !nextExercise.equals(mCurrentExercise)) {
+            Log.d(TAG, "Primo esercizio, oppure esercizio cambiato");
+            mCurrentExercise = nextExercise;
+            mViewModel.setCurrentExercise(mCurrentExercise);
+            mMaxRepetition.setText(NumberFormat.getInstance(Locale.getDefault())
+                    .format(mCurrentExercise.getSteps())
+            );
+            mViewModel.getExerciseInformation(mCurrentExercise).observe(getViewLifecycleOwner(), new Observer<Exercise>() {
+                @Override
+                public void onChanged(Exercise exercise) {
+                    mExerciseTitle.setText(exercise.getExerciseName());
+                    mExerciseImage.setImageResource(exercise.getImageReference());
+                    mTimeTimer.setText(PersonalExercise.getCoolDownString(mCurrentExercise.getCoolDown() * CONVERSION_SEC_IN_MILLIS));
+                    if (witch == NEXT || witch == INIT) {
+                        mProgressValue.setText(NumberFormat.getInstance(Locale.getDefault()).format(progress * mViewModel.getNextIndex()));
+                        mProgressBar.setProgress(progress * mViewModel.getNextIndex());
+                    } else if (witch == PREVIOUSLY) {
+                        mProgressValue.setText(NumberFormat.getInstance(Locale.getDefault()).format(progress * mViewModel.getPrevIndex()));
+                        mProgressBar.setProgress(progress * mViewModel.getPrevIndex());
+                    }
                 }
-            }
-        });
+            });
+        }
+        mCurrentRepetition.setText(NumberFormat
+                .getInstance(Locale.getDefault())
+                .format(mViewModel.getCurrentSeries()));
     }
 
     /**
@@ -272,6 +281,7 @@ public class PlayingWorkout extends Fragment {
             mPrevText.setVisibility(View.GONE);
         }
         if (mViewModel.thereIsNext()) {
+            //TODO: thereIsNext non valuta il fatto che ci sono delle serie da eseguire
             mNext.setVisibility(View.VISIBLE);
             mNextText.setVisibility(View.VISIBLE);
         } else {

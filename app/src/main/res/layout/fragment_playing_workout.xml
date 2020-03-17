@@ -198,7 +198,7 @@
                     android:id="@+id/playing_workout_repetition"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/_1_3"
+                    android:text="1"
                     app:layout_constraintBottom_toBottomOf="@+id/playing_workout_current_repetition_label"
                     app:layout_constraintStart_toStartOf="@+id/playing_workout_timer"
                     app:layout_constraintTop_toTopOf="@+id/playing_workout_current_repetition_label" />
@@ -223,6 +223,24 @@
                     app:layout_constraintBottom_toBottomOf="@+id/playing_workout_last_time_label"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/playing_workout_last_time_label" />
+
+                <TextView
+                    android:id="@+id/playing_workout_repetition_max"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3"
+                    app:layout_constraintBottom_toBottomOf="@+id/playing_workout_slash"
+                    app:layout_constraintStart_toEndOf="@+id/playing_workout_slash"
+                    app:layout_constraintTop_toTopOf="@+id/playing_workout_slash" />
+
+                <TextView
+                    android:id="@+id/playing_workout_slash"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="/"
+                    app:layout_constraintBottom_toBottomOf="@+id/playing_workout_repetition"
+                    app:layout_constraintStart_toEndOf="@+id/playing_workout_repetition"
+                    app:layout_constraintTop_toTopOf="@+id/playing_workout_repetition" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
