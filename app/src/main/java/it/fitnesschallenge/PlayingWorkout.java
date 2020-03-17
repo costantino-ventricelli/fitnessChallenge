@@ -257,8 +257,8 @@ public class PlayingWorkout extends Fragment {
                         mProgressValue.setText(NumberFormat.getInstance(Locale.getDefault()).format(progress * mViewModel.getNextIndex()));
                         mProgressBar.setProgress(progress * mViewModel.getNextIndex());
                     } else if (witch == PREVIOUSLY) {
-                        mProgressValue.setText(NumberFormat.getInstance(Locale.getDefault()).format(progress * mViewModel.getPrevIndex()));
-                        mProgressBar.setProgress(progress * mViewModel.getPrevIndex());
+                        mProgressValue.setText(NumberFormat.getInstance(Locale.getDefault()).format(mProgressBar.getProgress() - progress));
+                        mProgressBar.setProgress(mProgressBar.getProgress() - progress);
                     }
                 }
             });
@@ -273,15 +273,14 @@ public class PlayingWorkout extends Fragment {
      * se l'esercizio è il primo allora mostrerà solo il pusante di successivo, e così via.
      */
     private void setNavigationButton() {
-        if (mViewModel.thereIsPrev()) {
+        if (mViewModel.thereIsPrev() | mViewModel.getCurrentSeries() > 1) {
             mPrev.setVisibility(View.VISIBLE);
             mPrevText.setVisibility(View.VISIBLE);
         } else {
             mPrev.setVisibility(View.GONE);
             mPrevText.setVisibility(View.GONE);
         }
-        if (mViewModel.thereIsNext()) {
-            //TODO: thereIsNext non valuta il fatto che ci sono delle serie da eseguire
+        if (mViewModel.thereIsNext() | (mCurrentExercise == null || mViewModel.getCurrentSeries() < mCurrentExercise.getSteps())) {
             mNext.setVisibility(View.VISIBLE);
             mNextText.setVisibility(View.VISIBLE);
         } else {

@@ -196,7 +196,8 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
     public PersonalExercise getPrevExercise() {
         //TODO: il recupero dell'esercizio precedente non setta come si deve le serie.
         PersonalExercise personalExercise = null;
-        if (mCurrentSeries >= mCurrentExercise.getSteps()) {
+        if (mCurrentSeries > 1) {
+            Log.d(TAG, "Setto la serie precedente");
             mCurrentSeries--;
             personalExercise = mCurrentExercise;
         } else {
@@ -204,6 +205,7 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
                 mPersonalExerciseListIterator = getPrevIndex();
             }
             personalExercise = mPersonalExerciseList.get(mPersonalExerciseListIterator);
+            mCurrentSeries = personalExercise.getSteps();
         }
         return personalExercise;
     }
@@ -219,6 +221,10 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
      */
     public int getNextIndex() {
         return mPersonalExerciseListIterator + 1;
+    }
+
+    public int getCurrentIndex() {
+        return mPersonalExerciseListIterator;
     }
 
     /**
