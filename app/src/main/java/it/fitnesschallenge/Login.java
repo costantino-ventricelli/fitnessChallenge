@@ -217,7 +217,9 @@ public class Login extends Fragment {
         return view;
     }
 
-    //metodo per il login con email e password
+    /**
+     * Questo metodo per il login con email e password
+     */
     private void signInMethod(String username, String password) {
         mAuth.signInWithEmailAndPassword(username, password)
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
@@ -233,6 +235,9 @@ public class Login extends Fragment {
                 });
     }
 
+    /**
+     * Questo metodo preleva i dati relativi all'utente che ha effettuato il login da FireBase.
+     */
     private void readUserFromDB() {
         progressBar.setVisibility(View.VISIBLE);
         database = FirebaseFirestore.getInstance();

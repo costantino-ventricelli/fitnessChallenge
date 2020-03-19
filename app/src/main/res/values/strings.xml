@@ -61,7 +61,7 @@
     <string name="next">next</string>
     <string name="training_goal">Training goal</string>
     <string name="starting_training_date">Starting training date</string>
-    <string name="date_pattern">YYYY-MM-dd</string>
+    <string name="date_pattern">yyyy-MM-dd</string>
     <string name="gain_muscle">GAIN MUSCLE</string>
     <string name="get_fit">GET FIT</string>
     <string name="title_goes_here">Title goes here</string>
@@ -125,6 +125,7 @@
     <string name="uploading_your_workout">Uploading your workout...</string>
     <string name="please_wait_a_few_moment">Please wait a few moment...</string>
     <string name="upload_workout_image">Upload workout image</string>
+    <string name="upload_complete">Upload complete, thank you</string>
     <plurals name="repetitionNumber">
         <item quantity="one">First repetition</item>
         <item quantity="other">%d repetition</item>

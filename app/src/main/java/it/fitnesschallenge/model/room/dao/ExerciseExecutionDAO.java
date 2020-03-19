@@ -6,10 +6,10 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Transaction;
 
+import java.util.Date;
 import java.util.List;
 
 import it.fitnesschallenge.model.room.entity.ExerciseExecution;
-import it.fitnesschallenge.model.room.entity.reference.PersonalExerciseWithExecution;
 
 @Dao
 public interface ExerciseExecutionDAO {
@@ -23,4 +23,8 @@ public interface ExerciseExecutionDAO {
             "WHERE exercise_id = :personalExerciseId AND execution_date " +
             "= (SELECT MAX(execution_date) FROM exercise_execution)")
     LiveData<ExerciseExecution> selectLastExerciseExecution(long personalExerciseId);
+
+    @Transaction
+    @Query("SELECT * FROM exercise_execution WHERE execution_date = :currentDate")
+    LiveData<List<ExerciseExecution>> selectExecutionInDate(Date currentDate);
 }

@@ -140,6 +140,14 @@ public class AddUserNameAndStartDate extends Fragment {
         return view;
     }
 
+    /**
+     * Questo metodo di callback viene richiamto dal DatePicker dopo aver selezionato una data di
+     * inizio per il workout
+     *
+     * @param requestCode contiene il codice di richiesta passato per il picker
+     * @param resultCode  contiene il codice risultato, ovvero OK, ERROR, FAIL
+     * @param data        contiene la data prelevata dal picker.
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -150,6 +158,9 @@ public class AddUserNameAndStartDate extends Fragment {
         }
     }
 
+    /**
+     * Questo metodo verifica che i campi siano stai compilati completamente.
+     */
     private void checkEmptyValue() {
         if (mEmail.getEditText().getText().toString().isEmpty())
             mEmail.setError(getContext().getResources().getString(R.string.complete_correctly_field));

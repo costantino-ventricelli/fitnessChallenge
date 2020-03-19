@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import it.fitnesschallenge.model.User;
@@ -29,15 +30,12 @@ import it.fitnesschallenge.model.room.entity.ExerciseExecution;
 import it.fitnesschallenge.model.room.FitnessChallengeRepository;
 import it.fitnesschallenge.model.room.entity.PersonalExercise;
 import it.fitnesschallenge.model.room.entity.Workout;
-import it.fitnesschallenge.model.room.entity.reference.PersonalExerciseWithExecution;
 import it.fitnesschallenge.model.room.entity.reference.WorkoutWithExercise;
 
 public class PlayingWorkoutModelView extends AndroidViewModel {
 
     private static final String TAG = "PlayingWorkoutModelView";
 
-    // Questo array conterrà tutte le esecuzioni degli esercizi dell'allenamento
-    private ArrayList<ExerciseExecution> mExerciseExecutionList;
     /*
      Questo array conterrà tutti gli esercizi del DB per ottenere info su di essi durante l'esecuzione
      dell'allenamento.
@@ -58,11 +56,10 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
     private FitnessChallengeRepository mRepository;
     // Questo contiene l'id dell'allenamento attuale
     private MutableLiveData<Long> mWorkoutId;
+    // Questa variablile contiene il workout con la lista degli esercizi da eseguire.
     private WorkoutWithExercise mWorkoutWithExercise;
     // Questa variabile contiene l'esercizio in esecuzione
     private PersonalExercise mCurrentExercise;
-    private LiveData<PersonalExerciseWithExecution> mExerciseExecution;
-
     // Queste variabili permettono di mantenere attivo l'utente mentre esegue il workout
     private User mUser;
     private FirebaseUser mFireStoreUser;
@@ -75,8 +72,7 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
         mWorkoutId = new MutableLiveData<>(-1L);
         mPersonalExerciseListIterator = -1;
         mCurrentSeries = 1;
-        mExerciseExecutionList = new ArrayList<>();
-        mExerciseExecution = new MutableLiveData<>();
+        // Questo array conterrà tutte le esecuzioni degli esercizi dell'allenamento
         mWorkoutWithExerciseLiveData = new MutableLiveData<>();
     }
 
@@ -223,16 +219,12 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
         return mPersonalExerciseListIterator + 1;
     }
 
-    public int getCurrentIndex() {
-        return mPersonalExerciseListIterator;
-    }
-
     /**
      * Questo metodo restituisce l'indice precedente a quello attualmente puntato dall'indice.
      *
      * @return ritorna l'indice precendente
      */
-    public int getPrevIndex() {
+    private int getPrevIndex() {
         return mPersonalExerciseListIterator - 1;
     }
 
@@ -243,6 +235,10 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
     public boolean thereIsNext() {
         Log.d(TAG, "thereIsNext: mPersonalExerciseListIterator: " + (mPersonalExerciseListIterator + 1));
         return (mPersonalExerciseListIterator + 1) <= (mPersonalExerciseList.size() - 1);
+    }
+
+    public LiveData<List<ExerciseExecution>> getLastExecution(Date currentDate) {
+        return mRepository.selectLastWorkoutExecution(currentDate);
     }
 
     /**

@@ -96,4 +96,8 @@ public class FitnessChallengeRepository {
     public void insertExecution(ExerciseExecution exerciseExecution) {
         exerciseExecutionDAO.insertExecution(exerciseExecution);
     }
+
+    public LiveData<List<ExerciseExecution>> selectLastWorkoutExecution(Date currentDate) {
+        return exerciseExecutionDAO.selectExecutionInDate(currentDate);
+    }
 }

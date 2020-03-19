@@ -1,10 +1,14 @@
+/**
+ * Questo fragment consente di inserirei i pesi utilizzati nell'allenameto.
+ * Utilizza una RecyclerView che viene impostata a seconda del numero di ripetizioni impostate alla
+ * creazione dell'esercizio da parte del trainer.
+ */
 package it.fitnesschallenge;
 
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,7 +22,6 @@ import com.google.android.material.button.MaterialButton;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -80,6 +83,9 @@ public class AddWeight extends Fragment {
         return view;
     }
 
+    /**
+     * Questo metodo salva l'esecuzione del workout in locale. Prendendo la data dal sistema.
+     */
     private void saveExecution() {
         Calendar calendar = Calendar.getInstance();
         Date currentDate = calendar.getTime();

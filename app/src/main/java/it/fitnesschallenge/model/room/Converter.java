@@ -6,22 +6,31 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
+import it.fitnesschallenge.R;
 
 public class Converter {
     @TypeConverter
-    public Date timestampToDate(Long date){
-        return date == null ? null : new Date(date);
+    public Date stringToDate(String date) {
+        try {
+            return new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(date);
+        } catch (ParseException e) {
+            return null;
+        }
     }
 
     @TypeConverter
-    public long dateToTimestamp(Date date){
-        return date == null ? null : date.getTime();
+    public String dateToString(Date date) {
+        return new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date);
     }
 
     /**

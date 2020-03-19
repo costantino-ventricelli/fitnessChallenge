@@ -27,7 +27,7 @@ public class GymHome extends Fragment {
         // Required empty public constructor
     }
 
-    public static GymHome newInstance(User user) {
+    static GymHome newInstance(User user) {
         GymHome fragment = new GymHome();
         Bundle args = new Bundle();
         args.putParcelable(USER, user);

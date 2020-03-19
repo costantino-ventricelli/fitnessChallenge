@@ -40,7 +40,6 @@ import static it.fitnesschallenge.model.SharedConstance.UPLOAD_NEW_WORKOUT;
 public class CreateTrainingList extends Fragment {
 
     private static final String TAG = "CreateTrainingList";
-    private Context mContext;
     private CreationViewModel mViewModel;
     private ProgressBar mProgressBar;
     private TextView mProgressTextView;
@@ -157,9 +156,14 @@ public class CreateTrainingList extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        mContext = context;
     }
 
+    /**
+     * Questo metodo modifica il fragment nidificato a seconda dello step di creazione in cui si trova
+     * l'utente.
+     *
+     * @param integers contiene lo step di creazione, in un range da [0-4]
+     */
     private void setCurrentStep(ArrayList<Integer> integers) {
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -217,6 +221,9 @@ public class CreateTrainingList extends Fragment {
         }
     }
 
+    /** Questi metodi in successione permettono di controllare il primo.
+     * @return true se è stato completato correttamente.
+     */
     private boolean checkFirstStepCompleted() {
         Log.d(TAG, "Verifico il completamento del primo step");
         Log.d(TAG, "Email: " + mViewModel.getEmail().getValue() + "\n" +
@@ -232,6 +239,10 @@ public class CreateTrainingList extends Fragment {
         }
     }
 
+    /**
+     * Secondo step.
+     * @return true se è stato competato correttamtne.
+     */
     private boolean checkSecondStepCompleted() {
         Log.d(TAG, "Controllo correttezza secondo step");
         List<PersonalExercise> personalExerciseList = mViewModel.getPersonalExerciseList().getValue();
@@ -256,6 +267,10 @@ public class CreateTrainingList extends Fragment {
         }
     }
 
+    /**
+     * Terzo step.
+     * @return true se è stato completato correttamente.
+     */
     private boolean checkThirdStepCompleted() {
         Log.d(TAG, "Controllo correttezza terzo step");
         Date date = mViewModel.getFinishDate().getValue();

@@ -25,9 +25,6 @@ public class Home extends Fragment{
 
     //TODO: passare l'NFC dall'activty o istanziarlo da qui, per ora istanzio da qui e verifico
 
-    private MaterialButton enterGymButton;
-    private MaterialButton startOutdoor;
-    private MaterialButton login;
     private static final String TAG = "Home";
 
     public Home() {
@@ -50,9 +47,9 @@ public class Home extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        enterGymButton = view.findViewById(R.id.statistics_oper_button);
-        startOutdoor = view.findViewById(R.id.start_training_button);
-        login = view.findViewById(R.id.trainerLogin);
+        MaterialButton enterGymButton = view.findViewById(R.id.statistics_oper_button);
+        MaterialButton startOutdoor = view.findViewById(R.id.start_training_button);
+        MaterialButton login = view.findViewById(R.id.trainerLogin);
 
         enterGymButton.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -13,6 +13,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,10 +66,6 @@ public class PlayingWorkout extends Fragment {
     private PlayingWorkoutModelView mViewModel;
     private ProgressBar mProgressBar;
     private TextView mProgressValue;
-    private User mUser;
-    private FirebaseUser mFireStoreUser;
-    private FirebaseAuth mAuth;
-    private FirebaseFirestore mDatabase;
     private Timer mTimer;
     private ExerciseExecution mExerciseExecution;
     private MaterialButton mStopButton;
@@ -100,11 +97,7 @@ public class PlayingWorkout extends Fragment {
         mProgressValue = view.findViewById(R.id.progress_value);
 
         mViewModel = ViewModelProviders.of(getActivity()).get(PlayingWorkoutModelView.class);
-        /*
-         * Setto l'utente nel Fragment in modo da poterlo utilizzare successivamente, probablimente
-         * da accorpare nel metodo che farà il Sync tra locale e remoto(FireBase)
-         */
-        setUserConsistence();
+
         // Prelevo il primo esercizio da eseguire nel ViewModel
         getCurrentExercise(INIT);
 
@@ -189,16 +182,6 @@ public class PlayingWorkout extends Fragment {
             }
         });
         return view;
-    }
-
-    /**
-     * Questo metodo preleva dal ViewModel le informazioni relative all'utente.
-     */
-    private void setUserConsistence() {
-        mAuth = mViewModel.getAuth();
-        mFireStoreUser = mViewModel.getFireStoreUser();
-        mUser = mViewModel.getUser();
-        mDatabase = mViewModel.getDatabase();
     }
 
     /**
