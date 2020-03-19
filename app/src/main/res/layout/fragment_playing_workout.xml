@@ -29,6 +29,7 @@
         android:elevation="10dp"
         android:text="@string/stop"
         android:textColor="@android:color/black"
+        android:contentDescription="@string/stop_workout"
         app:cornerRadius="20dp"
         app:icon="@drawable/ic_stop_24dp"
         app:iconGravity="end"

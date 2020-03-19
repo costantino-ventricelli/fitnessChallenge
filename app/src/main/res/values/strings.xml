@@ -126,6 +126,8 @@
     <string name="please_wait_a_few_moment">Please wait a few moment...</string>
     <string name="upload_workout_image">Upload workout image</string>
     <string name="upload_complete">Upload complete, thank you</string>
+    <string name="get_next_exercise">Get next exercise</string>
+    <string name="stop_workout">Stop workout</string>
     <plurals name="repetitionNumber">
         <item quantity="one">First repetition</item>
         <item quantity="other">%d repetition</item>

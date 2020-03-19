@@ -5,6 +5,11 @@
  */
 package it.fitnesschallenge;
 
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -26,11 +31,13 @@ import android.widget.TextView;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.NumberFormat;
+import java.util.Calendar;
 import java.util.Locale;
 
 import it.fitnesschallenge.adapter.LastExecutionDialog;
@@ -49,6 +56,7 @@ import static it.fitnesschallenge.model.SharedConstance.UPLOAD_WORKOUT_ON_FIREBA
 public class PlayingWorkout extends Fragment {
 
     private static final String TAG = "PlayingWorkout";
+    private static final int NANOSECOND_IN_MILLISECONDS = 1000000;
     private static final short PREVIOUSLY = 1;
     private static final short NEXT = 2;
     private static final short INIT = 3;
@@ -69,6 +77,12 @@ public class PlayingWorkout extends Fragment {
     private Timer mTimer;
     private ExerciseExecution mExerciseExecution;
     private MaterialButton mStopButton;
+    private SensorManager mSensorManager;
+    private float mAcceleration;
+    private float mCurrentAcceleration;
+    private long mLastShake;
+    private long mCurrentShake;
+    private long mTimeDelta;
 
     public PlayingWorkout() {
         // Required empty public constructor
@@ -95,6 +109,11 @@ public class PlayingWorkout extends Fragment {
         mPrevText = view.findViewById(R.id.prev_exercise_label);
         mProgressBar = view.findViewById(R.id.playing_workout_progress_bar);
         mProgressValue = view.findViewById(R.id.progress_value);
+        mAcceleration = 10f;
+        mCurrentAcceleration = SensorManager.GRAVITY_EARTH;
+        mCurrentShake = 0L;
+        mLastShake = 0L;
+        mTimeDelta = 2000;
 
         mViewModel = ViewModelProviders.of(getActivity()).get(PlayingWorkoutModelView.class);
 
@@ -117,14 +136,7 @@ public class PlayingWorkout extends Fragment {
             @Override
             public void onClick(View v) {
                 if (mStopButton.getContentDescription().equals(getContext().getString(R.string.finish_workout))) {
-                    UploadWorkoutOnFireBase uploadWorkoutOnFireBase = new UploadWorkoutOnFireBase();
-                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    FragmentTransaction transaction = fragmentManager.beginTransaction();
-                    transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
-                            R.anim.enter_from_rigth, R.anim.exit_from_left)
-                            .replace(R.id.fragmentContainer, uploadWorkoutOnFireBase, UPLOAD_WORKOUT_ON_FIREBASE)
-                            .addToBackStack(UPLOAD_WORKOUT_ON_FIREBASE)
-                            .commit();
+                    uploadOnFireBase();
                 } else
                     getActivity().getSupportFragmentManager().popBackStackImmediate();
             }
@@ -181,7 +193,109 @@ public class PlayingWorkout extends Fragment {
                         .commit();
             }
         });
+
+        mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
+        mSensorManager.registerListener(mSensorListener,
+                mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_NORMAL);
         return view;
+    }
+
+    /**
+     * Questo metodo apre il fragment per fare l'upload del workout su firebase.
+     */
+    private void uploadOnFireBase() {
+        Log.d(TAG, "Apro uploadOnFireBase.");
+        UploadWorkoutOnFireBase uploadWorkoutOnFireBase = new UploadWorkoutOnFireBase();
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
+                R.anim.enter_from_rigth, R.anim.exit_from_left)
+                .replace(R.id.fragmentContainer, uploadWorkoutOnFireBase, UPLOAD_WORKOUT_ON_FIREBASE)
+                .addToBackStack(UPLOAD_WORKOUT_ON_FIREBASE)
+                .commit();
+    }
+
+    /**
+     * La variabile sensorEventListener crea il listener ai cambiamenti dei dati inviati dai sensori
+     * in questo caso prende i tre assi x, y, z, o meglio le accellerazioni sui tre assi e ne fa una
+     * somma vettoriale, ottenendo l'accelerazione di tutto il device.
+     */
+    private final SensorEventListener mSensorListener = new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            float accelerationOnX = event.values[0];
+            float accelerationOnY = event.values[1];
+            float accelerationOnZ = event.values[2];
+
+            float mLastAcceleration = mCurrentAcceleration;
+            /*
+             * Il time stamp di event restituisce il valore in nano secondi, quindi per comodità lo
+             * convertiamo in millisecondi.
+             */
+            mCurrentShake = event.timestamp / NANOSECOND_IN_MILLISECONDS;
+            /*
+             * Se sto eseguendo per la prima volta questo pezzo di codice, serve settare un riferimento
+             * anche per last shake
+             */
+            if (mLastShake == 0) {
+                Log.d(TAG, "Setto per la prima volta last shake");
+                mLastShake = mCurrentShake;
+            }
+
+            /*
+             * Questa formula ricava l'accellerazione lienare di tutto il dispositivo, sfruttando la
+             * proprietà fisica dell'accellerazione vista sotto forma di vettore con le sue componenti
+             * x, y, z.
+             */
+            mCurrentAcceleration = (float) Math.sqrt(accelerationOnX * accelerationOnX +
+                    accelerationOnY * accelerationOnY +
+                    accelerationOnZ * accelerationOnZ);
+
+            // Questo delta di accelerazione mi dice se il dispositivo sta accellerando, in questo istante.
+            float accelerationDelta = mCurrentAcceleration - mLastAcceleration;
+
+            /*
+             * In questa formula sottraggo l'accellerazione di gravità, se il telefono sta solo cadendo,
+             * non riuscirà a produrre l'accelerazione necessaria per attivare lo shake event.
+             */
+            mAcceleration = mAcceleration * 0.9f + accelerationDelta;
+            /*
+             * Il delta temporale serve per valutare se lo shake che si è rilevato è dovuto ancora allo
+             * shake iniziale, poichè il sensore è così veloce da inviare almeno 3 dati diversi per una
+             * stessa shekerata.
+             */
+            mTimeDelta = mCurrentShake - mLastShake;
+            Log.d(TAG, "Time delta: " + mTimeDelta);
+            Log.d(TAG, "Acceleration: " + mAcceleration);
+
+            /*
+             * Se l'accelerazione totale del dispositivo è maggiore di 18(?, sperimentalmente provato
+             * come valore targhet, per il tipo di shake che cerchiamo di rilevare) e il tempo tra un
+             * dato e l'altro è maggiore di 2 sec.
+             */
+            if (mAcceleration > 18 & mTimeDelta >= 2000) {
+                mLastShake = mCurrentShake;
+                Log.d(TAG, "Sensor event, prossimo esercizio");
+                if (mNext.getVisibility() == View.VISIBLE) {
+                    getCurrentExercise(NEXT);
+                } else
+                    uploadOnFireBase();
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+            //Necessario sovrascivere ma lascio vuoto.
+        }
+    };
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mSensorManager.registerListener(mSensorListener,
+                mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     /**
@@ -276,5 +390,11 @@ public class PlayingWorkout extends Fragment {
             mNext.setVisibility(View.GONE);
             mNextText.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mSensorManager.unregisterListener(mSensorListener);
     }
 }
