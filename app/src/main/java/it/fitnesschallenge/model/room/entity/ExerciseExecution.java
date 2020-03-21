@@ -3,6 +3,7 @@ package it.fitnesschallenge.model.room.entity;
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +27,12 @@ public class ExerciseExecution {
         this.executionDate = executionDate;
         this.usedKilograms = usedKilograms;
         this.exerciseId = exerciseId;
+    }
+
+    @Ignore
+    public ExerciseExecution(Date executionDate, List<Float> usedKilograms) {
+        this.executionDate = executionDate;
+        this.usedKilograms = usedKilograms;
     }
 
     public int getExerciseId() {

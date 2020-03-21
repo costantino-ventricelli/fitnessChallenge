@@ -9,6 +9,7 @@ import androidx.room.Transaction;
 import java.util.Date;
 import java.util.List;
 
+import it.fitnesschallenge.model.ExecutionList;
 import it.fitnesschallenge.model.room.entity.ExerciseExecution;
 
 @Dao
@@ -27,4 +28,13 @@ public interface ExerciseExecutionDAO {
     @Transaction
     @Query("SELECT * FROM exercise_execution WHERE execution_date = :currentDate")
     LiveData<List<ExerciseExecution>> selectExecutionInDate(Date currentDate);
+
+    @Transaction
+    @Query("SELECT count(DISTINCT execution_date) FROM exercise_execution")
+    LiveData<Integer> selectNumberOfExecution();
+
+    @Transaction
+    @Query("SELECT * FROM exercise_execution WHERE execution_date = (SELECT MAX(execution_date) FROM exercise_execution)")
+    LiveData<List<ExerciseExecution>> selectLastUsedKilograms();
+
 }

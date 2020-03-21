@@ -22,7 +22,7 @@
         android:layout_marginStart="@dimen/small_distance"
         android:layout_marginTop="@dimen/small_distance"
         android:text="@string/date_pattern"
-        android:textColor="#99000000"
+        android:textColor="@color/subTitleColor"
         android:textSize="@dimen/sub_title"
         app:layout_constraintStart_toStartOf="@+id/last_execution_dialog_label"
         app:layout_constraintTop_toBottomOf="@+id/last_execution_dialog_label" />

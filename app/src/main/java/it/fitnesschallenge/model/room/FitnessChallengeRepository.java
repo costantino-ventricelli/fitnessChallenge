@@ -9,11 +9,11 @@ import android.app.Application;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
 import java.util.Date;
 import java.util.List;
 
+import it.fitnesschallenge.model.ExecutionList;
 import it.fitnesschallenge.model.room.dao.ExerciseDAO;
 import it.fitnesschallenge.model.room.dao.ExerciseExecutionDAO;
 import it.fitnesschallenge.model.room.dao.PersonalExerciseDAO;
@@ -37,7 +37,6 @@ public class FitnessChallengeRepository {
     private PersonalExerciseDAO personalExerciseDAO;
     private ExerciseExecutionDAO exerciseExecutionDAO;
     private PersonalExerciseWorkoutCrossReferenceDAO personalExerciseWorkoutCrossReferenceDAO;
-    private LiveData<WorkoutWithExercise> workoutWithExerciseList;
 
     public FitnessChallengeRepository(Application application){
         FitnessChallengeDatabase database = FitnessChallengeDatabase.getInstance(application);
@@ -47,7 +46,6 @@ public class FitnessChallengeRepository {
         personalExerciseDAO = database.getPersonalExerciseDAO();
         personalExerciseWorkoutCrossReferenceDAO = database.getPersonalExerciseWorkoutCrossReferenceDAO();
         exerciseExecutionDAO = database.getExerciseExecutionDAO();
-        workoutWithExerciseList = new MutableLiveData<>();
     }
 
     public LiveData<List<Exercise>> getListExerciseLiveData() {
@@ -55,8 +53,7 @@ public class FitnessChallengeRepository {
     }
 
     public LiveData<WorkoutWithExercise> getWorkoutWithExerciseList(long workoutId) {
-        workoutWithExerciseList = workoutWithExerciseDAO.getWorkoutWithExercise(workoutId);
-        return workoutWithExerciseList;
+        return workoutWithExerciseDAO.getWorkoutWithExercise(workoutId);
     }
 
     public List<PersonalExercise> getPersonalExerciseList(long workoutId) {
@@ -99,5 +96,13 @@ public class FitnessChallengeRepository {
 
     public LiveData<List<ExerciseExecution>> selectLastWorkoutExecution(Date currentDate) {
         return exerciseExecutionDAO.selectExecutionInDate(currentDate);
+    }
+
+    public LiveData<Integer> getNumberOfExecution() {
+        return exerciseExecutionDAO.selectNumberOfExecution();
+    }
+
+    public LiveData<List<ExerciseExecution>> getLastUsedKilograms() {
+        return exerciseExecutionDAO.selectLastUsedKilograms();
     }
 }

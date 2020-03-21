@@ -1,20 +1,46 @@
 package it.fitnesschallenge;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link Statistics#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.ValueFormatter;
+
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
+
+import it.fitnesschallenge.formatter.DayAxisValueFormatter;
+import it.fitnesschallenge.formatter.KilogramsFormatter;
+import it.fitnesschallenge.model.room.entity.ExerciseExecution;
+import it.fitnesschallenge.model.view.StatisticsViewModel;
+
 public class Statistics extends Fragment {
+
+    private static final String TAG = "Statistics";
+
+    private LineChart mLineChart;
+    private TextView mWorkoutsChart;
+    private ArrayList<Entry> mEntryList;
 
     public Statistics() {
         // Required empty public constructor
@@ -25,6 +51,81 @@ public class Statistics extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_statistics, container, false);
+
+        StatisticsViewModel mViewModel = ViewModelProviders.of(getActivity()).get(StatisticsViewModel.class);
+        mLineChart = view.findViewById(R.id.execution_chart);
+        mWorkoutsChart = view.findViewById(R.id.workout_statistics_times);
+        mEntryList = new ArrayList<>();
+
+        mViewModel.getNumberOfExecution().observe(getViewLifecycleOwner(), new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer integer) {
+                mWorkoutsChart.setText(NumberFormat.getInstance(Locale.getDefault())
+                        .format(integer));
+            }
+        });
+
+        mViewModel.getExerciseExecutionList().observe(getViewLifecycleOwner(), new Observer<List<ExerciseExecution>>() {
+            @Override
+            public void onChanged(List<ExerciseExecution> exerciseExecutions) {
+                for (ExerciseExecution execution : exerciseExecutions) {
+                    Calendar calendar = Calendar.getInstance(Locale.getDefault());
+                    calendar.setTime(execution.getExecutionDate());
+                    float executionDate = calendar.get(Calendar.)
+                    float usedKilogramsAvg = getKilogramsAVG(execution.getUsedKilograms());
+                    Entry entry = new Entry(executionDate, usedKilogramsAvg);
+                    Log.d(TAG, "\tCreata nuova entry: " + executionDate + ", " + usedKilogramsAvg);
+                    mEntryList.add(entry);
+                }
+                setBarChart();
+            }
+        });
+
         return view;
+    }
+
+    private void setBarChart() {
+        LineDataSet lineDataSet = new LineDataSet(mEntryList, "Execution");
+        lineDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
+        lineDataSet.setCircleColor(getContext().getColor(R.color.colorPrimaryDark));
+        lineDataSet.setLineWidth(3f);
+        lineDataSet.setCircleRadius(4f);
+
+        LineData data = new LineData(lineDataSet);
+        data.setValueTextSize(10f);
+
+        mLineChart.setData(data);
+
+        initBarChart();
+    }
+
+    private void initBarChart() {
+        Legend legend = mLineChart.getLegend();
+        legend.setEnabled(false);
+        mLineChart.setBackgroundColor(Color.WHITE);
+        mLineChart.getDescription().setEnabled(false);
+        mLineChart.setTouchEnabled(false);
+        mLineChart.setDragEnabled(true);
+        mLineChart.setPinchZoom(true);
+        mLineChart.animateX(1500);
+
+        DayAxisValueFormatter formatter = new DayAxisValueFormatter(mLineChart);
+
+        XAxis xAxis = mLineChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setGranularity(1f);
+        xAxis.setValueFormatter(formatter);
+
+        YAxis rightAxis = mLineChart.getAxisRight();
+        rightAxis.setDrawAxisLine(false);
+        rightAxis.setDrawTopYLabelEntry(false);
+        rightAxis.setDrawLabels(false);
+    }
+
+    private Float getKilogramsAVG(List<Float> usedKilograms) {
+        float sum = 0.0F;
+        for (Float kilograms : usedKilograms)
+            sum += kilograms;
+        return sum / usedKilograms.size();
     }
 }
