@@ -1,6 +1,7 @@
 package it.fitnesschallenge;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -62,6 +63,14 @@ public class GymHome extends Fragment {
                 transaction.replace(R.id.fragmentContainer, workoutList, PLAYING_WORKOUT)
                         .addToBackStack(PLAYING_WORKOUT)
                         .commit();
+            }
+        });
+
+        openWorkoutStatistics.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), ViewStatisticsActivity.class);
+                getActivity().startActivity(intent);
             }
         });
         return view;

@@ -122,8 +122,8 @@
     <string name="no_past_execution">No past execution</string>
     <string name="last_execution">Last execution</string>
     <string name="finish_workout">Finish</string>
-    <string name="uploading_your_workout">Uploading your workout...</string>
-    <string name="please_wait_a_few_moment">Please wait a few moment...</string>
+    <string name="uploading_your_workout">Uploading your workout…</string>
+    <string name="please_wait_a_few_moment">Please wait a few moment…</string>
     <string name="upload_workout_image">Upload workout image</string>
     <string name="upload_complete">Upload complete, thank you</string>
     <string name="get_next_exercise">Get next exercise</string>
@@ -132,4 +132,7 @@
         <item quantity="one">First repetition</item>
         <item quantity="other">%d repetition</item>
     </plurals>
+    <string name="title_activity_statistics">StatisticsActivity</string>
+    <string name="statistics_tab_title">Statistics</string>
+    <string name="room_tab_title">Room</string>
 </resources>
