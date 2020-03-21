@@ -1,54 +1,101 @@
 package it.fitnesschallenge.adapter;
 
+import android.app.Application;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.checkbox.MaterialCheckBox;
-import com.google.android.material.textfield.TextInputLayout;
-
+import java.text.NumberFormat;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import it.fitnesschallenge.R;
 import it.fitnesschallenge.model.room.entity.Exercise;
+import it.fitnesschallenge.model.room.FitnessChallengeRepository;
+import it.fitnesschallenge.model.room.entity.PersonalExercise;
 
+public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder>
+        implements ItemTouchHelperCallBack2.ItemTouchHelperContract2{
 
-public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
+    private List<PersonalExercise> mList;
+    private FitnessChallengeRepository mRepository;
+    private LifecycleOwner mCallingFragment;
+    private OnClickListener mOnClickListener;
 
-    private static final String TAG = "HomeAdapter";
-
-    private mOnClickListener mOnClickListener;
-    private mOnSelectItemListener mOnSelectedItemListener;
-    private List<Exercise> mList;
-
-    public HomeAdapter(List<Exercise> mList) {
+    public HomeAdapter(List<PersonalExercise> mList, Application callingApplication, LifecycleOwner fragment) {
         this.mList = mList;
+        this.mRepository = new FitnessChallengeRepository(callingApplication);
+        this.mCallingFragment = fragment;
     }
+
+
+    public interface OnClickListener {
+        void onClickListener(View view, int position);
+    }
+
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        private ImageView mImageView;
+        private TextView mTitleTextView;
+        private TextView mSetNumberTextView;
+        private View mCardView;
+        private ImageButton mActionButton;
+        private TextView mCoolDown;
+
+        ViewHolder(@NonNull View itemView, final OnClickListener actionClickListener) {
+            super(itemView);
+
+            mCardView = itemView;
+            mImageView = itemView.findViewById(R.id.add_exercise_img);
+            mTitleTextView = itemView.findViewById(R.id.add_exercise_title);
+            mSetNumberTextView = itemView.findViewById(R.id.exercise_item_number);
+            mActionButton = itemView.findViewById(R.id.exercise_item_action);
+            mCoolDown = itemView.findViewById(R.id.exercise_item_timer);
+
+        }
+
+    }
+
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.home_exercise_item, parent, false);
-
-        return new ViewHolder(view, mOnClickListener, mOnSelectedItemListener);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.exercise_list_layout, parent, false);
+        return new ViewHolder(view, mOnClickListener);
     }
 
+
+    @NonNull
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Log.d(TAG, "Collego il ViewHolder");
-        holder.exerciseTitle.setText(mList.get(position).getExerciseName());
-        holder.exerciseImage.setImageResource(mList.get(position).getImageReference());
-        holder.cardView.setTag(mList.get(position).getExerciseId());
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+        final PersonalExercise personalExercise = mList.get(position);
+        mRepository.getExercise(personalExercise.getExerciseId()).observe(mCallingFragment, new Observer<Exercise>() {
+            @Override
+            public void onChanged(Exercise exercise) {
+                holder.mImageView.setImageResource(exercise.getImageReference());
+                holder.mTitleTextView.setText(exercise.getExerciseName());
+                StringBuilder builder = new StringBuilder(NumberFormat.getInstance().format(personalExercise.getRepetition()));
+                builder.append("/");
+                builder.append(NumberFormat.getInstance().format(personalExercise.getSteps()));
+                holder.mSetNumberTextView.setText(builder.toString());
+                holder.mCoolDown.setText(NumberFormat.getInstance(Locale.getDefault()).format(personalExercise.getCoolDown()));
+                holder.mCardView.setTag(exercise.getExerciseName());
+                if (personalExercise.isDeleted())
+                    holder.mActionButton.setImageResource(R.drawable.ic_undo);
+                else
+                    holder.mActionButton.setImageResource(R.drawable.ic_remove_circle);
+            }
+        });
     }
 
     @Override
@@ -56,30 +103,31 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
         return mList.size();
     }
 
-    public interface mOnClickListener {
-        void onClickListener(int finalHeight, int startHeight, View itemView, boolean expanded);
+    @Override
+    public void onRowMoved(int fromPosition, int toPosition) {
+        if (fromPosition < toPosition)
+            for (int i = fromPosition; i < toPosition; i++) {
+                /*
+                 * Collection.swap è un metodo che scambia automanticamente la posizione tra gli
+                 * elementi di una Collection in questo caso la List<>
+                 */
+                Collections.swap(mList, i, i + 1);
+            }
+        else
+            for (int i = fromPosition; i > toPosition; i--) {
+                Collections.swap(mList, i, i - 1);
+            }
+        notifyItemMoved(fromPosition, toPosition);
     }
 
-    public interface mOnSelectItemListener {
-        void onSelectItemListener(View view, int position);
-    }
-        class ViewHolder extends RecyclerView.ViewHolder {
-
-        private TextView exerciseTitle;
-        private CardView cardView;
-        private ImageView exerciseImage;
-
-            ViewHolder(@NonNull final View itemView, final mOnClickListener mOnClickListener,
-                       final mOnSelectItemListener mOnSelectedItemListener) {
-                super(itemView);
-
-            cardView = (CardView) itemView.findViewById(R.id.exercise_list);
-            exerciseTitle = itemView.findViewById(R.id.home_exercise_title);
-            exerciseImage = itemView.findViewById(R.id.home_exercise_img);
-            View divider = itemView.findViewById(R.id.add_card_divider);
-
-        }
+    @Override
+    public void onRowSelected(ViewHolder viewHolder) {
+        viewHolder.mCardView.setBackgroundColor(Color.LTGRAY);
     }
 
+    @Override
+    public void onRowClear(ViewHolder viewHolder) {
+        viewHolder.mCardView.setBackgroundColor(Color.WHITE);
+    }
 
 }
