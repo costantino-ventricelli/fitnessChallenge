@@ -39,11 +39,6 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder>
         this.mCallingFragment = fragment;
     }
 
-
-    public interface OnClickListener {
-        void onClickListener(View view, int position);
-    }
-
     static class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView mImageView;
         private TextView mTitleTextView;
@@ -130,4 +125,11 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder>
         viewHolder.mCardView.setBackgroundColor(Color.WHITE);
     }
 
+    public void setOnClickListener(HomeAdapter.OnClickListener onClickListener) {
+        mOnClickListener = onClickListener;
+    }
+
+    public interface OnClickListener {
+        void onClickListener(View view, int position);
+    }
 }
