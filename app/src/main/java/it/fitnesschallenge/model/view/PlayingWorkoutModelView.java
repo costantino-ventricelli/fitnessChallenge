@@ -25,9 +25,9 @@ import java.util.Date;
 import java.util.List;
 
 import it.fitnesschallenge.model.User;
+import it.fitnesschallenge.model.room.FitnessChallengeRepository;
 import it.fitnesschallenge.model.room.entity.Exercise;
 import it.fitnesschallenge.model.room.entity.ExerciseExecution;
-import it.fitnesschallenge.model.room.FitnessChallengeRepository;
 import it.fitnesschallenge.model.room.entity.PersonalExercise;
 import it.fitnesschallenge.model.room.entity.Workout;
 import it.fitnesschallenge.model.room.entity.reference.WorkoutWithExercise;

@@ -6,11 +6,11 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class ItemTouchHelperCallBack2 extends ItemTouchHelper.Callback {
+public class HomeAdapterDrag extends ItemTouchHelper.Callback {
 
     private final ItemTouchHelperContract2 mItemTouchHelperContract;
 
-    public ItemTouchHelperCallBack2(ItemTouchHelperContract2 mItemTouchHelperContract) {
+    public HomeAdapterDrag(ItemTouchHelperContract2 mItemTouchHelperContract) {
         this.mItemTouchHelperContract = mItemTouchHelperContract;
     }
 

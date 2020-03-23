@@ -9,7 +9,6 @@ import androidx.room.Transaction;
 import java.util.Date;
 import java.util.List;
 
-import it.fitnesschallenge.model.ExecutionList;
 import it.fitnesschallenge.model.room.entity.ExerciseExecution;
 
 @Dao

@@ -20,14 +20,14 @@ import java.util.Collections;
 import java.util.List;
 
 import it.fitnesschallenge.R;
-import it.fitnesschallenge.model.room.entity.Exercise;
 import it.fitnesschallenge.model.room.FitnessChallengeRepository;
+import it.fitnesschallenge.model.room.entity.Exercise;
 import it.fitnesschallenge.model.room.entity.PersonalExercise;
 
 import static it.fitnesschallenge.model.SharedConstance.CONVERSION_SEC_IN_MILLIS;
 
 public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder>
-        implements ItemTouchHelperCallBack.ItemTouchHelperContract {
+        implements ShowAdapterDrag.ItemTouchHelperContract {
 
     private static final String TAG = "ShowAdapter";
 

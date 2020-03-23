@@ -20,7 +20,6 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
-
 import it.fitnesschallenge.HomeActivity;
 import it.fitnesschallenge.R;
 import it.fitnesschallenge.model.room.entity.PersonalExercise;

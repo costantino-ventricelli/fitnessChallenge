@@ -14,8 +14,8 @@ import it.fitnesschallenge.timepicker.OnTimerSetListener;
 import it.fitnesschallenge.timepicker.TimerPickerDialog;
 
 import static android.app.Activity.RESULT_OK;
-import static it.fitnesschallenge.model.SharedConstance.SELECTED_TIMER;
 import static it.fitnesschallenge.model.SharedConstance.POSITION_IN_ADAPTER;
+import static it.fitnesschallenge.model.SharedConstance.SELECTED_TIMER;
 
 public class TimerPickerFragment extends AppCompatDialogFragment {
 

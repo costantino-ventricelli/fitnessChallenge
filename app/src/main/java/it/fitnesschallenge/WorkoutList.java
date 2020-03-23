@@ -1,7 +1,16 @@
+/**
+ * Questo fragment permette di prelevare l'ultimo workout attivo disponibile, verificando se su
+ * FireStore è presente un nuovo workout, e permette di visualizzare la sequenza di esecuzione prima
+ * di avviare l'allenamento tramite il FAB.
+ */
 package it.fitnesschallenge;
 
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,11 +22,6 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -32,8 +36,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import it.fitnesschallenge.adapter.ItemTouchHelperCallBack;
 import it.fitnesschallenge.adapter.ShowAdapter;
+import it.fitnesschallenge.adapter.ShowAdapterDrag;
 import it.fitnesschallenge.model.User;
 import it.fitnesschallenge.model.room.entity.Workout;
 import it.fitnesschallenge.model.room.entity.reference.WorkoutWithExercise;
@@ -58,7 +62,7 @@ public class WorkoutList extends Fragment {
         // Required empty public constructor
     }
 
-    public static WorkoutList newInstance(User user) {
+    static WorkoutList newInstance(User user) {
         WorkoutList fragment = new WorkoutList();
         Bundle args = new Bundle();
         args.putParcelable(FIREBASE_USER, user);
@@ -214,7 +218,7 @@ public class WorkoutList extends Fragment {
                 getActivity().getApplication(), getViewLifecycleOwner());
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mShowAdapter);
-        ItemTouchHelper.Callback callback = new ItemTouchHelperCallBack(mShowAdapter);
+        ItemTouchHelper.Callback callback = new ShowAdapterDrag(mShowAdapter);
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(mRecyclerView);
     }

@@ -13,7 +13,6 @@ import androidx.lifecycle.LiveData;
 import java.util.Date;
 import java.util.List;
 
-import it.fitnesschallenge.model.ExecutionList;
 import it.fitnesschallenge.model.room.dao.ExerciseDAO;
 import it.fitnesschallenge.model.room.dao.ExerciseExecutionDAO;
 import it.fitnesschallenge.model.room.dao.PersonalExerciseDAO;

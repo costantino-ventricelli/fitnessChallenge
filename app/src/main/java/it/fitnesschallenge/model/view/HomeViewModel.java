@@ -9,8 +9,8 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
-import it.fitnesschallenge.model.room.entity.Exercise;
 import it.fitnesschallenge.model.room.FitnessChallengeRepository;
+import it.fitnesschallenge.model.room.entity.Exercise;
 
 public class HomeViewModel extends AndroidViewModel {
 

@@ -6,9 +6,7 @@ package it.fitnesschallenge.model.view;
 
 import android.app.Application;
 
-
 import androidx.annotation.NonNull;
-
 import androidx.lifecycle.AndroidViewModel;
 
 import it.fitnesschallenge.service.TimerService;

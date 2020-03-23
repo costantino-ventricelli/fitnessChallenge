@@ -1,3 +1,7 @@
+/**
+ * Questo fragment permette, durante la creazione della scheda di allenamento di visualizzare gli
+ * esercizi inseriti, cambiarnel l'ordine e permette di rimuoverli se la selezione non è più necessaria.
+ */
 package it.fitnesschallenge;
 
 
@@ -21,8 +25,8 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 
-import it.fitnesschallenge.adapter.ItemTouchHelperCallBack;
 import it.fitnesschallenge.adapter.ShowAdapter;
+import it.fitnesschallenge.adapter.ShowAdapterDrag;
 import it.fitnesschallenge.model.room.entity.PersonalExercise;
 import it.fitnesschallenge.model.view.CreationViewModel;
 
@@ -58,7 +62,7 @@ public class ExerciseList extends Fragment {
                 mShowAdapter = new ShowAdapter(mActualList, getActivity().getApplication(), getViewLifecycleOwner());
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
                 mRecyclerView.setAdapter(mShowAdapter);
-                ItemTouchHelper.Callback callback = new ItemTouchHelperCallBack(mShowAdapter);
+                ItemTouchHelper.Callback callback = new ShowAdapterDrag(mShowAdapter);
                 ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
                 touchHelper.attachToRecyclerView(mRecyclerView);
                 mShowAdapter.setOnClickListener(new ShowAdapter.OnClickListener() {

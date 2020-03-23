@@ -2,7 +2,6 @@ package it.fitnesschallenge.adapter;
 
 import android.app.Application;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,12 +20,12 @@ import java.util.List;
 import java.util.Locale;
 
 import it.fitnesschallenge.R;
-import it.fitnesschallenge.model.room.entity.Exercise;
 import it.fitnesschallenge.model.room.FitnessChallengeRepository;
+import it.fitnesschallenge.model.room.entity.Exercise;
 import it.fitnesschallenge.model.room.entity.PersonalExercise;
 
 public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder>
-        implements ItemTouchHelperCallBack2.ItemTouchHelperContract2{
+        implements HomeAdapterDrag.ItemTouchHelperContract2 {
 
     private List<PersonalExercise> mList;
     private FitnessChallengeRepository mRepository;

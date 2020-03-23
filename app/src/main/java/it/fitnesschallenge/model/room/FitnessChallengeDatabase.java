@@ -20,11 +20,11 @@ import java.util.List;
 
 import it.fitnesschallenge.R;
 import it.fitnesschallenge.model.ExerciseList;
-import it.fitnesschallenge.model.room.dao.ExerciseExecutionDAO;
-import it.fitnesschallenge.model.room.dao.WorkoutDAO;
 import it.fitnesschallenge.model.room.dao.ExerciseDAO;
+import it.fitnesschallenge.model.room.dao.ExerciseExecutionDAO;
 import it.fitnesschallenge.model.room.dao.PersonalExerciseDAO;
 import it.fitnesschallenge.model.room.dao.PersonalExerciseWorkoutCrossReferenceDAO;
+import it.fitnesschallenge.model.room.dao.WorkoutDAO;
 import it.fitnesschallenge.model.room.dao.WorkoutWithExerciseDAO;
 import it.fitnesschallenge.model.room.entity.Exercise;
 import it.fitnesschallenge.model.room.entity.ExerciseExecution;

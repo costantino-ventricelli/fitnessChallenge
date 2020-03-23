@@ -17,11 +17,9 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.ValueFormatter;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -29,8 +27,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-import it.fitnesschallenge.formatter.DayAxisValueFormatter;
-import it.fitnesschallenge.formatter.KilogramsFormatter;
 import it.fitnesschallenge.model.room.entity.ExerciseExecution;
 import it.fitnesschallenge.model.view.StatisticsViewModel;
 
@@ -65,13 +61,15 @@ public class Statistics extends Fragment {
             }
         });
 
-        mViewModel.getExerciseExecutionList().observe(getViewLifecycleOwner(), new Observer<List<ExerciseExecution>>() {
+        /*mViewModel.getExerciseExecutionList().observe(getViewLifecycleOwner(), new Observer<List<ExerciseExecution>>() {
             @Override
             public void onChanged(List<ExerciseExecution> exerciseExecutions) {
                 for (ExerciseExecution execution : exerciseExecutions) {
                     Calendar calendar = Calendar.getInstance(Locale.getDefault());
                     calendar.setTime(execution.getExecutionDate());
-                    float executionDate = calendar.get(Calendar.)
+                    String floatDate = calendar.get(Calendar.YEAR) + "." + calendar.get(Calendar.DAY_OF_YEAR);
+                    float executionDate = Float.parseFloat(floatDate);
+                    Log.d(TAG, "Data di esecuzione: " + executionDate);
                     float usedKilogramsAvg = getKilogramsAVG(execution.getUsedKilograms());
                     Entry entry = new Entry(executionDate, usedKilogramsAvg);
                     Log.d(TAG, "\tCreata nuova entry: " + executionDate + ", " + usedKilogramsAvg);
@@ -79,7 +77,14 @@ public class Statistics extends Fragment {
                 }
                 setBarChart();
             }
-        });
+        });*/
+
+        for (int i = 0; i < 50; i++) {
+            Entry entry = new Entry(i, (float) Math.random());
+            mEntryList.add(entry);
+        }
+
+        setBarChart();
 
         return view;
     }
@@ -96,30 +101,30 @@ public class Statistics extends Fragment {
 
         mLineChart.setData(data);
 
-        initBarChart();
+        initLineChartChart();
     }
 
-    private void initBarChart() {
+    private void initLineChartChart() {
         Legend legend = mLineChart.getLegend();
         legend.setEnabled(false);
         mLineChart.setBackgroundColor(Color.WHITE);
         mLineChart.getDescription().setEnabled(false);
-        mLineChart.setTouchEnabled(false);
+        mLineChart.setTouchEnabled(true);
         mLineChart.setDragEnabled(true);
         mLineChart.setPinchZoom(true);
         mLineChart.animateX(1500);
 
-        DayAxisValueFormatter formatter = new DayAxisValueFormatter(mLineChart);
 
         XAxis xAxis = mLineChart.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setGranularity(1f);
-        xAxis.setValueFormatter(formatter);
+        xAxis.setDrawAxisLine(false);
+        xAxis.setDrawLabels(false);
+
 
         YAxis rightAxis = mLineChart.getAxisRight();
         rightAxis.setDrawAxisLine(false);
         rightAxis.setDrawTopYLabelEntry(false);
         rightAxis.setDrawLabels(false);
+
     }
 
     private Float getKilogramsAVG(List<Float> usedKilograms) {
