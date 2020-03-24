@@ -62,13 +62,13 @@ public class WorkoutHome extends Fragment {
         openTrainingList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TrainingListHome trainingListHome = new TrainingListHome();
+                WorkoutList workoutList = new WorkoutList();
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
                         R.anim.enter_from_rigth, R.anim.exit_from_left);
-                transaction.replace(R.id.fragmentContainer, trainingListHome, TRAINING_LIST_HOME)
-                        .addToBackStack(TRAINING_LIST_HOME)
+                transaction.replace(R.id.fragmentContainer, workoutList, WORKOUT_STATISTICS_FRAGMENT)
+                        .addToBackStack(WORKOUT_STATISTICS_FRAGMENT)
                         .commit();
             }
         });

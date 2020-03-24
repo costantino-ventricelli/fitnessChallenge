@@ -6,6 +6,9 @@
 package it.fitnesschallenge;
 
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -57,6 +60,7 @@ public class WorkoutList extends Fragment {
     private FirebaseFirestore mDatabase;
     private RecyclerView mRecyclerView;
     private ShowAdapter mShowAdapter;
+    private Context mContext;
 
     public WorkoutList() {
         // Required empty public constructor
@@ -85,7 +89,7 @@ public class WorkoutList extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_workout_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_workout_list_fabPlay, container, false);
         mRecyclerView = view.findViewById(R.id.workout_list_recycler_view);
 
         FloatingActionButton floatingActionButton = view.findViewById(R.id.start_workout_FAB);
@@ -121,6 +125,18 @@ public class WorkoutList extends Fragment {
         setUserConsistence();
         return view;
     }
+
+    /**
+     * Questo metodo controlla se il dispositivo è connesso prima di richiamare il metodo setObserver()
+     */
+    private void checkConnection() {
+        ConnectivityManager cm = (ConnectivityManager)mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+        if(isConnected)
+            setObserver();
+    }
+
 
     /**
      * Set observer crea gli observer al ViewModel nel caso in cui il fragment venga chiamato per la
