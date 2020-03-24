@@ -14,19 +14,22 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import it.fitnesschallenge.R;
 import it.fitnesschallenge.Room;
 import it.fitnesschallenge.Statistics;
+import it.fitnesschallenge.model.User;
 
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @StringRes
     private static final int[] TAB_TITLES = new int[]{R.string.statistics_tab_title, R.string.room_tab_title};
     private final Context mContext;
+    private final User mUser;
 
     /**
      * Il costuttore è autogenerato, imposta il fragment manager dell'activity e il contesto.
      */
-    public SectionsPagerAdapter(Context context, FragmentManager fm) {
+    public SectionsPagerAdapter(Context context, FragmentManager fm, User user) {
         super(fm);
         mContext = context;
+        mUser = user;
     }
 
     /**
@@ -41,7 +44,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if (position == 0) {
-            return new Statistics();
+            return Statistics.newInstance(mUser);
         } else {
             return new Room();
         }

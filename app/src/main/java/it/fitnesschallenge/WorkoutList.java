@@ -145,9 +145,9 @@ public class WorkoutList extends Fragment {
                                             Log.d(TAG, "Ho letto da Firebase nuovi workout");
                                             for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
                                                 workoutList.add(queryDocumentSnapshot.toObject(WorkoutWithExercise.class));
-                                                checkWorkoutList(workoutList);
                                                 Log.d(TAG, "Individuato workout per l'utente");
                                             }
+                                            checkWorkoutList(workoutList);
                                         }
                                     })
                                     .addOnFailureListener(new OnFailureListener() {

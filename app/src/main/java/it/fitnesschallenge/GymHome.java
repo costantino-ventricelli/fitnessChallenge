@@ -69,6 +69,7 @@ public class GymHome extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), ViewStatisticsActivity.class);
+                intent.putExtra(USER, mUser);
                 getActivity().startActivity(intent);
             }
         });
