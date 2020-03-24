@@ -276,7 +276,7 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
     /**
      * Questo metodo preleva i workout attivi dal DB locale.
      * @return il valore di ritorno è un booleano che indica se c'è un workout attivo nel DB locale
-     * e nel frattempo detta la variabile del view model contenente il workoutId, per poi essere
+     * e nel frattempo setta la variabile del view model contenente il workoutId, per poi essere
      * prelevata ed utilizzata nel fragment che la richiederà.
      */
     public LiveData<Boolean> setActiveWorkoutFromLocal() {

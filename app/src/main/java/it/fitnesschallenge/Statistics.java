@@ -27,6 +27,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import it.fitnesschallenge.adapter.LineChartMakerView;
 import it.fitnesschallenge.model.room.entity.ExerciseExecution;
 import it.fitnesschallenge.model.view.StatisticsViewModel;
 
@@ -61,13 +62,17 @@ public class Statistics extends Fragment {
             }
         });
 
-        /*mViewModel.getExerciseExecutionList().observe(getViewLifecycleOwner(), new Observer<List<ExerciseExecution>>() {
+        mViewModel.getExerciseExecutionList().observe(getViewLifecycleOwner(), new Observer<List<ExerciseExecution>>() {
             @Override
             public void onChanged(List<ExerciseExecution> exerciseExecutions) {
                 for (ExerciseExecution execution : exerciseExecutions) {
                     Calendar calendar = Calendar.getInstance(Locale.getDefault());
                     calendar.setTime(execution.getExecutionDate());
-                    String floatDate = calendar.get(Calendar.YEAR) + "." + calendar.get(Calendar.DAY_OF_YEAR);
+                    String floatDate = calendar.get(Calendar.YEAR) + "";
+                    if (calendar.get(Calendar.DAY_OF_YEAR) < 100)
+                        floatDate += ".0" + calendar.get(Calendar.DAY_OF_YEAR);
+                    else
+                        floatDate += calendar.get(Calendar.DAY_OF_YEAR);
                     float executionDate = Float.parseFloat(floatDate);
                     Log.d(TAG, "Data di esecuzione: " + executionDate);
                     float usedKilogramsAvg = getKilogramsAVG(execution.getUsedKilograms());
@@ -77,12 +82,7 @@ public class Statistics extends Fragment {
                 }
                 setBarChart();
             }
-        });*/
-
-        for (int i = 0; i < 50; i++) {
-            Entry entry = new Entry(i, (float) Math.random());
-            mEntryList.add(entry);
-        }
+        });
 
         setBarChart();
 
@@ -93,8 +93,8 @@ public class Statistics extends Fragment {
         LineDataSet lineDataSet = new LineDataSet(mEntryList, "Execution");
         lineDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
         lineDataSet.setCircleColor(getContext().getColor(R.color.colorPrimaryDark));
-        lineDataSet.setLineWidth(3f);
-        lineDataSet.setCircleRadius(4f);
+        lineDataSet.setLineWidth(4f);
+        lineDataSet.setCircleRadius(6f);
 
         LineData data = new LineData(lineDataSet);
         data.setValueTextSize(10f);
@@ -125,6 +125,9 @@ public class Statistics extends Fragment {
         rightAxis.setDrawTopYLabelEntry(false);
         rightAxis.setDrawLabels(false);
 
+        LineChartMakerView makerView = new LineChartMakerView(getContext(), R.layout.custom_point_view);
+        makerView.setChartView(mLineChart);
+        mLineChart.setMarker(makerView);
     }
 
     private Float getKilogramsAVG(List<Float> usedKilograms) {
