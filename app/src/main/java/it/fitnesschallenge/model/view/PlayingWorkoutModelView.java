@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import it.fitnesschallenge.WorkoutList;
 import it.fitnesschallenge.model.User;
 import it.fitnesschallenge.model.room.FitnessChallengeRepository;
 import it.fitnesschallenge.model.room.entity.Exercise;
@@ -279,14 +280,17 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
      * e nel frattempo setta la variabile del view model contenente il workoutId, per poi essere
      * prelevata ed utilizzata nel fragment che la richiederà.
      */
-    public LiveData<Boolean> setActiveWorkoutFromLocal() {
-        List<Workout> workoutList = mRepository.getWorkoutList().getValue();
+    public LiveData<Boolean> setActiveWorkoutFromLocal(List<Workout> workoutList) {
         if (workoutList != null)
             for (Workout workout : workoutList) {
                 if (workout.isActive())
                     mWorkoutId.setValue((long) workout.getWorkOutId());
             }
         return new MutableLiveData<>(mWorkoutId.getValue() != -1);
+    }
+
+    public MutableLiveData<List<Workout>> getWorkoutList() {
+        return new MutableLiveData<>(mRepository.getWorkoutList().getValue());
     }
 
     /**

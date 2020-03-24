@@ -65,20 +65,10 @@ public class Statistics extends Fragment {
         mViewModel.getExerciseExecutionList().observe(getViewLifecycleOwner(), new Observer<List<ExerciseExecution>>() {
             @Override
             public void onChanged(List<ExerciseExecution> exerciseExecutions) {
-                for (ExerciseExecution execution : exerciseExecutions) {
-                    Calendar calendar = Calendar.getInstance(Locale.getDefault());
-                    calendar.setTime(execution.getExecutionDate());
-                    String floatDate = calendar.get(Calendar.YEAR) + "";
-                    if (calendar.get(Calendar.DAY_OF_YEAR) < 100)
-                        floatDate += ".0" + calendar.get(Calendar.DAY_OF_YEAR);
-                    else
-                        floatDate += calendar.get(Calendar.DAY_OF_YEAR);
-                    float executionDate = Float.parseFloat(floatDate);
-                    Log.d(TAG, "Data di esecuzione: " + executionDate);
-                    float usedKilogramsAvg = getKilogramsAVG(execution.getUsedKilograms());
-                    Entry entry = new Entry(executionDate, usedKilogramsAvg);
-                    Log.d(TAG, "\tCreata nuova entry: " + executionDate + ", " + usedKilogramsAvg);
-                    mEntryList.add(entry);
+                if (exerciseExecutions.size() <= 0) {
+                    setEntryList(exerciseExecutions);
+                } else {
+                    //TODO: scaricare dal cloud esecuzioni sull'ultimo workout attivo.
                 }
                 setBarChart();
             }
@@ -87,6 +77,24 @@ public class Statistics extends Fragment {
         setBarChart();
 
         return view;
+    }
+
+    private void setEntryList(List<ExerciseExecution> exerciseExecutions) {
+        for (ExerciseExecution execution : exerciseExecutions) {
+            Calendar calendar = Calendar.getInstance(Locale.getDefault());
+            calendar.setTime(execution.getExecutionDate());
+            String floatDate = calendar.get(Calendar.YEAR) + "";
+            if (calendar.get(Calendar.DAY_OF_YEAR) < 100)
+                floatDate += ".0" + calendar.get(Calendar.DAY_OF_YEAR);
+            else
+                floatDate += calendar.get(Calendar.DAY_OF_YEAR);
+            float executionDate = Float.parseFloat(floatDate);
+            Log.d(TAG, "Data di esecuzione: " + executionDate);
+            float usedKilogramsAvg = getKilogramsAVG(execution.getUsedKilograms());
+            Entry entry = new Entry(executionDate, usedKilogramsAvg);
+            Log.d(TAG, "\tCreata nuova entry: " + executionDate + ", " + usedKilogramsAvg);
+            mEntryList.add(entry);
+        }
     }
 
     private void setBarChart() {

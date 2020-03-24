@@ -128,32 +128,37 @@ public class WorkoutList extends Fragment {
      * alla MainActivity.
      */
     private void setObserver() {
-        mViewModel.setActiveWorkoutFromLocal().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+        mViewModel.getWorkoutList().observe(getViewLifecycleOwner(), new Observer<List<Workout>>() {
             @Override
-            public void onChanged(Boolean aBoolean) {
-                final List<WorkoutWithExercise> workoutList = new ArrayList<>();
-                if (!aBoolean) {
-                    Log.d(TAG, "Non sono stati individuati workout nel DB");
-                    mDatabase.collection("user/" + mUser.getUsername() + "/workout")
-                            .get()
-                            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                @Override
-                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                    Log.d(TAG, "Ho letto da Firebase nuovi workout");
-                                    for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
-                                        workoutList.add(queryDocumentSnapshot.toObject(WorkoutWithExercise.class));
-                                        checkWorkoutList(workoutList);
-                                        Log.d(TAG, "Individuato workout per l'utente");
-                                    }
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.d(TAG, "Qualcosa è andato storto nella lettura del workout");
-                                }
-                            });
-                }
+            public void onChanged(List<Workout> workoutList) {
+                mViewModel.setActiveWorkoutFromLocal(workoutList).observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+                    @Override
+                    public void onChanged(Boolean aBoolean) {
+                        final List<WorkoutWithExercise> workoutList = new ArrayList<>();
+                        if (!aBoolean) {
+                            Log.d(TAG, "Non sono stati individuati workout nel DB");
+                            mDatabase.collection("user/" + mUser.getUsername() + "/workout")
+                                    .get()
+                                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                            Log.d(TAG, "Ho letto da Firebase nuovi workout");
+                                            for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
+                                                workoutList.add(queryDocumentSnapshot.toObject(WorkoutWithExercise.class));
+                                                checkWorkoutList(workoutList);
+                                                Log.d(TAG, "Individuato workout per l'utente");
+                                            }
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.d(TAG, "Qualcosa è andato storto nella lettura del workout");
+                                        }
+                                    });
+                        }
+                    }
+                });
             }
         });
     }

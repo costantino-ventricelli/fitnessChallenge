@@ -21,8 +21,7 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.List;
 
 import it.fitnesschallenge.adapter.HomeAdapter;
-import it.fitnesschallenge.adapter.ItemTouchHelperCallBack;
-import it.fitnesschallenge.adapter.ItemTouchHelperCallBack2;
+import it.fitnesschallenge.adapter.HomeAdapterDrag;
 import it.fitnesschallenge.model.room.entity.PersonalExercise;
 import it.fitnesschallenge.model.view.CreationViewModel;
 
@@ -64,7 +63,7 @@ public class TrainingListHome extends Fragment {
 
                 mList = personalExercises;
 
-                ItemTouchHelper.Callback callback = new ItemTouchHelperCallBack2(mAdapter);
+                ItemTouchHelper.Callback callback = new HomeAdapterDrag(mAdapter);
                 ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
                 touchHelper.attachToRecyclerView(recyclerView);
 

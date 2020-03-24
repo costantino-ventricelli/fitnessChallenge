@@ -33,7 +33,7 @@ public interface ExerciseExecutionDAO {
     LiveData<Integer> selectNumberOfExecution();
 
     @Transaction
-    @Query("SELECT * FROM exercise_execution WHERE execution_date = (SELECT MAX(execution_date) FROM exercise_execution)")
+    @Query("SELECT * FROM exercise_execution")
     LiveData<List<ExerciseExecution>> selectLastUsedKilograms();
 
 }

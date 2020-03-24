@@ -2,6 +2,7 @@ package it.fitnesschallenge;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
@@ -23,6 +24,14 @@ public class ViewStatisticsActivity extends AppCompatActivity {
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
         FloatingActionButton shareFAB = findViewById(R.id.share_statistics_fab);
+        ImageButton backButton = findViewById(R.id.statistics_activity_back_button);
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         shareFAB.setOnClickListener(new View.OnClickListener() {
             @Override
