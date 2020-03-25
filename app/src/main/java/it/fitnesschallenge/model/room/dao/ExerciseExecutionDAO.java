@@ -3,6 +3,7 @@ package it.fitnesschallenge.model.room.dao;
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
 
@@ -14,7 +15,7 @@ import it.fitnesschallenge.model.room.entity.ExerciseExecution;
 @Dao
 public interface ExerciseExecutionDAO {
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertExecution(ExerciseExecution exerciseExecution);
 
     @Transaction

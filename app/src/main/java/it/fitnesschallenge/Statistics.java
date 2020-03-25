@@ -1,3 +1,8 @@
+/**
+ * Questo fragment permette di visualizzare un grafico a linee composto dal giorno di esecuzione sull'
+ * asse delle X e la media dei pesi utilizzti per il workout sull'asse delle Y, inoltre se si clicca
+ * su uno dei punti del grafico compare una "nuvoletta" che riporta i dati con esattezza.
+ */
 package it.fitnesschallenge;
 
 import android.graphics.Color;
@@ -41,7 +46,6 @@ import it.fitnesschallenge.model.ExecutionList;
 import it.fitnesschallenge.model.User;
 import it.fitnesschallenge.model.room.entity.ExerciseExecution;
 import it.fitnesschallenge.model.room.entity.Workout;
-import it.fitnesschallenge.model.room.entity.reference.WorkoutWithExercise;
 import it.fitnesschallenge.model.view.StatisticsViewModel;
 
 public class Statistics extends Fragment {
@@ -49,8 +53,14 @@ public class Statistics extends Fragment {
     private static final String TAG = "Statistics";
     private static final String USER = "user";
 
+    // LineChart è l'istanza del grafico a linee
     private LineChart mLineChart;
     private TextView mWorkoutsChart;
+    /*
+     * Questa lista contiene degli oggetti denominati Entry, che fondamentalmente, racchiude due valori
+     * di tipo float: x, y, che sono rispettivamente i valori che verranno utilizzati per la rappresentazione
+     * dei punti sul grafico.
+     */
     private ArrayList<Entry> mEntryList;
     private StatisticsViewModel mViewModel;
     private FirebaseFirestore mDatabase;
@@ -95,6 +105,11 @@ public class Statistics extends Fragment {
             }
         });
 
+        /*
+         * Qui viene interpellato il ViewModel per prelevare i dati delle esecuzioni dal DB locale
+         * se non vengono trovate esecuzioni in locale si interpella FireBase per prelevare eventuali
+         * esecuizioni in remoto.
+         */
         mViewModel.getExerciseExecutionList().observe(getViewLifecycleOwner(), new Observer<List<ExerciseExecution>>() {
             @Override
             public void onChanged(List<ExerciseExecution> exerciseExecutions) {
@@ -123,6 +138,12 @@ public class Statistics extends Fragment {
         return view;
     }
 
+    /**
+     * Questo metodo viene invocato se in locale non sono presenti esecuzioni, quindi verranno prelevati
+     * da remoto solo le esecuzioni legate a workout attivi.
+     *
+     * @param workouts contiene una lista di tutti i workout individuati per l'utente in questione.
+     */
     private void setActiveWorkout(List<Workout> workouts) {
         Calendar calendar = Calendar.getInstance();
         for (Workout workout : workouts) {
@@ -135,6 +156,11 @@ public class Statistics extends Fragment {
         }
     }
 
+    /**
+     * In questo metodo vengono prelevare le esecuzioni dei workout da FireStore e memorizzate in locale
+     * così da notificare i LiveData che aggiorneranno il grafico.
+     * @param workout contiene il workout di riferimento.
+     */
     private void getExecution(Workout workout) {
         Log.d(TAG, "Prelevo dati da FireStore.");
         final ArrayList<ExecutionList> executionLists = new ArrayList<>();
@@ -162,6 +188,10 @@ public class Statistics extends Fragment {
                 });
     }
 
+    /**
+     * Questo metodo crea la lista dei nodi necessari per disegnare il grafico in questione.
+     * @param exerciseExecutions contiene una lista delle esecuzioni.
+     */
     private void setEntryList(List<ExerciseExecution> exerciseExecutions) {
         for (ExerciseExecution execution : exerciseExecutions) {
             Calendar calendar = Calendar.getInstance(Locale.getDefault());
@@ -176,6 +206,12 @@ public class Statistics extends Fragment {
         }
     }
 
+    /**
+     * Questo metodo contiene i comandi per settare i nodi che il grafico dovrà rappresentare.
+     * Tramite la classe LineDataSet viene utilizzata la lista dei nodi da passare al grafico, impostando
+     * le dipendenze, e gli apetti delle linee di collegamento e i punti da mostrare.
+     * LineData racchiude queste informazioni e le invia al grafico per permetterne la reppresentazione.
+     */
     private void setBarChart() {
         LineDataSet lineDataSet = new LineDataSet(mEntryList, "Execution");
         lineDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
@@ -191,6 +227,10 @@ public class Statistics extends Fragment {
         initLineChartChart();
     }
 
+    /**
+     * Questo metodo permette di impostare i valori necessari per disegnare il grafico, come le etichette,
+     * la legenda, la granularità del grafico, e lo sfondo di tutta la rappresentazione.
+     */
     private void initLineChartChart() {
         Legend legend = mLineChart.getLegend();
         legend.setEnabled(false);
@@ -205,8 +245,6 @@ public class Statistics extends Fragment {
         XAxis xAxis = mLineChart.getXAxis();
         xAxis.setGranularity(1F);
         xAxis.setXOffset(10F);
-        //xAxis.setDrawAxisLine(false);
-        //xAxis.setDrawLabels(false);
 
 
         YAxis rightAxis = mLineChart.getAxisRight();
@@ -219,6 +257,11 @@ public class Statistics extends Fragment {
         mLineChart.setMarker(makerView);
     }
 
+    /**
+     * Questo metodo calcola la media di tutti i pesi utilizzati durante il workout
+     * @param usedKilograms lista dei pesi utilizzati
+     * @return la media di tutti i pesi.
+     */
     private Float getKilogramsAVG(List<Float> usedKilograms) {
         float sum = 0.0F;
         for (Float kilograms : usedKilograms)
