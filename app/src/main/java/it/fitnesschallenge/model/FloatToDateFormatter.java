@@ -1,6 +1,6 @@
 /**
  * Questa classe permette di formattare un valore in floating point in una data del tipo 2020-Mar-24,
- * partendo da un valore in floting point del tipo 2020.084 dove 2020 è l'anno e 084 è l'84esimo giorno
+ * partendo da un valore in floting point del tipo 84.2020 dove 2020 è l'anno e 84 è l'84esimo giorno
  * dell'anno ovvero il 24 marzo in un anno bisestile.
  */
 package it.fitnesschallenge.model;
@@ -16,26 +16,28 @@ public class FloatToDateFormatter {
     private static final String[] MONTHS = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     // Quseto array contine i giorni dei vari mesi in ordine.
     private static final int[] MONTHS_DAY = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-    private static final float THOUSANDTH_TO_INT = 1000.00F;
+    private static final float THOUSANDTH_TO_INT = 10000.00F;
 
     private int mYear;
     private int mDayOfMonth;
     private int mMonth;
+    private int mDayOfYear;
 
     public FloatToDateFormatter(float floatingDate) {
         /*
          * Questo comando effettua il troncamento della valore passato, quindi nel caso di 2020.084,
          * mYear pernderà il valore di 2020;
          */
-        mYear = (int) floatingDate;
+        mDayOfYear = (int) floatingDate;
         Log.d(TAG, "Data in floating point: " + floatingDate);
+        mYear = Math.round((floatingDate - mDayOfYear) * THOUSANDTH_TO_INT);
         Log.d(TAG, "Anno estrapolato: " + mYear + " l'anno è bisestile: " + isLeap());
         /*
          * Dopo aver verificato se l'anno è bisestile passo il giorno dell'anno per calcolare il mese
          * a cui esso appartine, quindi trasformo la parte millesimale in intera, nell esempio avremo:
          * 2020.084 - 2020 = 0.084, dopo di che 0.084 * 1000 = 84, e quindi l'84esimo giorno dell'anno.
          */
-        monthOfTheYear(Math.round((floatingDate - mYear) * THOUSANDTH_TO_INT));
+        monthOfTheYear(mDayOfYear);
         Log.d(TAG, "Mese calcolato: " + mMonth + " giorno calcolato: " + mDayOfMonth);
     }
 

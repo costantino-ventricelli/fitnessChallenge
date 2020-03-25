@@ -166,11 +166,7 @@ public class Statistics extends Fragment {
         for (ExerciseExecution execution : exerciseExecutions) {
             Calendar calendar = Calendar.getInstance(Locale.getDefault());
             calendar.setTime(execution.getExecutionDate());
-            String floatDate = calendar.get(Calendar.YEAR) + "";
-            if (calendar.get(Calendar.DAY_OF_YEAR) < 100)
-                floatDate += ".0" + calendar.get(Calendar.DAY_OF_YEAR);
-            else
-                floatDate += calendar.get(Calendar.DAY_OF_YEAR);
+            String floatDate = calendar.get(Calendar.DAY_OF_YEAR) + "." + calendar.get(Calendar.YEAR);
             float executionDate = Float.parseFloat(floatDate);
             Log.d(TAG, "Data di esecuzione: " + executionDate);
             float usedKilogramsAvg = getKilogramsAVG(execution.getUsedKilograms());
@@ -207,8 +203,10 @@ public class Statistics extends Fragment {
 
 
         XAxis xAxis = mLineChart.getXAxis();
-        xAxis.setDrawAxisLine(false);
-        xAxis.setDrawLabels(false);
+        xAxis.setGranularity(1F);
+        xAxis.setXOffset(10F);
+        //xAxis.setDrawAxisLine(false);
+        //xAxis.setDrawLabels(false);
 
 
         YAxis rightAxis = mLineChart.getAxisRight();
