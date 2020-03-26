@@ -140,4 +140,7 @@
     <string name="room_name">Room name</string>
     <string name="members_n">Members n°</string>
     <string name="my_rooms">My rooms</string>
+    <string name="room_code">Room code</string>
+    <string name="ranking">Ranking</string>
+    <string name="close_detalis">Close detalis</string>
 </resources>

@@ -17,8 +17,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".RoomActivity"></activity>
         <activity
-            android:name=".ViewStatisticsActivity"
+            android:name=".StatisticsRoomActivity"
             android:label="@string/title_activity_statistics"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

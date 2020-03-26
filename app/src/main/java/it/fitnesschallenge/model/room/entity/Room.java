@@ -2,6 +2,7 @@ package it.fitnesschallenge.model.room.entity;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "room")
@@ -15,6 +16,7 @@ public class Room {
     @ColumnInfo(name = "room_members")
     private int roomMembers;
 
+    @Ignore
     public Room() {
         // necessario per deserializzazione FireBase
     }

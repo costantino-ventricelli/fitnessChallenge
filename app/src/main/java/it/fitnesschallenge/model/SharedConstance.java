@@ -33,4 +33,5 @@ public final class SharedConstance {
     public final static int CONVERSION_SEC_IN_MILLIS = 1000;
     public final static String ADD_WEIGHT = "addWeight";
     public final static String UPLOAD_WORKOUT_ON_FIREBASE = "uploadWorkoutOnFirebase";
+    public final static String ROOM_FRAGMENT = "roomFragment";
 }

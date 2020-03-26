@@ -9,6 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.mikhaellopez.circularimageview.CircularImageView;
+
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
@@ -59,6 +61,7 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.ViewHolder> 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         private CardView mCardView;
+        private CircularImageView mImageView;
         private TextView mRoomName;
         private TextView mMembersNumber;
 
@@ -66,10 +69,11 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.ViewHolder> 
             super(itemView);
             final ViewHolder holder = this;
             mCardView = itemView.findViewById(R.id.rooms_card_view);
+            mImageView = itemView.findViewById(R.id.rooms_layout_room_image);
             mRoomName = itemView.findViewById(R.id.rooms_layout_room_name);
             mMembersNumber = itemView.findViewById(R.id.rooms_layout_members);
             mRoomName.setTransitionName("room_name_shared_" + getAdapterPosition());
-            mMembersNumber.setTransitionName("room_members_shared_" + getAdapterPosition());
+            mImageView.setTransitionName("room_image_shared_" + getAdapterPosition());
             mCardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -82,8 +86,8 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.ViewHolder> 
             return mRoomName;
         }
 
-        public TextView getMembersNumber() {
-            return mMembersNumber;
+        public CircularImageView getImageRoom() {
+            return mImageView;
         }
     }
 }

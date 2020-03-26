@@ -29,7 +29,10 @@
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="android:fragmentSharedElementEnterTransition">
+        <item name="android:windowEnterTransition">
+            @transition/activity_transaction
+        </item>
+        <item name="android:windowSharedElementEnterTransition">
             @transition/shared_elements_transaction
         </item>
     </style>
