@@ -136,4 +136,8 @@
     <string name="statistics_tab_title">Statistics</string>
     <string name="room_tab_title">Room</string>
     <string name="workout_times">Workout times:</string>
+    <string name="room_image">Room image</string>
+    <string name="room_name">Room name</string>
+    <string name="members_n">Members n°</string>
+    <string name="my_rooms">My rooms</string>
 </resources>

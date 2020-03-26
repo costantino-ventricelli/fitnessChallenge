@@ -46,7 +46,7 @@ import it.fitnesschallenge.model.ExecutionList;
 import it.fitnesschallenge.model.User;
 import it.fitnesschallenge.model.room.entity.ExerciseExecution;
 import it.fitnesschallenge.model.room.entity.Workout;
-import it.fitnesschallenge.model.view.StatisticsViewModel;
+import it.fitnesschallenge.model.view.StatisticsRoomsViewModel;
 
 public class Statistics extends Fragment {
 
@@ -62,7 +62,7 @@ public class Statistics extends Fragment {
      * dei punti sul grafico.
      */
     private ArrayList<Entry> mEntryList;
-    private StatisticsViewModel mViewModel;
+    private StatisticsRoomsViewModel mViewModel;
     private FirebaseFirestore mDatabase;
     private User mUser;
 
@@ -92,7 +92,7 @@ public class Statistics extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_statistics, container, false);
 
-        mViewModel = ViewModelProviders.of(getActivity()).get(StatisticsViewModel.class);
+        mViewModel = ViewModelProviders.of(getActivity()).get(StatisticsRoomsViewModel.class);
         mLineChart = view.findViewById(R.id.execution_chart);
         mWorkoutsChart = view.findViewById(R.id.workout_statistics_times);
         mEntryList = new ArrayList<>();

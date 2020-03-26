@@ -12,7 +12,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import it.fitnesschallenge.R;
-import it.fitnesschallenge.Room;
+import it.fitnesschallenge.Rooms;
 import it.fitnesschallenge.Statistics;
 import it.fitnesschallenge.model.User;
 
@@ -46,7 +46,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         if (position == 0) {
             return Statistics.newInstance(mUser);
         } else {
-            return new Room();
+            return new Rooms();
         }
     }
 

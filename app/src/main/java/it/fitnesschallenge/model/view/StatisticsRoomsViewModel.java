@@ -13,15 +13,16 @@ import java.util.List;
 import it.fitnesschallenge.model.ExecutionList;
 import it.fitnesschallenge.model.room.FitnessChallengeRepository;
 import it.fitnesschallenge.model.room.entity.ExerciseExecution;
+import it.fitnesschallenge.model.room.entity.Room;
 import it.fitnesschallenge.model.room.entity.Workout;
 
-public class StatisticsViewModel extends AndroidViewModel {
+public class StatisticsRoomsViewModel extends AndroidViewModel {
 
     private static final String TAG = "StatisticsViewModel";
 
     private FitnessChallengeRepository mRepository;
 
-    public StatisticsViewModel(@NonNull Application application) {
+    public StatisticsRoomsViewModel(@NonNull Application application) {
         super(application);
         mRepository = new FitnessChallengeRepository(application);
     }
@@ -41,6 +42,10 @@ public class StatisticsViewModel extends AndroidViewModel {
     public void writeExecutionsInLocalDB(List<ExecutionList> executions) {
         WriteExecutionsInLocal writeExecutionsInLocal = new WriteExecutionsInLocal(mRepository);
         writeExecutionsInLocal.execute(executions);
+    }
+
+    public LiveData<List<Room>> getAllRooms() {
+        return mRepository.getAllRoom();
     }
 
     private static class WriteExecutionsInLocal extends AsyncTask<List<ExecutionList>, Void, Void> {
