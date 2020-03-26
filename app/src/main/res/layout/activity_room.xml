@@ -3,23 +3,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     tools:context=".RoomActivity">
 
+    <include
+        android:id="@+id/room_toolbar"
+        layout="@layout/room_toolbar" />
+
     <com.mikhaellopez.circularimageview.CircularImageView
-        android:id="@+id/fragment_room_image"
+        android:id="@+id/room_image"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginStart="@dimen/margin"
         android:layout_marginTop="@dimen/margin"
-        android:transitionName="room_image"
         android:contentDescription="@string/room_image"
         android:src="@mipmap/ninja"
+        android:transitionName="room_image"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/room_toolbar" />
 
     <TextView
-        android:id="@+id/fragment_room_name"
+        android:id="@+id/room_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin"
@@ -27,21 +31,22 @@
         android:text="@string/room_name"
         android:textSize="@dimen/headline"
         android:transitionName="room_name"
-        app:layout_constraintStart_toEndOf="@+id/fragment_room_image"
-        app:layout_constraintTop_toTopOf="@+id/fragment_room_image" />
+        app:layout_constraintStart_toEndOf="@+id/room_image"
+        app:layout_constraintTop_toTopOf="@+id/room_image" />
 
     <TextView
-        android:id="@+id/fragment_room_code"
+        android:id="@+id/room_code"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/small_distance"
         android:text="@string/room_code"
         android:textSize="@dimen/sub_title"
-        app:layout_constraintStart_toStartOf="@+id/fragment_room_name"
-        app:layout_constraintTop_toBottomOf="@+id/fragment_room_name" />
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="@+id/room_name"
+        app:layout_constraintTop_toBottomOf="@+id/room_name" />
 
     <TextView
-        android:id="@+id/fragment_room_ranking_label"
+        android:id="@+id/room_ranking_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin"
@@ -49,19 +54,20 @@
         android:text="@string/ranking"
         android:textSize="@dimen/title"
         android:textStyle="bold"
+        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fragment_room_image" />
+        app:layout_constraintTop_toBottomOf="@+id/room_image" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/fragment_room_recyclerview"
+        android:id="@+id/room_recyclerview"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/margin"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fragment_room_ranking_label"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/room_ranking_label" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

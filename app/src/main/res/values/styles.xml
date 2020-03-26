@@ -26,13 +26,29 @@
         <item name="android:textAllCaps">true</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
+    <style name="StatisticRoomTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="android:windowEnterTransition">
-            @transition/activity_transaction
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
+        <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
+        <item name="materialAlertDialogTheme">
+            @style/ThemeOverlay.MaterialComponents.MaterialAlertDialog
         </item>
+
+        <item name="android:windowActivityTransitions">true</item>
+
+        <!-- specify enter and exit transitions -->
+        <item name="android:windowEnterTransition">@transition/activity_transaction</item>
+        <item name="android:windowExitTransition">@transition/activity_transaction</item>
+
+        <!-- specify shared element transitions -->
         <item name="android:windowSharedElementEnterTransition">
+            @transition/shared_elements_transaction
+        </item>
+        <item name="android:windowSharedElementExitTransition">
             @transition/shared_elements_transaction
         </item>
     </style>

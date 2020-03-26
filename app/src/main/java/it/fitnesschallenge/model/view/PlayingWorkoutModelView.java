@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import it.fitnesschallenge.WorkoutList;
 import it.fitnesschallenge.model.User;
 import it.fitnesschallenge.model.room.FitnessChallengeRepository;
 import it.fitnesschallenge.model.room.entity.Exercise;

@@ -1,10 +1,8 @@
 package it.fitnesschallenge;
 
-import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
-import android.transition.Fade;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -21,16 +19,12 @@ import java.util.List;
 
 import it.fitnesschallenge.adapter.RoomsAdapter;
 import it.fitnesschallenge.model.view.StatisticsRoomsViewModel;
-import it.fitnesschallenge.transition.SharedTransition;
-
-import static it.fitnesschallenge.model.SharedConstance.ROOM_FRAGMENT;
-
 
 public class Rooms extends Fragment {
 
     private static final String TAG = "Room";
+    private static final String ROOM = "room";
 
-    private StatisticsRoomsViewModel mViewModel;
     private RecyclerView mRecyclerView;
     private RoomsAdapter mRoomsAdapter;
 
@@ -45,11 +39,11 @@ public class Rooms extends Fragment {
         View view = inflater.inflate(R.layout.fragment_rooms, container, false);
 
         mRecyclerView = view.findViewById(R.id.fragment_rooms_recyclerview);
-        mViewModel = ViewModelProviders.of(getActivity()).get(StatisticsRoomsViewModel.class);
+        StatisticsRoomsViewModel mViewModel = ViewModelProviders.of(getActivity()).get(StatisticsRoomsViewModel.class);
 
         mViewModel.getAllRooms().observe(getViewLifecycleOwner(), new Observer<List<it.fitnesschallenge.model.room.entity.Room>>() {
             @Override
-            public void onChanged(List<it.fitnesschallenge.model.room.entity.Room> rooms) {
+            public void onChanged(final List<it.fitnesschallenge.model.room.entity.Room> rooms) {
                 mRoomsAdapter = new RoomsAdapter(rooms);
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 mRecyclerView.setAdapter(mRoomsAdapter);
@@ -58,6 +52,7 @@ public class Rooms extends Fragment {
                     public void onClick(int position, final RoomsAdapter.ViewHolder view) {
                         Log.d(TAG, "Click su room alla posizione: " + position);
                         Intent intent = new Intent(getActivity(), RoomActivity.class);
+                        intent.putExtra(ROOM, rooms.get(position));
                         ActivityOptions options = ActivityOptions
                                 .makeSceneTransitionAnimation(getActivity(),
                                         Pair.create((View) view.getRoomName(), "room_name"),
@@ -69,4 +64,6 @@ public class Rooms extends Fragment {
         });
         return view;
     }
+
+
 }

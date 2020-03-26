@@ -132,7 +132,7 @@
         <item quantity="one">First repetition</item>
         <item quantity="other">%d repetition</item>
     </plurals>
-    <string name="title_activity_statistics">StatisticsActivity</string>
+    <string name="title_activity_statistics">Overview</string>
     <string name="statistics_tab_title">Statistics</string>
     <string name="room_tab_title">Room</string>
     <string name="workout_times">Workout times:</string>
@@ -142,5 +142,5 @@
     <string name="my_rooms">My rooms</string>
     <string name="room_code">Room code</string>
     <string name="ranking">Ranking</string>
-    <string name="close_detalis">Close detalis</string>
+    <string name="close_details">Close details</string>
 </resources>
