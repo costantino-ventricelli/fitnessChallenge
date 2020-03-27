@@ -15,6 +15,9 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.List;
 
 import it.fitnesschallenge.adapter.RoomsAdapter;
@@ -39,6 +42,10 @@ public class Rooms extends Fragment {
         View view = inflater.inflate(R.layout.fragment_rooms, container, false);
 
         mRecyclerView = view.findViewById(R.id.fragment_rooms_recyclerview);
+        FloatingActionButton fab = view.findViewById(R.id.rooms_subscribe_fab);
+        MaterialButton createNewRoom = view.findViewById(R.id.rooms_create_new_room_button);
+
+
         StatisticsRoomsViewModel mViewModel = ViewModelProviders.of(getActivity()).get(StatisticsRoomsViewModel.class);
 
         mViewModel.getAllRooms().observe(getViewLifecycleOwner(), new Observer<List<it.fitnesschallenge.model.room.entity.Room>>() {

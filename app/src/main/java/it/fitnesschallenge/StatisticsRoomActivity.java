@@ -30,20 +30,12 @@ public class StatisticsRoomActivity extends AppCompatActivity {
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(mViewPager);
 
-        FloatingActionButton shareFAB = findViewById(R.id.share_statistics_fab);
         ImageButton backButton = findViewById(R.id.statistics_activity_back_button);
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
-            }
-        });
-
-        shareFAB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //TODO: share button
             }
         });
     }

@@ -29,6 +29,7 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -94,6 +95,13 @@ public class Statistics extends Fragment {
         mViewModel = ViewModelProviders.of(getActivity()).get(StatisticsRoomsViewModel.class);
         mLineChart = view.findViewById(R.id.execution_chart);
         mWorkoutsChart = view.findViewById(R.id.workout_statistics_times);
+        FloatingActionButton fab = view.findViewById(R.id.statistics_share_FAB);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         mEntryList = new ArrayList<>();
 
         mViewModel.getNumberOfExecution().observe(getViewLifecycleOwner(), new Observer<Integer>() {

@@ -44,9 +44,16 @@ public class StatisticsRoomsViewModel extends AndroidViewModel {
         writeExecutionsInLocal.execute(executions);
     }
 
+    @Deprecated
+    /**
+     * Le room non dovrebbero mai essere salvate in locale, non si possono salvare tutti gli utenti
+     * in locale, inoltre i bisogna trovare un modo per calcolare i codici univoci in automatico
+     * salvarle in FireBase ci da la possibilità di autogenerare il codice identificativo della room
+     */
     public LiveData<List<Room>> getAllRooms() {
         return mRepository.getAllRoom();
     }
+
 
     private static class WriteExecutionsInLocal extends AsyncTask<List<ExecutionList>, Void, Void> {
 

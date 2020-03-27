@@ -16,7 +16,6 @@ public class RoomActivity extends AppCompatActivity {
 
     private static final String TAG = "RoomActivity";
     private static final String ROOM = "room";
-    private static final String START_TEXT_SIZE = "startTextSize";
 
     private TextView mRoomName;
     private TextView mRoomCode;
@@ -39,6 +38,7 @@ public class RoomActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+        //TODO: prelevare partecipanti Room, probabilmente da modificare il DB
         Room room = getIntent().getParcelableExtra(ROOM);
         mRoomName = findViewById(R.id.room_name);
         mRoomCode = findViewById(R.id.room_code);
