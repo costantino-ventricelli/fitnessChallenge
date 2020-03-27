@@ -8,6 +8,10 @@
     android:background="@color/colorAccent"
     tools:context=".SubscribeNewRoom">
 
+    <include
+        android:id="@+id/subscribe_toolbar"
+        layout="@layout/subscribe_new_room_toolbar" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/new_room_fab"
         android:layout_width="wrap_content"

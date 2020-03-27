@@ -144,4 +144,6 @@
     <string name="ranking">Ranking</string>
     <string name="close_details">Close details</string>
     <string name="new_room">New room</string>
+    <string name="search">Search</string>
+    <string name="search_room_hint">Search room</string>
 </resources>
