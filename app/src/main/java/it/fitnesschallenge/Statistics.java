@@ -19,6 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.viewpager.widget.ViewPager;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
@@ -65,6 +66,7 @@ public class Statistics extends Fragment {
     private StatisticsRoomsViewModel mViewModel;
     private FirebaseFirestore mDatabase;
     private User mUser;
+    private FloatingActionButton fab;
 
     public Statistics() {
         // Required empty public constructor
@@ -95,13 +97,7 @@ public class Statistics extends Fragment {
         mViewModel = ViewModelProviders.of(getActivity()).get(StatisticsRoomsViewModel.class);
         mLineChart = view.findViewById(R.id.execution_chart);
         mWorkoutsChart = view.findViewById(R.id.workout_statistics_times);
-        FloatingActionButton fab = view.findViewById(R.id.statistics_share_FAB);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-            }
-        });
         mEntryList = new ArrayList<>();
 
         mViewModel.getNumberOfExecution().observe(getViewLifecycleOwner(), new Observer<Integer>() {
