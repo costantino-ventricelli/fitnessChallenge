@@ -146,4 +146,11 @@
     <string name="new_room">New room</string>
     <string name="search">Search</string>
     <string name="search_room_hint">Search room</string>
+    <string name="waiting_search_image">Waiting search image</string>
+    <string name="close_subscribe">Close subscribe new room</string>
+    <string name="generated_code">Generated code:</string>
+    <string name="exemple_code">iahbvasbd</string>
+    <string name="close_new_room">Close new room</string>
+    <string name="subscribe">Subscribe</string>
+    <string name="room_details">Room details</string>
 </resources>

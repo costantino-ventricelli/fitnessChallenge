@@ -85,15 +85,6 @@ public class RoomActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause called");
-        mRankingRecycler.setVisibility(View.INVISIBLE);
-        mRoomCode.setVisibility(View.INVISIBLE);
-        mRoomRanking.setVisibility(View.INVISIBLE);
-    }
-
-    @Override
     public void onBackPressed() {
         Log.d(TAG, "onBackPressed");
         closeActivity();

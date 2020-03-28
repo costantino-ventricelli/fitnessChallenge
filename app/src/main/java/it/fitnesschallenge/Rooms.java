@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -42,7 +43,7 @@ public class Rooms extends Fragment {
 
         mRecyclerView = view.findViewById(R.id.fragment_rooms_recyclerview);
 
-        MaterialButton createNewRoom = view.findViewById(R.id.rooms_create_new_room_button);
+        final MaterialButton createNewRoom = view.findViewById(R.id.rooms_create_new_room_button);
 
         StatisticsRoomsViewModel mViewModel = ViewModelProviders.of(getActivity()).get(StatisticsRoomsViewModel.class);
 
@@ -65,6 +66,17 @@ public class Rooms extends Fragment {
                         getActivity().startActivity(intent, options.toBundle());
                     }
                 });
+            }
+        });
+
+        createNewRoom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), NewRoomActivity.class);
+                ActivityOptions options = ActivityOptions
+                        .makeSceneTransitionAnimation(getActivity(),
+                                createNewRoom, "new_room");
+                getActivity().startActivity(intent, options.toBundle());
             }
         });
         return view;

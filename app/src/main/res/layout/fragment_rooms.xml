@@ -26,6 +26,7 @@
         android:backgroundTint="@color/colorAccent"
         android:text="@string/new_room"
         android:textColor="@android:color/black"
+        android:transitionName="new_room"
         app:icon="@drawable/ic_add_circle"
         app:iconTint="@android:color/black"
         app:layout_constraintBottom_toBottomOf="@+id/rooms_fragment_title"

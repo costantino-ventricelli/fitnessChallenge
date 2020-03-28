@@ -79,7 +79,7 @@ public class StatisticsRoomActivity extends AppCompatActivity {
             public void onClick(View v) {
                 int position = mViewPager.getCurrentItem();
                 if (position == 0) {
-                    //Ancora nulla
+                    //TODO: aggiungere comandi di share.
                 } else if (position == 1) {
                     Intent intent = new Intent(StatisticsRoomActivity.this, SubscribeNewRoom.class);
                     float[] fabAttribute = getFabAttribute();

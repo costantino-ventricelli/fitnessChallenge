@@ -10,7 +10,30 @@
 
     <include
         android:id="@+id/subscribe_toolbar"
-        layout="@layout/subscribe_new_room_toolbar" />
+        layout="@layout/subscribe_toolbar" />
+
+    <ImageView
+        android:id="@+id/subscribe_image"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:contentDescription="@string/waiting_search_image"
+        android:src="@mipmap/old_day"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@id/subscribe_recycler_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/subscribe_toolbar" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/subscribe_recycler_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/margin"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/subscribe_image"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/new_room_fab"
