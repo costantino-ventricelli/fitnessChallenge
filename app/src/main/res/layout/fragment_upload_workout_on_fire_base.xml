@@ -67,7 +67,7 @@
         android:layout_marginEnd="@dimen/margin"
         android:layout_marginBottom="@dimen/margin"
         android:contentDescription="@string/upload_workout_image"
-        android:src="@mipmap/undraw_uploading_go67"
+        android:src="@mipmap/uploading"
         app:layout_constraintBottom_toTopOf="@+id/uploading_workout_uplad_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
