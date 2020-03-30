@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import it.fitnesschallenge.WorkoutList;
 import it.fitnesschallenge.model.User;
 import it.fitnesschallenge.model.room.FitnessChallengeRepository;
 import it.fitnesschallenge.model.room.entity.Exercise;
@@ -191,7 +190,6 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
      * Questo metodo è identico a getNextExercise solo che restituisce l'esercizio precendente
      */
     public PersonalExercise getPrevExercise() {
-        //TODO: il recupero dell'esercizio precedente non setta come si deve le serie.
         PersonalExercise personalExercise = null;
         if (mCurrentSeries > 1) {
             Log.d(TAG, "Setto la serie precedente");

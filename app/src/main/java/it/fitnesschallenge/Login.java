@@ -115,60 +115,6 @@ public class Login extends Fragment {
         }
 
         mAuth = FirebaseAuth.getInstance();
-
-        //questo listener cattura l'aperura della tastiera per nascondere l'immagine superiore
-        try {
-            KeyboardVisibilityEvent.setEventListener(getActivity(), new KeyboardVisibilityEventListener() {
-                @Override
-                public void onVisibilityChanged(boolean isOpen) {
-                    if (isOpen) {
-                        int previouslyHeight = topImageView.getHeight();
-                        int duration = 200;
-                        int finalHeight = 0;
-                        ValueAnimator valueAnimator = ValueAnimator.ofInt(previouslyHeight,
-                                finalHeight);
-                        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                            @Override
-                            public void onAnimationUpdate(ValueAnimator animation) {
-                                topImageView.getLayoutParams().height =
-                                        (int) animation.getAnimatedValue();
-                                topImageView.requestLayout();
-                            }
-                        });
-                        valueAnimator.setInterpolator(new DecelerateInterpolator());
-                        valueAnimator.setDuration(duration);
-                        valueAnimator.start();
-                        valueAnimator.addListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                super.onAnimationEnd(animation);
-                                topImageView.setVisibility(View.GONE);
-                            }
-                        });
-                    } else {
-                        int previouslyHeigth = topImageView.getHeight();
-                        int finalHeight = Math.round(mContext.getResources()
-                                .getDisplayMetrics().density * 150);
-                        int duration = 100;
-                        ValueAnimator valueAnimator = ValueAnimator.ofInt(previouslyHeigth, finalHeight);
-                        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                            @Override
-                            public void onAnimationUpdate(ValueAnimator animation) {
-                                topImageView.getLayoutParams().height =
-                                        (int) animation.getAnimatedValue();
-                                topImageView.requestLayout();
-                            }
-                        });
-                        valueAnimator.setInterpolator(new DecelerateInterpolator());
-                        valueAnimator.setDuration(duration);
-                        valueAnimator.start();
-                        topImageView.setVisibility(View.VISIBLE);
-                    }
-                }
-            });
-        } catch (NullPointerException ex) {
-            Log.d(TAG, "La tastiera ha generato un eccezione.");
-        }
     }
 
     @Override
@@ -218,7 +164,66 @@ public class Login extends Fragment {
             }
         });
 
+        //questo listener cattura l'aperura della tastiera per nascondere l'immagine superiore
+        try {
+            handleKeyboardEventListener();
+        } catch (NullPointerException ex) {
+            Log.d(TAG, "La tastiera ha generato un eccezione.");
+            ex.printStackTrace();
+        }
+
         return view;
+    }
+
+    private void handleKeyboardEventListener() {
+        KeyboardVisibilityEvent.setEventListener(getActivity(), new KeyboardVisibilityEventListener() {
+            @Override
+            public void onVisibilityChanged(boolean isOpen) {
+                if (isOpen) {
+                    int previouslyHeight = topImageView.getHeight();
+                    int duration = 200;
+                    int finalHeight = 0;
+                    ValueAnimator valueAnimator = ValueAnimator.ofInt(previouslyHeight,
+                            finalHeight);
+                    valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator animation) {
+                            topImageView.getLayoutParams().height =
+                                    (int) animation.getAnimatedValue();
+                            topImageView.requestLayout();
+                        }
+                    });
+                    valueAnimator.setInterpolator(new DecelerateInterpolator());
+                    valueAnimator.setDuration(duration);
+                    valueAnimator.start();
+                    valueAnimator.addListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                            topImageView.setVisibility(View.GONE);
+                        }
+                    });
+                } else {
+                    int previouslyHeight = topImageView.getHeight();
+                    int finalHeight = Math.round(mContext.getResources()
+                            .getDisplayMetrics().density * 150);
+                    int duration = 100;
+                    ValueAnimator valueAnimator = ValueAnimator.ofInt(previouslyHeight, finalHeight);
+                    valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator animation) {
+                            topImageView.getLayoutParams().height =
+                                    (int) animation.getAnimatedValue();
+                            topImageView.requestLayout();
+                        }
+                    });
+                    valueAnimator.setInterpolator(new DecelerateInterpolator());
+                    valueAnimator.setDuration(duration);
+                    valueAnimator.start();
+                    topImageView.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
     /**

@@ -191,4 +191,11 @@ public class HomeActivity extends AppCompatActivity{
             }
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if (getSupportFragmentManager().getBackStackEntryCount() <= 0)
+            finish();
+    }
 }

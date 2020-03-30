@@ -34,6 +34,11 @@ public class ExerciseExecution {
         this.usedKilograms = usedKilograms;
     }
 
+    @Ignore
+    public ExerciseExecution() {
+        // Necessario per deserializzare l'oggetto ottenuto da firebase
+    }
+
     public int getExerciseId() {
         return exerciseId;
     }

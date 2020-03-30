@@ -68,7 +68,8 @@ public class GymHome extends Fragment {
         openWorkoutStatistics.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), ViewStatisticsActivity.class);
+                Intent intent = new Intent(getActivity(), StatisticsRoomActivity.class);
+                intent.putExtra(USER, mUser);
                 getActivity().startActivity(intent);
             }
         });

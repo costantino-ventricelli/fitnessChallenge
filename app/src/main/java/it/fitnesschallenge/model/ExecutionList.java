@@ -8,6 +8,10 @@ public class ExecutionList {
 
     private List<ExerciseExecution> mExerciseList;
 
+    public ExecutionList() {
+        // Necessario per deserializzazione Firestore
+    }
+
     public ExecutionList(List<ExerciseExecution> mExerciseList) {
         this.mExerciseList = mExerciseList;
     }

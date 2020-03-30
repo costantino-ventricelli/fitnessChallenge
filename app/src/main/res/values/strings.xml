@@ -132,8 +132,25 @@
         <item quantity="one">First repetition</item>
         <item quantity="other">%d repetition</item>
     </plurals>
-    <string name="title_activity_statistics">StatisticsActivity</string>
+    <string name="title_activity_statistics">Overview</string>
     <string name="statistics_tab_title">Statistics</string>
     <string name="room_tab_title">Room</string>
     <string name="workout_times">Workout times:</string>
+    <string name="room_image">Room image</string>
+    <string name="room_name">Room name</string>
+    <string name="members_n">Members n°</string>
+    <string name="my_rooms">My rooms</string>
+    <string name="room_code">Room code</string>
+    <string name="ranking">Ranking</string>
+    <string name="close_details">Close details</string>
+    <string name="new_room">New room</string>
+    <string name="search">Search</string>
+    <string name="search_room_hint">Search room</string>
+    <string name="waiting_search_image">Waiting search image</string>
+    <string name="close_subscribe">Close subscribe new room</string>
+    <string name="generated_code">Generated code:</string>
+    <string name="exemple_code">iahbvasbd</string>
+    <string name="close_new_room">Close new room</string>
+    <string name="subscribe">Subscribe</string>
+    <string name="room_details">Room details</string>
 </resources>

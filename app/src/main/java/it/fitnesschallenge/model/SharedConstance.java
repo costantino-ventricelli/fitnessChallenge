@@ -23,6 +23,7 @@ public final class SharedConstance {
     public static final String WORKOUT_FRAGMENT = "workoutFragment";
     public static final String ADD_EXERCISE_TO_LIST = "addExerciseToList";
     public static final String WORKOUT_STATISTICS_FRAGMENT = "workoutStatisticsFragment";
+    public static final String TRAINING_LIST_HOME = "trainingListHome";
     public static final String ENTER_FRAGMENT = "enterFragment";
     public static final String GYM_HOME_FRAGMENT = "gymHomeFragment";
     public static final String PLAYING_WORKOUT = "playingWorkout";
@@ -32,5 +33,5 @@ public final class SharedConstance {
     public final static int CONVERSION_SEC_IN_MILLIS = 1000;
     public final static String ADD_WEIGHT = "addWeight";
     public final static String UPLOAD_WORKOUT_ON_FIREBASE = "uploadWorkoutOnFirebase";
-    public final static String WORKOUT_LIST_FRAGMENT = "workoutListFragment";
+    public final static String ROOM_FRAGMENT = "roomFragment";
 }
