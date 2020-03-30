@@ -47,6 +47,7 @@ public class Rooms extends Fragment {
 
         StatisticsRoomsViewModel mViewModel = ViewModelProviders.of(getActivity()).get(StatisticsRoomsViewModel.class);
 
+        /* TODO: Accesso online per prelevare le room.
         mViewModel.getAllRooms().observe(getViewLifecycleOwner(), new Observer<List<it.fitnesschallenge.model.room.entity.Room>>() {
             @Override
             public void onChanged(final List<it.fitnesschallenge.model.room.entity.Room> rooms) {
@@ -62,12 +63,13 @@ public class Rooms extends Fragment {
                         ActivityOptions options = ActivityOptions
                                 .makeSceneTransitionAnimation(getActivity(),
                                         Pair.create((View) view.getRoomName(), "room_name"),
-                                        Pair.create((View) view.getImageRoom(), "room_image"));
+                                        Pair.create((View) view.getImageRoom(), "room_image"),
+                                        Pair.create((View) view.getRoomCreator(), "room_creator"));
                         getActivity().startActivity(intent, options.toBundle());
                     }
                 });
             }
-        });
+        });*/
 
         createNewRoom.setOnClickListener(new View.OnClickListener() {
             @Override

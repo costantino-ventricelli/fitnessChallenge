@@ -25,7 +25,6 @@ import it.fitnesschallenge.model.room.dao.ExerciseDAO;
 import it.fitnesschallenge.model.room.dao.ExerciseExecutionDAO;
 import it.fitnesschallenge.model.room.dao.PersonalExerciseDAO;
 import it.fitnesschallenge.model.room.dao.PersonalExerciseWorkoutCrossReferenceDAO;
-import it.fitnesschallenge.model.room.dao.RoomDAO;
 import it.fitnesschallenge.model.room.dao.WorkoutDAO;
 import it.fitnesschallenge.model.room.dao.WorkoutWithExerciseDAO;
 import it.fitnesschallenge.model.room.entity.Exercise;
@@ -35,8 +34,8 @@ import it.fitnesschallenge.model.room.entity.PersonalExerciseWorkoutCrossReferen
 import it.fitnesschallenge.model.room.entity.Workout;
 
 @Database(entities = {Exercise.class, Workout.class, PersonalExerciseWorkoutCrossReference.class,
-        PersonalExercise.class, ExerciseExecution.class, it.fitnesschallenge.model.room.entity.Room.class},
-        version = 27, exportSchema = false)
+        PersonalExercise.class, ExerciseExecution.class},
+        version = 28, exportSchema = false)
 @TypeConverters({Converter.class})
 public abstract class FitnessChallengeDatabase extends RoomDatabase {
 
@@ -47,7 +46,6 @@ public abstract class FitnessChallengeDatabase extends RoomDatabase {
     public abstract WorkoutDAO getWorkoutDAO();
     public abstract WorkoutWithExerciseDAO getWorkoutWithExerciseDAO();
 
-    public abstract RoomDAO getRoomDAO();
     public abstract ExerciseExecutionDAO getExerciseExecutionDAO();
     public abstract PersonalExerciseDAO getPersonalExerciseDAO();
 
@@ -65,6 +63,7 @@ public abstract class FitnessChallengeDatabase extends RoomDatabase {
                     context.getString(R.string.fitness_challenge_db))
                     .addCallback(roomCallback)
                     .addMigrations(MIGRATION_26_27)
+                    .addMigrations(MIGRATION_27_28)
                     .build();
             Log.d(TAG, "Istanza db creata");
         }
@@ -106,6 +105,13 @@ public abstract class FitnessChallengeDatabase extends RoomDatabase {
                     "'room_name' TEXT," +
                     "'room_members' INTEGER NOT NULL)");
             database.execSQL("INSERT INTO room ('room_name', 'room_members') VALUES('Exemple room', 15)");
+        }
+    };
+
+    private static Migration MIGRATION_27_28 = new Migration(27, 28) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("DROP TABLE IF EXISTS 'room'");
         }
     };
 }

@@ -3,45 +3,26 @@ package it.fitnesschallenge.model.room.entity;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.Ignore;
-import androidx.room.PrimaryKey;
-
-@Entity(tableName = "room")
 public class Room implements Parcelable {
 
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "room_id")
-    private long roomId;
-    @ColumnInfo(name = "room_name")
+    private String idCode;
     private String roomName;
-    @ColumnInfo(name = "room_members")
-    private int roomMembers;
+    private String roomCreator;
 
-    @Ignore
     public Room() {
         // necessario per deserializzazione FireBase
     }
 
-    @Ignore
     public Room(Parcel in) {
-        roomId = in.readLong();
+        idCode = in.readString();
         roomName = in.readString();
-        roomMembers = in.readInt();
+        roomCreator = in.readString();
     }
 
-    public Room(String roomName, int roomMembers) {
+    public Room(String idCode, String roomName, String roomCreator) {
+        this.idCode = idCode;
         this.roomName = roomName;
-        this.roomMembers = roomMembers;
-    }
-
-    public long getRoomId() {
-        return roomId;
-    }
-
-    public void setRoomId(long roomId) {
-        this.roomId = roomId;
+        this.roomCreator = roomCreator;
     }
 
     public String getRoomName() {
@@ -52,12 +33,20 @@ public class Room implements Parcelable {
         this.roomName = roomName;
     }
 
-    public int getRoomMembers() {
-        return roomMembers;
+    public String getRoomCreator() {
+        return roomCreator;
     }
 
-    public void setRoomMembers(int roomMembers) {
-        this.roomMembers = roomMembers;
+    public void setRoomCreator(String roomCreator) {
+        this.roomCreator = roomCreator;
+    }
+
+    public String getIdCode() {
+        return idCode;
+    }
+
+    public void setIdCode(String idCode) {
+        this.idCode = idCode;
     }
 
     @Override
@@ -67,12 +56,11 @@ public class Room implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(roomId);
+        dest.writeString(idCode);
         dest.writeString(roomName);
-        dest.writeInt(roomMembers);
+        dest.writeString(roomCreator);
     }
 
-    @Ignore
     public static final Parcelable.Creator<Room> CREATOR
             = new Parcelable.Creator<Room>() {
         public Room createFromParcel(Parcel in) {

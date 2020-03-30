@@ -11,9 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.mikhaellopez.circularimageview.CircularImageView;
 
-import java.text.NumberFormat;
 import java.util.List;
-import java.util.Locale;
 
 import it.fitnesschallenge.R;
 import it.fitnesschallenge.model.room.entity.Room;
@@ -41,8 +39,7 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.mCardView.setTag("Item_" + position);
         holder.mRoomName.setText(mRoomList.get(position).getRoomName());
-        holder.mMembersNumber.setText(NumberFormat.getInstance(Locale.getDefault())
-                .format(mRoomList.get(position).getRoomMembers()));
+        holder.mCreator.setText(mRoomList.get(position).getRoomCreator());
     }
 
     @Override
@@ -63,7 +60,7 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.ViewHolder> 
         private CardView mCardView;
         private CircularImageView mImageView;
         private TextView mRoomName;
-        private TextView mMembersNumber;
+        private TextView mCreator;
 
         ViewHolder(@NonNull View itemView, final OnClickListener mListener) {
             super(itemView);
@@ -71,7 +68,7 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.ViewHolder> 
             mCardView = itemView.findViewById(R.id.rooms_card_view);
             mImageView = itemView.findViewById(R.id.rooms_layout_room_image);
             mRoomName = itemView.findViewById(R.id.rooms_layout_room_name);
-            mMembersNumber = itemView.findViewById(R.id.rooms_layout_members);
+            mCreator = itemView.findViewById(R.id.rooms_layout_creator);
             mRoomName.setTransitionName("room_name_shared_" + getAdapterPosition());
             mImageView.setTransitionName("room_image_shared_" + getAdapterPosition());
             mCardView.setOnClickListener(new View.OnClickListener() {
@@ -88,6 +85,10 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.ViewHolder> 
 
         public CircularImageView getImageRoom() {
             return mImageView;
+        }
+
+        public TextView getRoomCreator() {
+            return mCreator;
         }
     }
 }
