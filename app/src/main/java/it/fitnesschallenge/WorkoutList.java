@@ -116,7 +116,7 @@ public class WorkoutList extends Fragment {
             if (mViewModel.getPersonalExerciseList() != null)
                 setRecyclerView();
             else {
-                setObserver();
+                checkConnection();
             }
             /*
              * Setto i parametri che definiscono l'utente nel ViewModel, in modo da renderli reperibili
