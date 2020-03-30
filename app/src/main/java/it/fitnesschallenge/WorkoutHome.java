@@ -12,8 +12,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.button.MaterialButton;
 
-import static it.fitnesschallenge.model.SharedConstance.TRAINING_LIST_HOME;
 import static it.fitnesschallenge.model.SharedConstance.WORKOUT_FRAGMENT;
+import static it.fitnesschallenge.model.SharedConstance.WORKOUT_LIST_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.WORKOUT_STATISTICS_FRAGMENT;
 
 /**
@@ -67,8 +67,8 @@ public class WorkoutHome extends Fragment {
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
                         R.anim.enter_from_rigth, R.anim.exit_from_left);
-                transaction.replace(R.id.fragmentContainer, workoutList, WORKOUT_STATISTICS_FRAGMENT)
-                        .addToBackStack(WORKOUT_STATISTICS_FRAGMENT)
+                transaction.replace(R.id.fragmentContainer, workoutList, WORKOUT_LIST_FRAGMENT)
+                        .addToBackStack(WORKOUT_LIST_FRAGMENT)
                         .commit();
             }
         });
