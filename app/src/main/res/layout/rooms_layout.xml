@@ -35,13 +35,13 @@
             app:layout_constraintTop_toTopOf="@+id/rooms_layout_room_image" />
 
         <TextView
-            android:id="@+id/rooms_layout_members_label"
+            android:id="@+id/rooms_layout_creator_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="@dimen/margin"
             android:layout_marginBottom="@dimen/margin"
-            android:text="@string/members_n"
+            android:text="@string/room_s_creator"
             android:textColor="@color/subTitleColor"
             android:textSize="@dimen/caption"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -50,16 +50,16 @@
             app:layout_constraintTop_toBottomOf="@+id/rooms_layout_room_name" />
 
         <TextView
-            android:id="@+id/rooms_layout_members"
+            android:id="@+id/rooms_layout_creator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
-            android:text="@string/_0"
+            android:text="@string/email"
             android:textColor="@color/subTitleColor"
             android:textSize="@dimen/caption"
-            app:layout_constraintBottom_toBottomOf="@+id/rooms_layout_members_label"
-            app:layout_constraintStart_toEndOf="@+id/rooms_layout_members_label"
-            app:layout_constraintTop_toTopOf="@+id/rooms_layout_members_label" />
+            app:layout_constraintBottom_toBottomOf="@+id/rooms_layout_creator_label"
+            app:layout_constraintStart_toEndOf="@+id/rooms_layout_creator_label"
+            app:layout_constraintTop_toTopOf="@+id/rooms_layout_creator_label" />
 
         <View
             android:id="@+id/divider"

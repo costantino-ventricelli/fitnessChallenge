@@ -153,4 +153,7 @@
     <string name="close_new_room">Close new room</string>
     <string name="subscribe">Subscribe</string>
     <string name="room_details">Room details</string>
+    <string name="upload_room_faild">Error uploading new room in FireBase</string>
+    <string name="connection_error_message">It looks like you don\'t have an active connection, active the network to continue</string>
+    <string name="room_s_creator">Room\'s creator</string>
 </resources>

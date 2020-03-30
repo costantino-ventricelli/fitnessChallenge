@@ -17,7 +17,6 @@ import it.fitnesschallenge.model.room.dao.ExerciseDAO;
 import it.fitnesschallenge.model.room.dao.ExerciseExecutionDAO;
 import it.fitnesschallenge.model.room.dao.PersonalExerciseDAO;
 import it.fitnesschallenge.model.room.dao.PersonalExerciseWorkoutCrossReferenceDAO;
-import it.fitnesschallenge.model.room.dao.RoomDAO;
 import it.fitnesschallenge.model.room.dao.WorkoutDAO;
 import it.fitnesschallenge.model.room.dao.WorkoutWithExerciseDAO;
 import it.fitnesschallenge.model.room.entity.Exercise;
@@ -38,7 +37,6 @@ public class FitnessChallengeRepository {
     private PersonalExerciseDAO personalExerciseDAO;
     private ExerciseExecutionDAO exerciseExecutionDAO;
     private PersonalExerciseWorkoutCrossReferenceDAO personalExerciseWorkoutCrossReferenceDAO;
-    private RoomDAO roomDAO;
 
     public FitnessChallengeRepository(Application application){
         FitnessChallengeDatabase database = FitnessChallengeDatabase.getInstance(application);
@@ -48,7 +46,6 @@ public class FitnessChallengeRepository {
         personalExerciseDAO = database.getPersonalExerciseDAO();
         personalExerciseWorkoutCrossReferenceDAO = database.getPersonalExerciseWorkoutCrossReferenceDAO();
         exerciseExecutionDAO = database.getExerciseExecutionDAO();
-        roomDAO = database.getRoomDAO();
     }
 
     public LiveData<List<Exercise>> getListExerciseLiveData() {
@@ -107,17 +104,5 @@ public class FitnessChallengeRepository {
 
     public LiveData<List<ExerciseExecution>> getLastUsedKilograms() {
         return exerciseExecutionDAO.selectLastUsedKilograms();
-    }
-
-    public void insertRoom(Room room) {
-        roomDAO.insert(room);
-    }
-
-    public void updateRoom(Room room) {
-        roomDAO.update(room);
-    }
-
-    public LiveData<List<Room>> getAllRoom() {
-        return roomDAO.selectAllRooms();
     }
 }
