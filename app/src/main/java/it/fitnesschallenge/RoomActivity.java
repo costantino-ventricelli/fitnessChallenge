@@ -51,7 +51,7 @@ public class RoomActivity extends AppCompatActivity {
 
         setTransitionListener();
 
-
+        //TODO: selezionare tutti gli utenti iscritti e i loro shared point, ed ordinarli per quel valore.
     }
 
     private void setTransitionListener() {
