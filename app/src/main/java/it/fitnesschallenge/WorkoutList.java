@@ -163,6 +163,12 @@ public class WorkoutList extends Fragment {
         }
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mContext = context;
+    }
+
     /**
      * Questo metodo controlla se il dispositivo è connesso prima di richiamare il metodo setObserver()
      */
