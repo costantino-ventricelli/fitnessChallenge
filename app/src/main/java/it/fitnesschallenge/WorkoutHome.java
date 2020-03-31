@@ -12,6 +12,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.button.MaterialButton;
 
+import it.fitnesschallenge.model.User;
+
 import static it.fitnesschallenge.model.SharedConstance.WORKOUT_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.WORKOUT_LIST_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.WORKOUT_STATISTICS_FRAGMENT;
@@ -21,6 +23,8 @@ import static it.fitnesschallenge.model.SharedConstance.WORKOUT_STATISTICS_FRAGM
  */
 public class WorkoutHome extends Fragment {
 
+    private static final String USER = "user";
+    private User mUser;
 
     private MaterialButton openStatistics;
     private MaterialButton openTrainingList;
@@ -28,6 +32,22 @@ public class WorkoutHome extends Fragment {
 
     public WorkoutHome() {
         // Required empty public constructor
+    }
+
+    static WorkoutHome newInstance(User user) {
+        WorkoutHome fragment = new WorkoutHome();
+        Bundle args = new Bundle();
+        args.putParcelable(USER, user);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mUser = getArguments().getParcelable(USER);
+        }
     }
 
     @Override
@@ -62,7 +82,7 @@ public class WorkoutHome extends Fragment {
         openTrainingList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                WorkoutList workoutList = new WorkoutList();
+                WorkoutList workoutList = WorkoutList.newInstance(mUser);
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,

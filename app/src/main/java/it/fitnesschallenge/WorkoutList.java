@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -99,12 +100,13 @@ public class WorkoutList extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_workout_list_fabplay, container, false);
-        mRecyclerView = view.findViewById(R.id.workout_list_recycler_view);
-        Log.d(TAG, "RecyclerView: " + mRecyclerView);
-
-        FloatingActionButton floatingActionButton = view.findViewById(R.id.start_workout_FAB);
+        View tempView = null; //variabile to hold il valore di view nei due rami if else da restiruire alla fine del metodo onCreateView
         if (mUser != null) {
+            View view = inflater.inflate(R.layout.fragment_workout_list_fabplay, container, false);
+            mRecyclerView = view.findViewById(R.id.workout_list_recycler_view);
+            Log.d(TAG, "RecyclerView: " + mRecyclerView);
+
+            FloatingActionButton floatingActionButton = view.findViewById(R.id.start_workout_FAB);
             floatingActionButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_arrow));
             floatingActionButton.setContentDescription(getString(R.string.start_workout_fab));
             floatingActionButton.setOnClickListener(new View.OnClickListener() {
@@ -120,10 +122,30 @@ public class WorkoutList extends Fragment {
                             .commit();
                 }
             });
+
+            tempView = view;
         } else {
-            floatingActionButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_fitness));
-            floatingActionButton.setContentDescription(getString(R.string.open_fitness_option_fab));
-            //TODO: aggiungere animazione apertura FAB.
+            View view = inflater.inflate(R.layout.fragment_workout_list_fabweight, container, false);
+            mRecyclerView = view.findViewById(R.id.workout_list_recycler_view);
+
+            FloatingActionMenu fabMenu = view.findViewById(R.id.fabMenu); //fab principale (menu)
+
+            com.github.clans.fab.FloatingActionButton fab1 = view.findViewById(R.id.fab1);
+            fab1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+
+            com.github.clans.fab.FloatingActionButton fab2 = view.findViewById(R.id.fab2);
+            fab2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+            tempView = view;
         }
 
         mViewModel = ViewModelProviders.of(getActivity()).get(PlayingWorkoutModelView.class);
@@ -153,7 +175,7 @@ public class WorkoutList extends Fragment {
                 }
             }
         });
-        return view;
+       return tempView;
     }
 
     /**
@@ -336,4 +358,6 @@ public class WorkoutList extends Fragment {
         mViewModel.setDatabase(mDatabase);
         mViewModel.setUser(mUser);
     }
+
+
 }
