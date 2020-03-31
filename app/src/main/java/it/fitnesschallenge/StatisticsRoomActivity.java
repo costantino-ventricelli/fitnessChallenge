@@ -10,10 +10,13 @@ import android.widget.ImageButton;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.material.circularreveal.CircularRevealFrameLayout;
+import com.google.android.material.circularreveal.CircularRevealLinearLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
 import it.fitnesschallenge.adapter.SectionsPagerAdapter;
+import it.fitnesschallenge.adapter.SharingBottomSheet;
 import it.fitnesschallenge.model.User;
 
 public class StatisticsRoomActivity extends AppCompatActivity {
@@ -27,7 +30,7 @@ public class StatisticsRoomActivity extends AppCompatActivity {
 
     private User mUser;
     private ViewPager mViewPager;
-    private FloatingActionButton fab;
+    private FloatingActionButton mFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +44,7 @@ public class StatisticsRoomActivity extends AppCompatActivity {
         tabs.setupWithViewPager(mViewPager);
 
         ImageButton backButton = findViewById(R.id.statistics_activity_back_button);
-        fab = findViewById(R.id.statistics_FAB);
+        mFab = findViewById(R.id.statistics_FAB);
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -52,18 +55,18 @@ public class StatisticsRoomActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
                 if (position == 0) {
-                    fab.setImageDrawable(getDrawable(R.drawable.ic_share));
-                    fab.show();
+                    mFab.setImageDrawable(getDrawable(R.drawable.ic_share));
+                    mFab.show();
                 } else if (position == 1) {
-                    fab.setImageDrawable(getDrawable(R.drawable.ic_add));
-                    fab.show();
+                    mFab.setImageDrawable(getDrawable(R.drawable.ic_add));
+                    mFab.show();
                 }
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
                 if (state == ViewPager.SCROLL_STATE_DRAGGING)
-                    fab.hide();
+                    mFab.hide();
             }
         });
 
@@ -74,12 +77,12 @@ public class StatisticsRoomActivity extends AppCompatActivity {
             }
         });
 
-        fab.setOnClickListener(new View.OnClickListener() {
+        mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int position = mViewPager.getCurrentItem();
                 if (position == 0) {
-                    //TODO: aggiungere comandi di share.
+                    setShareContent();
                 } else if (position == 1) {
                     Intent intent = new Intent(StatisticsRoomActivity.this, SubscribeNewRoom.class);
                     float[] fabAttribute = getFabAttribute();
@@ -88,22 +91,27 @@ public class StatisticsRoomActivity extends AppCompatActivity {
                     intent.putExtra(FAB_RADIUS, fabAttribute[2]);
                     ActivityOptions options = ActivityOptions
                             .makeSceneTransitionAnimation(StatisticsRoomActivity.this,
-                                    fab, "fab");
+                                    mFab, "fab");
                     startActivity(intent, options.toBundle());
                 }
             }
         });
     }
 
+    private void setShareContent() {
+        SharingBottomSheet sharingBottomSheet = new SharingBottomSheet();
+        sharingBottomSheet.show(getSupportFragmentManager(), "SHARED_BOTTOM");
+    }
+
     private float[] getFabAttribute() {
         float[] fabAttributes = new float[3];
         int[] fabPosition = new int[2];
-        fab.getLocationOnScreen(fabPosition);
-        fabAttributes[0] = fabPosition[0] - (fab.getWidth() / 2.00F);
-        fabAttributes[1] = fabPosition[1] - (fab.getHeight() / 2.00F);
+        mFab.getLocationOnScreen(fabPosition);
+        fabAttributes[0] = fabPosition[0] - (mFab.getWidth() / 2.00F);
+        fabAttributes[1] = fabPosition[1] - (mFab.getHeight() / 2.00F);
         Log.d(TAG, "XPosition: " + fabAttributes[0]);
         Log.d(TAG, "YPosition: " + fabAttributes[1]);
-        fabAttributes[2] = fab.getWidth() / 2.00F;
+        fabAttributes[2] = mFab.getWidth() / 2.00F;
         Log.d(TAG, "Radius: " + fabAttributes[2]);
         return fabAttributes;
     }

@@ -20,6 +20,7 @@ public class RoomActivity extends AppCompatActivity {
     private TextView mRoomName;
     private TextView mRoomCode;
     private TextView mRoomRanking;
+    private TextView mRoomCreator;
     private RecyclerView mRankingRecycler;
     private boolean isClosed = false;
 
@@ -38,15 +39,19 @@ public class RoomActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-        //TODO: prelevare partecipanti Room, probabilmente da modificare il DB
         Room room = getIntent().getParcelableExtra(ROOM);
         mRoomName = findViewById(R.id.room_name);
         mRoomCode = findViewById(R.id.room_code);
         mRoomRanking = findViewById(R.id.room_ranking_label);
         mRankingRecycler = findViewById(R.id.room_recyclerview);
+        mRoomCreator = findViewById(R.id.room_creator);
         mRoomName.setText(room.getRoomName());
+        mRoomCreator.setText(room.getRoomCreator());
+        mRoomCode.setText(room.getIdCode());
 
         setTransitionListener();
+
+
     }
 
     private void setTransitionListener() {
@@ -95,6 +100,7 @@ public class RoomActivity extends AppCompatActivity {
         mRoomCode.setVisibility(View.GONE);
         mRoomRanking.setVisibility(View.GONE);
         mRankingRecycler.setVisibility(View.GONE);
+        mRoomCreator.setVisibility(View.GONE);
         isClosed = true;
     }
 }

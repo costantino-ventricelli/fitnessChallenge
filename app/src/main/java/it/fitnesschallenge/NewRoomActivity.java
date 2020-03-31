@@ -104,6 +104,7 @@ public class NewRoomActivity extends AppCompatActivity {
         if (!roomName.isEmpty()) {
             final String generatedCode = createNewId();
             Room room = new Room(generatedCode, roomName, mUser.getEmail());
+            room.addMembers(mUser.getEmail());
             mDatabase.collection("room/").document(generatedCode).set(room)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override

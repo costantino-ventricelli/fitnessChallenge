@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -33,7 +33,6 @@ import java.util.List;
 import it.fitnesschallenge.adapter.RoomsAdapter;
 import it.fitnesschallenge.model.Participation;
 import it.fitnesschallenge.model.Room;
-import it.fitnesschallenge.model.view.StatisticsRoomsViewModel;
 
 public class Rooms extends Fragment {
 
@@ -57,13 +56,13 @@ public class Rooms extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_rooms, container, false);
 
+        Log.d(TAG, "onCreateView");
+
         mRecyclerView = view.findViewById(R.id.fragment_rooms_recyclerview);
         mConnectionImage = view.findViewById(R.id.fragment_rooms_no_connection_image);
         mProgressBar = view.findViewById(R.id.rooms_fragment_progress_bar);
 
         final MaterialButton createNewRoom = view.findViewById(R.id.rooms_create_new_room_button);
-
-        StatisticsRoomsViewModel mViewModel = ViewModelProviders.of(getActivity()).get(StatisticsRoomsViewModel.class);
 
         mDatabase = FirebaseFirestore.getInstance();
         mUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -99,10 +98,17 @@ public class Rooms extends Fragment {
                     .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                 @Override
                 public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                    Log.d(TAG, "Prelevate room personali");
-                    for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                        Participation participation = documentSnapshot.toObject(Participation.class);
-                        readRoomsFromFirestone(participation.getRoomsList());
+                    Log.d(TAG, "Prelevate room personali: " + queryDocumentSnapshots.getDocuments().size());
+                    if (queryDocumentSnapshots.getDocuments().size() > 0) {
+                        for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                            Participation participation = documentSnapshot.toObject(Participation.class);
+                            readRoomsFromFirestone(participation.getRoomsList());
+                        }
+                    } else {
+                        mProgressBar.setVisibility(View.GONE);
+                        mRecyclerView.setVisibility(View.GONE);
+                        mConnectionImage.setImageResource(R.mipmap.into_the_night);
+                        mConnectionImage.setVisibility(View.VISIBLE);
                     }
                 }
             });
@@ -111,10 +117,13 @@ public class Rooms extends Fragment {
                     .setTitle(R.string.ops)
                     .setMessage(R.string.connection_error_message);
             builder.show();
+            mRecyclerView.setVisibility(View.GONE);
+            mConnectionImage.setVisibility(View.VISIBLE);
         }
     }
 
     private void readRoomsFromFirestone(List<String> roomsStringList) {
+        Log.d(TAG, "Room prelevate: " + roomsStringList.toString());
         final ArrayList<Room> roomArrayList = new ArrayList<>();
         mRoomsAdapter = new RoomsAdapter(roomArrayList);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -144,6 +153,12 @@ public class Rooms extends Fragment {
     }
 
     private void openRoomActivity(int position, RoomsAdapter.ViewHolder viewHolder) {
-
+        Intent intent = new Intent(getActivity(), RoomActivity.class);
+        intent.putExtra(ROOM, mRoomsAdapter.getItemAtPosition(position));
+        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(getActivity(),
+                Pair.create((View) viewHolder.getRoomName(), "room_name"),
+                Pair.create((View) viewHolder.getRoomCreator(), "room_creator"),
+                Pair.create((View) viewHolder.getImageRoom(), "room_image"));
+        startActivity(intent, options.toBundle());
     }
 }

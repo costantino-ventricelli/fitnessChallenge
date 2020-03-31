@@ -47,6 +47,10 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.ViewHolder> 
         return mRoomList.size();
     }
 
+    public Room getItemAtPosition(int position) {
+        return mRoomList.get(position);
+    }
+
     public interface OnClickListener {
         void onClick(int position, ViewHolder view);
     }
