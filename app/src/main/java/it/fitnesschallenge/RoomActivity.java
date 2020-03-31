@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
-import it.fitnesschallenge.model.room.entity.Room;
+import it.fitnesschallenge.model.Room;
 
 public class RoomActivity extends AppCompatActivity {
 

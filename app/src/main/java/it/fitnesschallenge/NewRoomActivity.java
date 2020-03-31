@@ -1,38 +1,37 @@
 package it.fitnesschallenge;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 
-import it.fitnesschallenge.model.room.entity.Room;
+import it.fitnesschallenge.model.Participation;
+import it.fitnesschallenge.model.Room;
 
 public class NewRoomActivity extends AppCompatActivity {
 
@@ -43,6 +42,8 @@ public class NewRoomActivity extends AppCompatActivity {
     private TextView mGeneratedCode;
     private ProgressBar mProgressBar;
     private TextView mGeneratedCodeLabel;
+    private FirebaseFirestore mDatabase;
+    private FirebaseUser mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,14 +75,16 @@ public class NewRoomActivity extends AppCompatActivity {
         NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
 
         if (activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting())
+                activeNetwork.isConnectedOrConnecting()) {
             mFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     saveNewRoom();
                 }
             });
-        else {
+            mDatabase = FirebaseFirestore.getInstance();
+            mUser = FirebaseAuth.getInstance().getCurrentUser();
+        } else {
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this)
                     .setTitle(R.string.ops)
                     .setMessage(R.string.connection_error_message)
@@ -99,22 +102,14 @@ public class NewRoomActivity extends AppCompatActivity {
         mProgressBar.setVisibility(View.VISIBLE);
         String roomName = mRoomNameInput.getEditText().getText().toString().trim();
         if (!roomName.isEmpty()) {
-            FirebaseFirestore database = FirebaseFirestore.getInstance();
-            FirebaseAuth auth = FirebaseAuth.getInstance();
             final String generatedCode = createNewId();
-            Room room = new Room(generatedCode, roomName, auth.getCurrentUser().getEmail());
-            database.collection("room/").document(generatedCode).set(room)
+            Room room = new Room(generatedCode, roomName, mUser.getEmail());
+            mDatabase.collection("room/").document(generatedCode).set(room)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            mProgressBar.setVisibility(View.GONE);
                             mGeneratedCode.setText(generatedCode);
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    finish();
-                                }
-                            }, 1500);
+                            setParticipation(generatedCode);
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -130,8 +125,88 @@ public class NewRoomActivity extends AppCompatActivity {
         }
     }
 
+    private void setParticipation(final String generatedCode) {
+        mDatabase.collection("user/").document(mUser.getEmail())
+                .collection("/participation")
+                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                Log.d(TAG, "Documenti prelevati da FireBase");
+                ArrayList<String> roomsList = new ArrayList<>();
+                if (queryDocumentSnapshots.getDocuments().size() > 0) {
+                    for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                        Participation participation = documentSnapshot.toObject(Participation.class);
+                        roomsList = participation.getRoomsList();
+                        roomsList.add(generatedCode);
+                        participation.setRoomsList(roomsList);
+                        updateDocument(participation, documentSnapshot.getId());
+                    }
+                } else {
+                    roomsList.add(generatedCode);
+                    createNewDocument(new Participation(roomsList));
+                }
+            }
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "Errore connessione");
+                    }
+                });
+    }
+
+    private void updateDocument(Participation participation, String id) {
+        if (participation != null) {
+            try {
+                mDatabase.collection("user").document(mUser.getEmail())
+                        .collection("participation").document(id)
+                        .update("roomsList", participation.getRoomsList())
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                mProgressBar.setVisibility(View.GONE);
+                                showSuccessDialog();
+                            }
+                        });
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                Log.d(TAG, "user/" + mUser.getEmail() + "/participation/");
+                Toast.makeText(this, "user/" + mUser.getEmail() + "/participation/", Toast.LENGTH_LONG).show();
+            }
+            Log.d(TAG, "Aggiorno il documento");
+        }
+    }
+
+    private void createNewDocument(Participation participation) {
+        if (participation != null) {
+            mDatabase.collection("user").document(mUser.getEmail())
+                    .collection("participation").add(participation)
+                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+                            mProgressBar.setVisibility(View.GONE);
+                            showSuccessDialog();
+                        }
+                    });
+            Log.d(TAG, "Aggiorno il documento");
+        }
+    }
+
+    private void showSuccessDialog() {
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.success)
+                .setMessage(R.string.upload_complete_successful)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                });
+        builder.show();
+    }
+
     private String createNewId() {
-        return Long.toString(System.currentTimeMillis() % 1000000);
+        return Long.toString(System.currentTimeMillis());
     }
 
     @Override
@@ -146,5 +221,6 @@ public class NewRoomActivity extends AppCompatActivity {
         mRoomNameInput.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.GONE);
         mGeneratedCode.setVisibility(View.GONE);
+        mGeneratedCodeLabel.setVisibility(View.GONE);
     }
 }

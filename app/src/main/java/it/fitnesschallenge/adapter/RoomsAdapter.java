@@ -14,7 +14,7 @@ import com.mikhaellopez.circularimageview.CircularImageView;
 import java.util.List;
 
 import it.fitnesschallenge.R;
-import it.fitnesschallenge.model.room.entity.Room;
+import it.fitnesschallenge.model.Room;
 
 public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.ViewHolder> {
 

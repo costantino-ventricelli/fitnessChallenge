@@ -1,4 +1,4 @@
-package it.fitnesschallenge.model.room.entity;
+package it.fitnesschallenge.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

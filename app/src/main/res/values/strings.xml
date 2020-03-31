@@ -156,4 +156,7 @@
     <string name="upload_room_faild">Error uploading new room in FireBase</string>
     <string name="connection_error_message">It looks like you don\'t have an active connection, active the network to continue</string>
     <string name="room_s_creator">Room\'s creator</string>
+    <string name="success">Success</string>
+    <string name="upload_complete_successful">Upload complete successful</string>
+    <string name="no_connection_image">No connection image</string>
 </resources>

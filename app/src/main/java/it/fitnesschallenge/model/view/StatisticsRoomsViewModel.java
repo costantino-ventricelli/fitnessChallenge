@@ -13,7 +13,6 @@ import java.util.List;
 import it.fitnesschallenge.model.ExecutionList;
 import it.fitnesschallenge.model.room.FitnessChallengeRepository;
 import it.fitnesschallenge.model.room.entity.ExerciseExecution;
-import it.fitnesschallenge.model.room.entity.Room;
 import it.fitnesschallenge.model.room.entity.Workout;
 
 public class StatisticsRoomsViewModel extends AndroidViewModel {

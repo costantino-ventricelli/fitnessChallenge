@@ -88,7 +88,7 @@ public class WorkoutList extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if(mUser != null) {
+        if (mUser != null) {
             View view = inflater.inflate(R.layout.fragment_workout_list_fabplay, container, false);
             mRecyclerView = view.findViewById(R.id.workout_list_recycler_view);
 
@@ -167,10 +167,10 @@ public class WorkoutList extends Fragment {
      * Questo metodo controlla se il dispositivo è connesso prima di richiamare il metodo setObserver()
      */
     private void checkConnection() {
-        ConnectivityManager cm = (ConnectivityManager)mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager cm = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-        if(isConnected)
+        if (isConnected)
             try {
                 setObserver();
             } catch (NullPointerException e) {
@@ -184,16 +184,17 @@ public class WorkoutList extends Fragment {
      * alla MainActivity.
      */
 
-        private void setObserver () {
-            mViewModel.getWorkoutList().observe(getViewLifecycleOwner(), new Observer<List<Workout>>() {
-                @Override
-                public void onChanged(List<Workout> workoutList) {
-                    mViewModel.setActiveWorkoutFromLocal(workoutList).observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-                        @Override
-                        public void onChanged(Boolean aBoolean) {
-                            final List<WorkoutWithExercise> workoutList = new ArrayList<>();
-                            if (!aBoolean) {
-                                Log.d(TAG, "Non sono stati individuati workout nel DB");
+    private void setObserver() {
+        mViewModel.getWorkoutList().observe(getViewLifecycleOwner(), new Observer<List<Workout>>() {
+            @Override
+            public void onChanged(List<Workout> workoutList) {
+                mViewModel.setActiveWorkoutFromLocal(workoutList).observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+                    @Override
+                    public void onChanged(Boolean aBoolean) {
+                        final List<WorkoutWithExercise> workoutList = new ArrayList<>();
+                        if (!aBoolean) {
+                            Log.d(TAG, "Non sono stati individuati workout nel DB");
+                            if (mUser != null)
                                 mDatabase.collection("user/" + mUser.getUsername() + "/workout")
                                         .get()
                                         .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -213,14 +214,12 @@ public class WorkoutList extends Fragment {
                                                 Log.d(TAG, "Qualcosa è andato storto nella lettura del workout");
                                             }
                                         });
-                            }
                         }
-                    });
-                }
-            });
-        }
-
-
+                    }
+                });
+            }
+        });
+    }
 
 
     /**
