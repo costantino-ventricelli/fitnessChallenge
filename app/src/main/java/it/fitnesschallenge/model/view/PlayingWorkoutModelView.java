@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -287,8 +288,13 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
         return new MutableLiveData<>(mWorkoutId.getValue() != -1);
     }
 
-    public MutableLiveData<List<Workout>> getWorkoutList() {
-        return new MutableLiveData<>(mRepository.getWorkoutList().getValue());
+    public LiveData<List<Workout>> getWorkout() {
+        return mRepository.getWorkoutList();
+    }
+
+    public void updateWorkout(Workout workout) {
+        UpdateWorkout updateWorkout = new UpdateWorkout(mRepository);
+        updateWorkout.execute(workout);
     }
 
     /**
@@ -305,7 +311,7 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
      *
      * @param workoutId contiene l'id del workout prelevato.
      */
-    private void setWorkoutId(long workoutId) {
+    public void setWorkoutId(long workoutId) {
         Log.d(TAG, "Setto l'id del workout precedente " + mWorkoutId.getValue() + " successivo: " + workoutId);
         this.mWorkoutId.setValue(workoutId);
     }
@@ -445,6 +451,21 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
         @Override
         protected Void doInBackground(ExerciseExecution... exerciseExecutions) {
             mRepository.insertExecution(exerciseExecutions[0]);
+            return null;
+        }
+    }
+
+    static class UpdateWorkout extends AsyncTask<Workout, Void, Void> {
+
+        private FitnessChallengeRepository mRepository;
+
+        UpdateWorkout(FitnessChallengeRepository repository) {
+            this.mRepository = repository;
+        }
+
+        @Override
+        protected Void doInBackground(Workout... workouts) {
+            mRepository.updateWorkout(workouts[0]);
             return null;
         }
     }

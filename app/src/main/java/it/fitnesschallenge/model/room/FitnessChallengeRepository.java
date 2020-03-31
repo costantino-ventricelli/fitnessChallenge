@@ -72,6 +72,10 @@ public class FitnessChallengeRepository {
         return workoutDAO.getWorkoutStartDate(date);
     }
 
+    public void updateWorkout(Workout workout) {
+        workoutDAO.update(workout);
+    }
+
     public LiveData<ExerciseExecution> getLastExecutionExecution(long personalExerciseId) {
         return exerciseExecutionDAO.selectLastExerciseExecution(personalExerciseId);
     }

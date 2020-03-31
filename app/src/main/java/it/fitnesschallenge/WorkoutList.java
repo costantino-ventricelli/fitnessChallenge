@@ -7,6 +7,7 @@ package it.fitnesschallenge;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -28,12 +29,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -47,6 +51,7 @@ import it.fitnesschallenge.model.room.entity.reference.WorkoutWithExercise;
 import it.fitnesschallenge.model.view.PlayingWorkoutModelView;
 
 import static it.fitnesschallenge.model.SharedConstance.PLAYING_WORKOUT;
+import static it.fitnesschallenge.model.SharedConstance.SIGN_UP_FRAGMENT;
 
 public class WorkoutList extends Fragment {
 
@@ -75,6 +80,12 @@ public class WorkoutList extends Fragment {
     }
 
     @Override
+    public void onAttach(@NotNull Context context) {
+        super.onAttach(context);
+        mContext = context;
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null)
@@ -88,11 +99,14 @@ public class WorkoutList extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_workout_list_fabplay, container, false);
+        mRecyclerView = view.findViewById(R.id.workout_list_recycler_view);
+        Log.d(TAG, "RecyclerView: " + mRecyclerView);
+
+        FloatingActionButton floatingActionButton = view.findViewById(R.id.start_workout_FAB);
         if (mUser != null) {
-            View view = inflater.inflate(R.layout.fragment_workout_list_fabplay, container, false);
-            mRecyclerView = view.findViewById(R.id.workout_list_recycler_view);
-
-            FloatingActionButton floatingActionButton = view.findViewById(R.id.start_workout_FAB);
+            floatingActionButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_arrow));
+            floatingActionButton.setContentDescription(getString(R.string.start_workout_fab));
             floatingActionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -106,82 +120,49 @@ public class WorkoutList extends Fragment {
                             .commit();
                 }
             });
-
-            mViewModel = ViewModelProviders.of(getActivity()).get(PlayingWorkoutModelView.class);
-            /*
-             * Verifico se le informazioni sono già state prelevate dal DB, se sono già disponibili nel
-             * ViewModel, gli Observer non verranno mai notificati, quindi si aggiunge un controllo
-             * manuale.
-             */
-            if (mViewModel.getPersonalExerciseList() != null)
-                setRecyclerView();
-            else {
-                checkConnection();
-            }
-            /*
-             * Setto i parametri che definiscono l'utente nel ViewModel, in modo da renderli reperibili
-             * mentre l'utente effettua il workout
-             */
-            setUserConsistence();
-            return view;
         } else {
-            View view = inflater.inflate(R.layout.fragment_workout_list_fabweight, container, false);
-            mRecyclerView = view.findViewById(R.id.workout_list_recycler_view);
-
-            FloatingActionButton floatingActionButton = view.findViewById(R.id.start_workout_FAB);
-            floatingActionButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    PlayingWorkout playingWorkout = new PlayingWorkout();
-                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    FragmentTransaction transaction = fragmentManager.beginTransaction();
-                    transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
-                            R.anim.enter_from_rigth, R.anim.exit_from_left);
-                    transaction.replace(R.id.fragmentContainer, playingWorkout, PLAYING_WORKOUT)
-                            .addToBackStack(PLAYING_WORKOUT)
-                            .commit();
-                }
-            });
-
-            mViewModel = ViewModelProviders.of(getActivity()).get(PlayingWorkoutModelView.class);
-            /*
-             * Verifico se le informazioni sono già state prelevate dal DB, se sono già disponibili nel
-             * ViewModel, gli Observer non verranno mai notificati, quindi si aggiunge un controllo
-             * manuale.
-             */
-            if (mViewModel.getPersonalExerciseList() != null)
-                setRecyclerView();
-            else {
-                checkConnection();
-            }
-            /*
-             * Setto i parametri che definiscono l'utente nel ViewModel, in modo da renderli reperibili
-             * mentre l'utente effettua il workout
-             */
-            setUserConsistence();
-            return view;
+            floatingActionButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_fitness));
+            floatingActionButton.setContentDescription(getString(R.string.open_fitness_option_fab));
+            //TODO: aggiungere animazione apertura FAB.
         }
-    }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        mContext = context;
+        mViewModel = ViewModelProviders.of(getActivity()).get(PlayingWorkoutModelView.class);
+        /*
+         * Verifico se le informazioni sono già state prelevate dal DB, se sono già disponibili nel
+         * ViewModel, gli Observer non verranno mai notificati, quindi si aggiunge un controllo
+         * manuale.
+         */
+        if (mViewModel.getPersonalExerciseList() != null)
+            setRecyclerView();
+        else {
+            setObserver();
+        }
+        /*
+         * Setto i parametri che definiscono l'utente nel ViewModel, in modo da renderli reperibili
+         * mentre l'utente effettua il workout
+         */
+        if (mFireStoreUser != null)
+            setUserConsistence();
+
+        mViewModel.getWorkoutId().observe(getViewLifecycleOwner(), new Observer<Long>() {
+            @Override
+            public void onChanged(Long aLong) {
+                if (aLong != -1) {
+                    Log.d(TAG, "Se sono qui ho trovato un workout utilizzabile.");
+                    setUpUI();
+                }
+            }
+        });
+        return view;
     }
 
     /**
      * Questo metodo controlla se il dispositivo è connesso prima di richiamare il metodo setObserver()
      */
-    private void checkConnection() {
+    private boolean checkConnection() {
         ConnectivityManager cm = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-        if (isConnected)
-            try {
-                setObserver();
-            } catch (NullPointerException e) {
-                Log.d(TAG, e.getMessage());
-            }
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 
     /**
@@ -191,40 +172,88 @@ public class WorkoutList extends Fragment {
      */
 
     private void setObserver() {
-        mViewModel.getWorkoutList().observe(getViewLifecycleOwner(), new Observer<List<Workout>>() {
+        mViewModel.getWorkout().observe(getViewLifecycleOwner(), new Observer<List<Workout>>() {
             @Override
             public void onChanged(List<Workout> workoutList) {
-                mViewModel.setActiveWorkoutFromLocal(workoutList).observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-                    @Override
-                    public void onChanged(Boolean aBoolean) {
-                        final List<WorkoutWithExercise> workoutList = new ArrayList<>();
-                        if (!aBoolean) {
-                            Log.d(TAG, "Non sono stati individuati workout nel DB");
-                            if (mUser != null)
-                                mDatabase.collection("user/" + mUser.getUsername() + "/workout")
-                                        .get()
-                                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                                Log.d(TAG, "Ho letto da Firebase nuovi workout");
-                                                for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
-                                                    workoutList.add(queryDocumentSnapshot.toObject(WorkoutWithExercise.class));
-                                                    checkWorkoutList(workoutList);
-                                                    Log.d(TAG, "Individuato workout per l'utente");
-                                                }
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Log.d(TAG, "Qualcosa è andato storto nella lettura del workout");
-                                            }
-                                        });
+                try {
+                    boolean find = false;
+                    Calendar calendar = Calendar.getInstance();
+                    for (Workout workout : workoutList) {
+                        if (workout.getEndDate().before(calendar.getTime()) && workout.isActive()) {
+                            workout.setActive(false);
+                            mViewModel.updateWorkout(workout);
+                        } else {
+                            mViewModel.setWorkoutId(workout.getWorkOutId());
+                            find = true;
                         }
                     }
-                });
+                    if (!find) {
+                        if (mFireStoreUser != null) {
+                            if (!checkConnection())
+                                showErrorMaterial(getString(R.string.connection_error_message));
+                            else
+                                getWorkoutFromFirebase();
+                        } else
+                            showErrorMaterial(getString(R.string.registration_error));
+
+                    }
+                } catch (NullPointerException ex) {
+                    ex.printStackTrace();
+                    showErrorMaterial(getString(R.string.registration_error));
+                }
             }
         });
+    }
+
+    private void showErrorMaterial(String messageError) {
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext())
+                .setTitle(R.string.ops)
+                .setMessage(messageError);
+        if (messageError.equals(getString(R.string.registration_error))) {
+            builder.setPositiveButton("Sign up", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    SignUp signUp = new SignUp();
+                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
+                            R.anim.enter_from_rigth, R.anim.exit_from_left)
+                            .replace(R.id.fragmentContainer, signUp, SIGN_UP_FRAGMENT)
+                            .addToBackStack(SIGN_UP_FRAGMENT)
+                            .commit();
+                }
+            });
+            builder.setNegativeButton("New workout", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //TODO: aggiungere possibilità di preare nuovo workuot out door.
+                }
+            });
+        }
+        builder.show();
+    }
+
+    private void getWorkoutFromFirebase() {
+        final ArrayList<WorkoutWithExercise> workoutWithExerciseList = new ArrayList<>();
+        mDatabase.collection("user/" + mUser.getUsername() + "/workout")
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        Log.d(TAG, "Ho letto da Firebase nuovi workout");
+                        for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
+                            workoutWithExerciseList.add(queryDocumentSnapshot.toObject(WorkoutWithExercise.class));
+                            checkWorkoutList(workoutWithExerciseList);
+                            Log.d(TAG, "Individuato workout per l'utente");
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "Qualcosa è andato storto nella lettura del workout");
+                    }
+                });
     }
 
 
@@ -264,6 +293,10 @@ public class WorkoutList extends Fragment {
     private void writeInLocalDB(WorkoutWithExercise workoutWithExercise) {
         Log.d(TAG, "Scrivo un nuovo workout nel database locale");
         mViewModel.writeWorkoutWithExercise(workoutWithExercise, getViewLifecycleOwner());
+        setUpUI();
+    }
+
+    private void setUpUI() {
         mViewModel.getWorkoutId().observe(getViewLifecycleOwner(), new Observer<Long>() {
             @Override
             public void onChanged(Long aLong) {

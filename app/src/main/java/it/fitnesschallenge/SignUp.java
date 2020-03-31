@@ -1,6 +1,7 @@
 package it.fitnesschallenge;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,13 +30,13 @@ public class SignUp extends Fragment {
 
     private static String[] ROLE;
     private static final int PICK_IMAGE_REQUEST = 1;
-    private TextInputLayout emailTextInut;
-    private TextInputLayout passwordTextInut;
-    private TextInputLayout rePasswordTextInput;
-    private TextInputLayout nomeTextInput;
-    private TextInputLayout cognomeTextInput;
-    private TextInputLayout roleTextInput;
-    private ProgressBar progressBar;
+    private TextInputLayout mEmailTextInput;
+    private TextInputLayout mPasswordTextInput;
+    private TextInputLayout mRePasswordTextInput;
+    private TextInputLayout mNomeTextInput;
+    private TextInputLayout mSurnameTextInput;
+    private TextInputLayout mRoleTextInput;
+    private ProgressBar mProgressBar;
     private FirebaseAuth mAuth;
 
     private static final String TAG = "SignUp";
@@ -54,13 +55,13 @@ public class SignUp extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_sign_up, container, false);
-        emailTextInut = view.findViewById(R.id.email_text_input);
-        passwordTextInut = view.findViewById(R.id.password_text_input);
-        rePasswordTextInput = view.findViewById(R.id.re_password_text_input);
-        nomeTextInput = view.findViewById(R.id.name_text_input);
-        cognomeTextInput = view.findViewById(R.id.surname_text_input);
-        roleTextInput = view.findViewById(R.id.role_text_input);
-        progressBar = view.findViewById(R.id.sign_up_progress_bar);
+        mEmailTextInput = view.findViewById(R.id.email_text_input);
+        mPasswordTextInput = view.findViewById(R.id.password_text_input);
+        mRePasswordTextInput = view.findViewById(R.id.re_password_text_input);
+        mNomeTextInput = view.findViewById(R.id.name_text_input);
+        mSurnameTextInput = view.findViewById(R.id.surname_text_input);
+        mRoleTextInput = view.findViewById(R.id.role_text_input);
+        mProgressBar = view.findViewById(R.id.sign_up_progress_bar);
         AutoCompleteTextView roleAutoComplete = view.findViewById(R.id.dropdown_role);
         MaterialButton signIn = view.findViewById(R.id.sign_in);
 
@@ -76,14 +77,14 @@ public class SignUp extends Fragment {
         signIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressBar.setVisibility(View.VISIBLE);
-                String email = emailTextInut.getEditText().getText().toString();
-                String password = passwordTextInut.getEditText().getText().toString();
-                String rePassword = rePasswordTextInput.getEditText().getText().toString();
-                String nome = nomeTextInput.getEditText().getText().toString();
-                String cognome = cognomeTextInput.getEditText().getText().toString();
-                String role = roleTextInput.getEditText().getText().toString();
-                validateForm(email, password, rePassword, nome, cognome, role);
+                mProgressBar.setVisibility(View.VISIBLE);
+                String email = mEmailTextInput.getEditText().getText().toString();
+                String password = mPasswordTextInput.getEditText().getText().toString();
+                String rePassword = mRePasswordTextInput.getEditText().getText().toString();
+                String nome = mNomeTextInput.getEditText().getText().toString();
+                String surname = mSurnameTextInput.getEditText().getText().toString();
+                String role = mRoleTextInput.getEditText().getText().toString();
+                validateForm(email, password, rePassword, nome, surname, role);
             }
         });
 
@@ -93,24 +94,24 @@ public class SignUp extends Fragment {
     private void validateForm(String email, String password, String rePassword,
                               String nome, String cognome, String role){
         if(email.isEmpty()){
-            emailTextInut.setError(getString(R.string.complete_correctly_field));
+            mEmailTextInput.setError(getString(R.string.complete_correctly_field));
             return;
         }
         if(password.isEmpty() && rePassword.isEmpty() && password.equals(rePassword)){
-            passwordTextInut.setError(getString(R.string.complete_correctly_field));
-            rePasswordTextInput.setError(getString(R.string.complete_correctly_field));
+            mPasswordTextInput.setError(getString(R.string.complete_correctly_field));
+            mRePasswordTextInput.setError(getString(R.string.complete_correctly_field));
             return;
         }
         if(nome.isEmpty()){
-            nomeTextInput.setError(getString(R.string.complete_correctly_field));
+            mNomeTextInput.setError(getString(R.string.complete_correctly_field));
             return;
         }
         if(cognome.isEmpty()){
-            cognomeTextInput.setError(getString(R.string.complete_correctly_field));
+            mSurnameTextInput.setError(getString(R.string.complete_correctly_field));
             return;
         }
         if(role.isEmpty()){
-            roleTextInput.setError(getString(R.string.complete_correctly_field));
+            mRoleTextInput.setError(getString(R.string.complete_correctly_field));
             return;
         }
 
@@ -118,17 +119,22 @@ public class SignUp extends Fragment {
     }
 
     private void registerUser(final String email, final String password, final String nome,
-                              final String cognome, final String role){
+                              final String surname, final String role) {
+        Log.d(TAG, "Registro l'utente");
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
-                        sendDataToFirebase(new User(email, nome, cognome, role));
+                        Log.d(TAG, "Utente correttamente registrato.");
+                        sendDataToFirebase(new User(email, nome, surname, role));
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
+                        mPasswordTextInput.setError(e.getMessage());
+                        mRePasswordTextInput.setError(e.getMessage());
+                        mProgressBar.setVisibility(View.GONE);
                         Log.e(TAG, "Exception throw", e);
                     }
                 });
@@ -142,13 +148,18 @@ public class SignUp extends Fragment {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        progressBar.setVisibility(View.GONE);
+                        mProgressBar.setVisibility(View.GONE);
                         Log.d(TAG, "Data correctly upload");
                         new MaterialAlertDialogBuilder(getContext())
                                 .setTitle("Success")
                                 .setMessage(getContext().getString(R.string.sign_in_successfully))
                                 .show();
-                        SystemClock.sleep(1000);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                getActivity().getSupportFragmentManager().popBackStackImmediate();
+                            }
+                        }, 500);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

@@ -8,6 +8,7 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Transaction;
+import androidx.room.Update;
 
 import java.util.Date;
 import java.util.List;
@@ -19,6 +20,9 @@ public interface WorkoutDAO {
 
     @Insert
     long insertWorkout(Workout workout);
+
+    @Update
+    void update(Workout workout);
 
     @Transaction
     @Query("SELECT * FROM workout WHERE workout_id = :workoutId")

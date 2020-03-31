@@ -159,4 +159,7 @@
     <string name="success">Success</string>
     <string name="upload_complete_successful">Upload complete successful</string>
     <string name="no_connection_image">No connection image</string>
+    <string name="start_workout_fab">Start workout</string>
+    <string name="open_fitness_option_fab">Open fitness option</string>
+    <string name="registration_error">It seems that you have no active training and that you are not registered on the platform, if you have training in the cloud, log in, otherwise create one.</string>
 </resources>

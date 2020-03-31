@@ -112,18 +112,15 @@ public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder>
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.exercise_list_layout, parent, false);
-        Log.d(TAG, "Creo il ViewHolder");
         return new ViewHolder(view, mOnClickListener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-        Log.d(TAG, "Collego il ViewHolder");
         final PersonalExercise personalExercise = mList.get(position);
         mRepository.getExercise(personalExercise.getExerciseId()).observe(mCallingFragment, new Observer<Exercise>() {
             @Override
             public void onChanged(Exercise exercise) {
-                Log.d(TAG, "Exercise: " + exercise.getExerciseId());
                 holder.mImageView.setImageResource(exercise.getImageReference());
                 holder.mTitleTextView.setText(exercise.getExerciseName());
                 StringBuilder builder = new StringBuilder(NumberFormat.getInstance().format(personalExercise.getRepetition()));
@@ -156,7 +153,6 @@ public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder>
 
         ViewHolder(@NonNull View itemView, final OnClickListener actionClickListener) {
             super(itemView);
-            Log.d(TAG, "Creo la view per l'item");
             mCardView = itemView;
             mImageView = itemView.findViewById(R.id.add_exercise_img);
             mTitleTextView = itemView.findViewById(R.id.add_exercise_title);
