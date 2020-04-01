@@ -23,6 +23,8 @@ public class Workout {
     private Date startDate;
     @ColumnInfo(name = "end_date")
     private Date endDate;
+    @Ignore
+    private long endDateInMillis;
 
     @Ignore
     public Workout() {
@@ -33,6 +35,7 @@ public class Workout {
         this.isActive = isActive;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.endDateInMillis = endDate.getTime();
     }
 
     public int getWorkOutId() {
@@ -53,6 +56,14 @@ public class Workout {
 
     public Date getEndDate() {
         return endDate;
+    }
+
+    public void setEndDateInMillis(long endDateInMillis) {
+        this.endDateInMillis = endDateInMillis;
+    }
+
+    public long getEndDateInMillis() {
+        return endDateInMillis;
     }
 
     public void setActive(boolean active) {

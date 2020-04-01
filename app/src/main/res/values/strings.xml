@@ -162,8 +162,9 @@
     <string name="start_workout_fab">Start workout</string>
     <string name="open_fitness_option_fab">Open fitness option</string>
     <string name="registration_error">It seems that you have no active training and that you are not registered on the platform, if you have training in the cloud, log in, otherwise create one.</string>
-    <string name="sharing_progress">Sharing your progress... wait a moment</string>
+    <string name="sharing_progress">Sharing your progress… wait a moment</string>
     <string name="shared_point">Shared point</string>
     <string name="close_sharing_sheet">Close sharing sheet</string>
     <string name="progress_saved">Your progress has been saved. Thank you</string>
+    <string name="no_active_workout">There are no active workout for you</string>
 </resources>

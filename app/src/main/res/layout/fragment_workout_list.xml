@@ -23,10 +23,51 @@
         android:layout_marginBottom="@dimen/fab_margin"
         android:backgroundTint="@color/colorAccent"
         android:clickable="true"
+        android:visibility="gone"
         android:src="@drawable/ic_play_arrow"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:focusable="true" />
+
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/outdoor_workout_list_fab_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginBottom="@dimen/fab_margin"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:menu_openDirection="up"
+        app:menu_icon="@drawable/ic_fitness"
+        app:menu_colorNormal="@color/colorAccent">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/outdoor_workout_list_fab_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fabSize="mini"
+            android:clickable="true"
+            android:focusable="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:fab_colorNormal="@color/colorAccent"
+            android:src="@drawable/ic_edit" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/outdoor_workout_list_fab_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fabSize="mini"
+            android:clickable="true"
+            android:focusable="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:src="@drawable/ic_play_arrow"
+            app:fab_colorNormal="@color/colorAccent" />
+    </com.github.clans.fab.FloatingActionMenu>
 
     <TextView
         android:id="@+id/my_workout_label"

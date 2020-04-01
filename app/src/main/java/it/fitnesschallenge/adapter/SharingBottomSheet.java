@@ -143,4 +143,9 @@ public class SharingBottomSheet extends BottomSheetDialogFragment {
                     }
                 });
     }
+
+    @Override
+    public int getTheme() {
+        return R.style.BottomSheetDialogTheme;
+    }
 }

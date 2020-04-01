@@ -30,6 +30,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.lang.ref.WeakReference;
@@ -121,10 +122,10 @@ public class UploadWorkoutOnFireBase extends Fragment {
      * @param execution contiene la data prelevata dal sistema, quindi l'esecuzione.
      */
     private void uploadOnFireBase(Date execution) {
-        FirebaseFirestore mDatabase = mPlayWorkoutViewModel.getDatabase();
+        FirebaseFirestore mDatabase = FirebaseFirestore.getInstance();
         Log.d(TAG, "Workout date: " + mWorkout.getStartDate().toString());
         Log.d(TAG, "Execution date: " + execution.toString());
-        mDatabase.collection("user").document(mPlayWorkoutViewModel.getUser().getUsername())
+        mDatabase.collection("user").document(FirebaseAuth.getInstance().getCurrentUser().getEmail())
                 .collection("workout").document(
                 new SimpleDateFormat(getString(R.string.date_pattern), Locale.getDefault())
                         .format(mWorkout.getStartDate())

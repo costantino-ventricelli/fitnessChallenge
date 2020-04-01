@@ -9,6 +9,7 @@ import android.app.Application;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import java.util.Date;
 import java.util.List;
@@ -72,6 +73,10 @@ public class FitnessChallengeRepository {
         return workoutDAO.getWorkoutStartDate(date);
     }
 
+    public long insertWorkout(Workout workout) {
+        return workoutDAO.insertWorkout(workout);
+    }
+
     public void updateWorkout(Workout workout) {
         workoutDAO.update(workout);
     }
@@ -80,17 +85,12 @@ public class FitnessChallengeRepository {
         return exerciseExecutionDAO.selectLastExerciseExecution(personalExerciseId);
     }
 
-    public long insertWorkoutWithExercise(WorkoutWithExercise workoutWithExercise) {
-        long workoutId = workoutDAO.insertWorkout(workoutWithExercise.getWorkout());
-        long[] exerciseIds = personalExerciseDAO.insertPersonalExercise(workoutWithExercise.getPersonalExerciseList());
-        Log.d(TAG, "Workout id: " + workoutId);
-        for (long exerciseId : exerciseIds) {
-            Log.d(TAG, "Exercise id: " + exerciseId);
-            personalExerciseWorkoutCrossReferenceDAO.createReference(new PersonalExerciseWorkoutCrossReference(
-                    workoutId,
-                    exerciseId));
-        }
-        return workoutId;
+    public long[] insertPersonalExerciseList(List<PersonalExercise> personalExerciseList) {
+        return personalExerciseDAO.insertPersonalExercise(personalExerciseList);
+    }
+
+    public void insertPersonalExerciseWorkoutReference(PersonalExerciseWorkoutCrossReference personalExerciseWorkoutCrossReference) {
+        personalExerciseWorkoutCrossReferenceDAO.createReference(personalExerciseWorkoutCrossReference);
     }
 
     public void insertExecution(ExerciseExecution exerciseExecution) {
