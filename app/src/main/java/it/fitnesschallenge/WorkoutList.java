@@ -51,6 +51,7 @@ import it.fitnesschallenge.model.room.entity.Workout;
 import it.fitnesschallenge.model.room.entity.reference.WorkoutWithExercise;
 import it.fitnesschallenge.model.view.PlayingWorkoutModelView;
 
+import static it.fitnesschallenge.model.SharedConstance.EDIT_LIST_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.PLAYING_WORKOUT;
 import static it.fitnesschallenge.model.SharedConstance.SIGN_UP_FRAGMENT;
 
@@ -134,7 +135,14 @@ public class WorkoutList extends Fragment {
             fab1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    EditList editList = new EditList();
+                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    FragmentTransaction transaction = fragmentManager.beginTransaction();
+                    transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
+                            R.anim.enter_from_rigth, R.anim.exit_from_left);
+                    transaction.replace(R.id.fragmentContainer, editList, EDIT_LIST_FRAGMENT)
+                            .addToBackStack(EDIT_LIST_FRAGMENT)
+                            .commit();
                 }
             });
 
@@ -142,7 +150,14 @@ public class WorkoutList extends Fragment {
             fab2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    PlayingWorkout playingWorkout = new PlayingWorkout();
+                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    FragmentTransaction transaction = fragmentManager.beginTransaction();
+                    transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
+                            R.anim.enter_from_rigth, R.anim.exit_from_left);
+                    transaction.replace(R.id.fragmentContainer, playingWorkout, PLAYING_WORKOUT)
+                            .addToBackStack(PLAYING_WORKOUT)
+                            .commit();
                 }
             });
             tempView = view;
@@ -157,7 +172,7 @@ public class WorkoutList extends Fragment {
         if (mViewModel.getPersonalExerciseList() != null)
             setRecyclerView();
         else {
-            setObserver();
+            checkConnection();
         }
         /*
          * Setto i parametri che definiscono l'utente nel ViewModel, in modo da renderli reperibili
@@ -184,8 +199,13 @@ public class WorkoutList extends Fragment {
     private boolean checkConnection() {
         ConnectivityManager cm = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-    }
+        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+        if(isConnected)
+            setObserver();
+        else
+            Log.d(TAG, "Nessuna connessione");
+        return isConnected;
+        }
 
     /**
      * Set observer crea gli observer al ViewModel nel caso in cui il fragment venga chiamato per la
