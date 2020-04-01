@@ -199,13 +199,8 @@ public class WorkoutList extends Fragment {
     private boolean checkConnection() {
         ConnectivityManager cm = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-        if(isConnected)
-            setObserver();
-        else
-            Log.d(TAG, "Nessuna connessione");
-        return isConnected;
-        }
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+    }
 
     /**
      * Set observer crea gli observer al ViewModel nel caso in cui il fragment venga chiamato per la
