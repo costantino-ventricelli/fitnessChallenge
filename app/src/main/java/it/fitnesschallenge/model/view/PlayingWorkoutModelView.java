@@ -39,6 +39,8 @@ import it.fitnesschallenge.model.room.entity.reference.WorkoutWithExercise;
 public class PlayingWorkoutModelView extends AndroidViewModel {
 
     private static final String TAG = "PlayingWorkoutModelView";
+    private static final int NEXT = 1;
+    private static final int PREVIOUS = 2;
 
     /*
      Questo array conterrà tutti gli esercizi del DB per ottenere info su di essi durante l'esecuzione
@@ -49,7 +51,19 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
     private ListIterator<PersonalExercise> mPersonalExerciseListIterator;
     // Questo indicatore tiene conto della serie in esecuzione
     private int mCurrentSeries;
-    // Questa variablie tiene in memoria l'attuale esercizio in esecuzione
+    /*
+     * Questa variablie indica all'iteratore come si deve comportare se avviene un cambio di riezione
+     * nello scorrimento della lista, in pratica gli chiamado next() l'iterarore restituisce l'elemento
+     * successivo:  A  B  C
+     *            ^         (posizione inizale iteratore)
+     *                ^     (dopo il primo next() restituisce A e si posiziona tra A e B)
+     *            ^         (chiamado previous() restituisce dinuovo A non l'inizi della lista come
+     *                       desideriamo al momento)
+     * Quindi la variabile indica se il verso di scorrimento è cambiato, se lo è allora deve chiamare
+     * rispettivamente previous() o next() 2 volte.
+     */
+    int direction;
+    // Questa variabile contiene l'esercizio attualmente in esecuzione
     private PersonalExercise mCurrentExercise;
     // Questo array contiene tutti gi esercizi legati al workout
     private ArrayList<PersonalExercise> mPersonalExerciseList;
@@ -84,6 +98,7 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
         mCurrentExercise = mPersonalExerciseListIterator.next();
         Log.d(TAG, "Primo esercizio prelevato: " + mCurrentExercise.getExerciseId());
         mCurrentSeries = 1;
+        direction = NEXT;
     }
 
     public boolean isIteratorNull() {
@@ -115,7 +130,13 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
     public PersonalExercise getNextExercise() {
         if (mCurrentSeries >= mCurrentExercise.getSteps()) {
             mCurrentSeries = 1;
-            mCurrentExercise = mPersonalExerciseListIterator.next();
+            if (this.direction == PREVIOUS && mPersonalExerciseListIterator.hasNext()) {
+                Log.d(TAG, "Cambio direzione di scorrimento NEXT");
+                mPersonalExerciseListIterator.next();
+                this.direction = NEXT;
+            }
+            if (mPersonalExerciseListIterator.hasNext())
+                mCurrentExercise = mPersonalExerciseListIterator.next();
         } else
             mCurrentSeries++;
         return mCurrentExercise;
@@ -123,12 +144,17 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
 
     public PersonalExercise getPreviousExercise() {
         if (mCurrentSeries <= 1) {
-            mCurrentExercise = mPersonalExerciseListIterator.previous();
-            mCurrentSeries = mCurrentExercise.getSteps();
-        } else {
-            Log.d(TAG, "Current series");
+            if (this.direction == NEXT && mPersonalExerciseListIterator.hasPrevious()) {
+                Log.d(TAG, "Cambio direzione di scorrimento PREVIOUS");
+                mPersonalExerciseListIterator.previous();
+                this.direction = PREVIOUS;
+            }
+            if (mPersonalExerciseListIterator.hasPrevious()) {
+                mCurrentExercise = mPersonalExerciseListIterator.previous();
+                mCurrentSeries = mCurrentExercise.getSteps();
+            }
+        } else
             mCurrentSeries--;
-        }
         return mCurrentExercise;
     }
 

@@ -62,7 +62,6 @@ public class PlayingWorkout extends Fragment {
     private TextView mTimeTimer;
     private TextView mCurrentRepetition;
     private TextView mMaxRepetition;
-    private PersonalExercise mCurrentExercise;
     private PlayingWorkoutModelView mViewModel;
     private ProgressBar mProgressBar;
     private TextView mProgressValue;
@@ -310,7 +309,7 @@ public class PlayingWorkout extends Fragment {
             }
         }
         setUI(witch);
-        setNavigationButton();
+        setNavigationButton(witch);
 
     }
 
@@ -321,8 +320,6 @@ public class PlayingWorkout extends Fragment {
      */
     private void setUI(final short witch) {
         final int progress = 100 / mViewModel.getPersonalExerciseList().size();
-        Log.d(TAG, "Progress: " + progress);
-        Log.d(TAG, "ExerciseList size(): " + mViewModel.getPersonalExerciseList().size());
         mMaxRepetition.setText(NumberFormat.getInstance(Locale.getDefault())
                 .format(mViewModel.getCurrentExercise().getSteps())
         );
@@ -336,8 +333,10 @@ public class PlayingWorkout extends Fragment {
                     mProgressValue.setText(NumberFormat.getInstance(Locale.getDefault()).format(progress * mViewModel.getNextPosition()));
                     mProgressBar.setProgress(progress * mViewModel.getNextPosition());
                 } else if (witch == PREVIOUSLY) {
-                    mProgressValue.setText(NumberFormat.getInstance(Locale.getDefault()).format(mProgressBar.getProgress() - progress));
-                    mProgressBar.setProgress(mProgressBar.getProgress() - progress);
+                    Log.d(TAG, "ProgressBar: " + mProgressBar.getProgress());
+                    Log.d(TAG, "Progress: " + progress);
+                    mProgressValue.setText(NumberFormat.getInstance(Locale.getDefault()).format(progress * (mViewModel.getNextPosition() + 1)));
+                    mProgressBar.setProgress(progress * (mViewModel.getNextPosition() + 1));
                 }
             }
         });
@@ -350,29 +349,41 @@ public class PlayingWorkout extends Fragment {
      * Questo metodo consente di verificare quali tasti di navigazione mostrare all'utente
      * se l'esercizio è il primo allora mostrerà solo il pusante di successivo, e così via.
      */
-    private void setNavigationButton() {
+    private void setNavigationButton(int witch) {
         Log.d(TAG, "Ha precedente: " + mViewModel.hasPrevious());
         Log.d(TAG, "getPreviousPosition(): " + mViewModel.getPreviousPosition());
         Log.d(TAG, "Ha successivo: " + mViewModel.hasNext());
         Log.d(TAG, "getNextPosition(): " + mViewModel.getNextPosition());
         Log.d(TAG, "Serie corrente: " + mViewModel.getCurrentSeries());
-        if (mViewModel.getPreviousPosition() > 0 || mViewModel.getCurrentSeries() > 1) {
-            mPrev.setVisibility(View.VISIBLE);
-            mPrevText.setVisibility(View.VISIBLE);
-        } else {
+        if ((witch == INIT ||
+                (mViewModel.getPreviousPosition() == -1))
+                && (mViewModel.getCurrentSeries() <= 1)) {
             mPrev.setVisibility(View.GONE);
             mPrevText.setVisibility(View.GONE);
-        }
-        if (mViewModel.getNextPosition() < mViewModel.getPersonalExerciseList().size()
-                || mViewModel.getCurrentSeries() < mViewModel.getCurrentExercise().getSteps()) {
-            mNext.setVisibility(View.VISIBLE);
-            mNextText.setVisibility(View.VISIBLE);
         } else {
-            mStopButton.setContentDescription(getContext().getString(R.string.finish_workout));
-            mStopButton.setText(R.string.finish_workout);
-            mStopButton.setIconResource(R.drawable.ic_backup_24dp);
-            mNext.setVisibility(View.GONE);
-            mNextText.setVisibility(View.GONE);
+            if (mPrev.getVisibility() == View.GONE) {
+                mPrev.setVisibility(View.VISIBLE);
+                mPrevText.setVisibility(View.VISIBLE);
+            }
+        }
+        if (((mViewModel.getNextPosition() == 3) && mViewModel.getCurrentSeries() >= mViewModel.getCurrentExercise().getSteps())) {
+            if (mNext.getVisibility() == View.VISIBLE) {
+                mNext.setVisibility(View.GONE);
+                mNextText.setVisibility(View.GONE);
+                mStopButton.setIconResource(R.drawable.ic_backup_24dp);
+                mStopButton.setText(R.string.finish);
+                mStopButton.setContentDescription(getString(R.string.finish_workout));
+            }
+        } else {
+            if (mNext.getVisibility() == View.GONE) {
+                mNext.setVisibility(View.VISIBLE);
+                mNextText.setVisibility(View.VISIBLE);
+            }
+            if (mStopButton.getContentDescription().equals(getString(R.string.finish_workout))) {
+                mStopButton.setIconResource(R.drawable.ic_stop_24dp);
+                mStopButton.setText(getString(R.string.stop));
+                mStopButton.setContentDescription(getString(R.string.stop_workout));
+            }
         }
     }
 
