@@ -7,6 +7,7 @@ package it.fitnesschallenge;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -51,7 +52,9 @@ import it.fitnesschallenge.model.room.entity.reference.WorkoutWithExercise;
 import it.fitnesschallenge.model.view.PlayingWorkoutModelView;
 
 import static it.fitnesschallenge.model.SharedConstance.EDIT_LIST_FRAGMENT;
+import static it.fitnesschallenge.model.SharedConstance.LOGIN_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.PLAYING_WORKOUT;
+import static it.fitnesschallenge.model.SharedConstance.SIGN_UP_FRAGMENT;
 
 public class WorkoutList extends Fragment {
 
@@ -171,8 +174,10 @@ public class WorkoutList extends Fragment {
                 Log.d(TAG, "Avvio verifica su DB, size: " + workoutList.size());
                 if (workoutList.size() > 0)
                     checkWorkoutInLocalDB(workoutList);
-                else
+                else if (mUser != null)
                     getLastWorkoutOnFireBase();
+                else
+                    errorDialog(R.string.registration_error);
             }
         });
 
@@ -237,10 +242,30 @@ public class WorkoutList extends Fragment {
         }
     }
 
-    private void errorDialog(int p) {
+    private void errorDialog(int message) {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext())
                 .setTitle(R.string.ops)
-                .setMessage(p);
+                .setMessage(message);
+        final FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
+                R.anim.enter_from_rigth, R.anim.exit_from_left);
+        if (message == R.string.registration_error) {
+            builder.setNegativeButton(R.string.sign_in, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    SignUp signUp = new SignUp();
+                    transaction.replace(R.id.fragmentContainer, signUp, SIGN_UP_FRAGMENT)
+                            .addToBackStack(SIGN_UP_FRAGMENT)
+                            .commit();
+                }
+            });
+            builder.setPositiveButton(R.string.create, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    
+                }
+            });
+        }
         builder.show();
     }
 

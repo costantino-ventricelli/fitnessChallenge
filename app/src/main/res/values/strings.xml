@@ -149,7 +149,6 @@
     <string name="waiting_search_image">Waiting search image</string>
     <string name="close_subscribe">Close subscribe new room</string>
     <string name="generated_code">Generated code:</string>
-    <string name="exemple_code">iahbvasbd</string>
     <string name="close_new_room">Close new room</string>
     <string name="subscribe">Subscribe</string>
     <string name="room_details">Room details</string>
@@ -161,7 +160,7 @@
     <string name="no_connection_image">No connection image</string>
     <string name="start_workout_fab">Start workout</string>
     <string name="open_fitness_option_fab">Open fitness option</string>
-    <string name="registration_error">It seems that you have no active training and that you are not registered on the platform, if you have training in the cloud, log in, otherwise create one.</string>
+    <string name="registration_error">It seems that you have no active training or that you are not registered on the platform, if you have training in the cloud, log in, otherwise create one.</string>
     <string name="sharing_progress">Sharing your progress… wait a moment</string>
     <string name="shared_point">Shared point</string>
     <string name="close_sharing_sheet">Close sharing sheet</string>
