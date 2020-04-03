@@ -1,3 +1,10 @@
+/**
+ * Questa activity permette di creare una nuova room, e contemporaneamente salvare la propria partecipazione
+ * alla stessa da entrabe le parti, ovvero nella lista di partecipazioni nel documento dell'utente e
+ * nella lista di partecipanti della room stessa.
+ * Inoltre mantiene sincronizzati gli indici su Algolia per poter effettuare le ricerche sul nome della
+ * room successivamente.
+ */
 package it.fitnesschallenge;
 
 import android.content.Context;
@@ -16,6 +23,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.algolia.search.saas.Client;
+import com.algolia.search.saas.Index;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -28,8 +37,14 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.ArrayList;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import it.fitnesschallenge.model.AlgoliaApiKeys;
 import it.fitnesschallenge.model.Participation;
 import it.fitnesschallenge.model.Room;
 
@@ -44,6 +59,9 @@ public class NewRoomActivity extends AppCompatActivity {
     private TextView mGeneratedCodeLabel;
     private FirebaseFirestore mDatabase;
     private FirebaseUser mUser;
+    private AlgoliaApiKeys mApiKeys;
+    private Client mClient;
+    private Index mIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,8 +114,28 @@ public class NewRoomActivity extends AppCompatActivity {
                     });
             builder.show();
         }
+
+        /*
+         * Questo metodo permette di ottenere i riferimenti ad Algolia che sono stati salvati su Firebase
+         * per una questione di sicirezza dell'applicazione stessa.
+         */
+        mDatabase.collection("AlgoliaApi").document("apiCode").get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        mApiKeys = documentSnapshot.toObject(AlgoliaApiKeys.class);
+                        mClient = new Client(mApiKeys.getClientCode(), mApiKeys.getApiKey());
+                        mIndex = mClient.getIndex("rooms_name");
+                        Log.d(TAG, "ClientCode: " + mApiKeys.getClientCode());
+                        Log.d(TAG, "ApiKey: " + mApiKeys.getApiKey());
+                    }
+                });
     }
 
+    /**
+     * Questo metodo permette di savare una nuova room in firebase generando prima di tutto la chiave
+     * della room basata sul timestamp del dispositivo, e poi inserendo la classe Room.
+     */
     private void saveNewRoom() {
         mProgressBar.setVisibility(View.VISIBLE);
         String roomName = mRoomNameInput.getEditText().getText().toString().trim();
@@ -105,11 +143,12 @@ public class NewRoomActivity extends AppCompatActivity {
             final String generatedCode = createNewId();
             Room room = new Room(generatedCode, roomName, mUser.getEmail());
             room.addMembers(mUser.getEmail());
-            mDatabase.collection("room/").document(generatedCode).set(room)
+            mDatabase.collection("room").document(generatedCode).set(room)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
                             mGeneratedCode.setText(generatedCode);
+                            saveRoomOnAlgolia();
                             setParticipation(generatedCode);
                         }
                     })
@@ -119,13 +158,21 @@ public class NewRoomActivity extends AppCompatActivity {
                             mGeneratedCode.setTextColor(Color.RED);
                             mGeneratedCode.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_error,
                                     0, 0, 0);
-                            mGeneratedCode.setText(R.string.upload_room_faild);
+                            mGeneratedCode.setText(R.string.upload_room_failed);
                             e.printStackTrace();
                         }
                     });
         }
     }
 
+    /**
+     * Questo metodo permette di inserire nel docuemento all'utente su firebase il riferimento alla
+     * room appena create, in modo da indicare che l'utente che crea la room, vi partecipa, inoltre
+     * distingue l'inserimento di una nuova partecipazione della creazione di una lista di
+     * partecipazioni, indirizzando il codice su due metodi differenti a seconda dei casi.
+     *
+     * @param generatedCode contiene la key della room.
+     */
     private void setParticipation(final String generatedCode) {
         mDatabase.collection("user/").document(mUser.getEmail())
                 .collection("/participation")
@@ -156,6 +203,12 @@ public class NewRoomActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Questo metodo permette di aggiornare la lista di partecipazioni dell'utente perlevando la lista
+     * già esistente nel documento dell'utente e aggiungendo il nuovo item.
+     * @param participation contiene la lista di partecipazioni
+     * @param id contiene l'id della nuova room.
+     */
     private void updateDocument(Participation participation, String id) {
         if (participation != null) {
             try {
@@ -178,6 +231,10 @@ public class NewRoomActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * In questo metodo viene creata una nuova lista di riferimenti alle room e salvata su Firebase.
+     * @param participation contiene la lista di partecipazioni aggiornata con la prima room da inserire.
+     */
     private void createNewDocument(Participation participation) {
         if (participation != null) {
             mDatabase.collection("user").document(mUser.getEmail())
@@ -190,6 +247,21 @@ public class NewRoomActivity extends AppCompatActivity {
                         }
                     });
             Log.d(TAG, "Aggiorno il documento");
+        }
+    }
+
+    /**
+     * Questo metodo permette di salvare il nome della nuova room su Algolia in modo da poter effettuare
+     * successivamente le ricerche tramite il nome della room
+     */
+    private void saveRoomOnAlgolia() {
+        List<JSONObject> array = new ArrayList<>();
+        try {
+            array.add(new JSONObject().put("roomName",
+                    mRoomNameInput.getEditText().getText().toString().trim()));
+            mIndex.addObjectsAsync(new JSONArray(array), null);
+        } catch (JSONException ex) {
+            ex.printStackTrace();
         }
     }
 

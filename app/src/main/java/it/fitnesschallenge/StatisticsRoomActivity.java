@@ -1,3 +1,7 @@
+/**
+ * Questa classe permette la gestione del layout tabulare dei due fragment che mostrano le statistiche
+ * di allenameno e il fragment che permette di gestire le room dell'utente.
+ */
 package it.fitnesschallenge;
 
 import android.app.ActivityOptions;
@@ -44,6 +48,10 @@ public class StatisticsRoomActivity extends AppCompatActivity {
         ImageButton backButton = findViewById(R.id.statistics_activity_back_button);
         mFab = findViewById(R.id.statistics_FAB);
 
+        /*
+         * Questo listener permette di rilevare quando è in corso un cambio pagiana e permette di
+         * aggiornare il FAB a seconda del fragment che viene richiamato.
+         */
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -75,6 +83,10 @@ public class StatisticsRoomActivity extends AppCompatActivity {
             }
         });
 
+        /*
+         * Questo listener permette di avviare due tipi di attività differenti a seconda del fragment
+         * dal quale si performa il click.
+         */
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,6 +113,12 @@ public class StatisticsRoomActivity extends AppCompatActivity {
         sharingBottomSheet.show(getSupportFragmentManager(), "SHARED_BOTTOM");
     }
 
+    /**
+     * Questo metodo permette di ottenere le informazioni sulla posizione del FAB, le quali serviranno
+     * per avviare l'aniamzionde di apertura circolare.
+     *
+     * @return un vettore di valori che indicano la posizione X, Y e il raggio del FAB.
+     */
     private float[] getFabAttribute() {
         float[] fabAttributes = new float[3];
         int[] fabPosition = new int[2];

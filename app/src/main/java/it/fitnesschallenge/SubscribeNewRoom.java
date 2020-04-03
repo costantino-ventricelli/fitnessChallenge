@@ -1,3 +1,7 @@
+/**
+ * Questa classe permette di riceracare una room alla quale iscriversi e con un click sui risultati
+ * di ricerca permette di effettuare l'iscrizione alla room.
+ */
 package it.fitnesschallenge;
 
 import android.animation.Animator;
@@ -17,9 +21,9 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
@@ -37,10 +41,9 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import org.json.JSONArray;
@@ -48,7 +51,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import it.fitnesschallenge.adapter.RegistrationCompleteBottomSheet;
 import it.fitnesschallenge.adapter.RoomsAdapter;
@@ -106,7 +108,17 @@ public class SubscribeNewRoom extends AppCompatActivity {
 
         mLayout = findViewById(R.id.subscribe_new_room_constraint);
 
+        /*
+         * Questo listener permette di registrare l'utente attualmente loggato nell'applicazione alla
+         * room selazionata dalla recycler view ottenuta tramite le query incrociate tra Algolia e
+         * Firebase, selezionata la room alla quale si intede iscriversi viene richiesta la lista delle
+         * iscrizioni dell'utente, se Firebase restituisce una lista popolata si verfica che l'utente
+         * non sia già iscritto a tale room, se lo è già l'inserimento fallisce, se Firebase restituisce
+         * una lista vuota, allora si da per scontato che l'utente non sia registrato a quella room.
+         */
         mRoomAdapter.setOnClickListener(new RoomsAdapter.OnClickListener() {
+            final RegistrationCompleteBottomSheet bottomSheet = new RegistrationCompleteBottomSheet();
+
             @Override
             public void onClick(final int position, RoomsAdapter.ViewHolder view) {
                 mDatabase.collection("user").document(mUser.getEmail())
@@ -114,9 +126,13 @@ public class SubscribeNewRoom extends AppCompatActivity {
                         .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                             @Override
                             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                for (DocumentSnapshot snapshot : queryDocumentSnapshots) {
-                                    addRoomToList(position, snapshot.toObject(Participation.class), snapshot.getId());
-                                }
+                                if (queryDocumentSnapshots.getDocuments().size() == 0) {
+                                    addNewRoomToList(position, bottomSheet);
+                                } else if (queryDocumentSnapshots.getDocuments().size() == 1) {
+                                    DocumentSnapshot snapshot = queryDocumentSnapshots.getDocuments().get(0);
+                                    updateRoomToList(position, snapshot.toObject(Participation.class), snapshot.getId(), bottomSheet);
+                                } else
+                                    Toast.makeText(SubscribeNewRoom.this, getString(R.string.room_error), Toast.LENGTH_LONG).show();
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
@@ -128,6 +144,10 @@ public class SubscribeNewRoom extends AppCompatActivity {
             }
         });
 
+        /*
+         * Questo metodo permette di ottenere i riferimenti ad Algolia che sono stati salvati su Firebase
+         * per una questione di sicirezza dell'applicazione stessa.
+         */
         mDatabase.collection("AlgoliaApi").document("apiCode").get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
@@ -142,8 +162,17 @@ public class SubscribeNewRoom extends AppCompatActivity {
         setCircleOpenAnimation();
     }
 
-    private void addRoomToList(int position, Participation participation, String documentId) {
-        final RegistrationCompleteBottomSheet bottomSheet = new RegistrationCompleteBottomSheet();
+    /**
+     * Questo metodo contiene le istruzioni per aggiornare la lista di partecipazioni dell'utente, prima
+     * effettua il controllo per verificare che l'utente non sia iscritto a quella particolare room.
+     *
+     * @param position      indica la posizione nell'adapter della room selezionata.
+     * @param participation contiene la lista delle room alla quale l'utente è già iscritto.
+     * @param documentId    contiene il riferimento al documento salvato su firebase, nel quale sono
+     *                      salvate le room dell'utente.
+     * @param bottomSheet   contiene il dialog per mostrare il risultato dell'elaborazione.
+     */
+    private void updateRoomToList(final int position, Participation participation, String documentId, final RegistrationCompleteBottomSheet bottomSheet) {
         bottomSheet.show(getSupportFragmentManager(), "REGISTERING_BOTTOM");
         String clickedRoom = mRoomAdapter.getItemAtPosition(position).getIdCode();
         ArrayList<String> participationList = participation.getRoomsList();
@@ -160,7 +189,7 @@ public class SubscribeNewRoom extends AppCompatActivity {
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            bottomSheet.setSuccess(true);
+                            addUserToRoomsList(position, bottomSheet);
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -170,6 +199,51 @@ public class SubscribeNewRoom extends AppCompatActivity {
                         }
                     });
         }
+    }
+
+    /**
+     * Questo metodo viene richiamato quando non ci sono liste da aggiornare, ma bisogna crearne una
+     * nuova, perchè l'utente non si è mai iscritto a nessuna room in precedenza.
+     *
+     * @param position    indica la posizione della room selazionata nell'adapter.
+     * @param bottomSheet contiene il riferimento al dialog che mostra i risultati dell'esecuzione.
+     */
+    private void addNewRoomToList(final int position, final RegistrationCompleteBottomSheet bottomSheet) {
+        bottomSheet.show(getSupportFragmentManager(), "REGISTERING_BOTTOM");
+        ArrayList<String> arrayList = new ArrayList<>();
+        arrayList.add(mRoomAdapter.getItemAtPosition(position).getIdCode());
+        Participation participation = new Participation(arrayList);
+        mDatabase.collection("user").document(mUser.getEmail())
+                .collection("participation").add(participation)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        if (documentReference != null) {
+                            addUserToRoomsList(position, bottomSheet);
+                        } else {
+                            bottomSheet.setSuccess(false);
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Questo metodo permette di aggiornare nel documento della room il nuovo utente che partecipa
+     * alla room.
+     *
+     * @param position    contiene la posizione della room selezionata nell'adapter.
+     * @param bottomSheet contiene il riferimento alla dialog per mostrare il risultato dell'operazione.
+     */
+    private void addUserToRoomsList(int position, final RegistrationCompleteBottomSheet bottomSheet) {
+        Room room = mRoomAdapter.getItemAtPosition(position);
+        room.getMembers().add(mUser.getEmail());
+        mDatabase.collection("room").document(room.getIdCode())
+                .update("members", room.getMembers()).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                bottomSheet.setSuccess(true);
+            }
+        });
     }
 
     /**
