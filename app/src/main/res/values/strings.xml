@@ -166,4 +166,8 @@
     <string name="close_sharing_sheet">Close sharing sheet</string>
     <string name="progress_saved">Your progress has been saved. Thank you</string>
     <string name="no_active_workout">There are no active workout for you</string>
+    <string name="ranking_image">Ranking image</string>
+    <string name="subscribing_in_a_new_room_please_wait">Subscribing in a new room, please wait…</string>
+    <string name="subscribing_complete">Subscribing complete, thank you</string>
+    <string name="subscribing_error">Subscribing error</string>
 </resources>

@@ -51,11 +51,11 @@ public class SharingBottomSheet extends BottomSheetDialogFragment {
 
         mDatabase = FirebaseFirestore.getInstance();
         mUser = FirebaseAuth.getInstance().getCurrentUser();
-        mSharingLabel = view.findViewById(R.id.sharing_label);
+        mSharingLabel = view.findViewById(R.id.registration_label);
         mSharingPoint = view.findViewById(R.id.shared_point);
-        mProgressBar = view.findViewById(R.id.sharing_progress_bar);
-        mSuccessImage = view.findViewById(R.id.share_success_image);
-        ImageView mCloseSheet = view.findViewById(R.id.close_sheet_bottom);
+        mProgressBar = view.findViewById(R.id.registration_progress_bar);
+        mSuccessImage = view.findViewById(R.id.registration_image_success);
+        ImageView mCloseSheet = view.findViewById(R.id.registration_close_sheet);
 
         mExecutionAvg = new MutableLiveData<>(0.00F);
         mWorkoutAvg = new MutableLiveData<>(0.00F);

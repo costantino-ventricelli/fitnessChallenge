@@ -93,6 +93,10 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
         mWorkoutWithExerciseLiveData = new MutableLiveData<>();
     }
 
+    /**
+     * Qesto metodo crea l'iterator impostandolo all'inizio della lista, imposta la prima direzione di
+     * scorrimento NEXT e la serie corrente dell'esercizio a 1.
+     */
     public void resetListIterator() {
         mPersonalExerciseListIterator = mPersonalExerciseList.listIterator();
         mCurrentExercise = mPersonalExerciseListIterator.next();
@@ -101,18 +105,35 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
         direction = NEXT;
     }
 
+    /**
+     * Questo metodo verifica se l'iteratore è stato impostato.
+     *
+     * @return true se l'iteratore non è impostato, false altrimenti
+     */
     public boolean isIteratorNull() {
         return mPersonalExerciseListIterator == null;
     }
 
+    /**
+     * Questo metodo restituisce l'indice successivo.
+     * @return indice successivo
+     */
     public int getNextPosition() {
         return mPersonalExerciseListIterator.nextIndex();
     }
 
+    /**
+     * Questo metodo restituisce l'indice precedente.
+     * @return indice precedente.
+     */
     public int getPreviousPosition() {
         return mPersonalExerciseListIterator.previousIndex();
     }
 
+    /**
+     * Questo metodo verifica se l'iteratore può ancora scorrere in avanti
+     * @return true se può scorrere, false altrimenti.
+     */
     public boolean hasNext() {
         if (mPersonalExerciseListIterator != null)
             return mPersonalExerciseListIterator.hasNext();
@@ -120,6 +141,10 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
             return false;
     }
 
+    /**
+     * Questo metodo verifica se l'iteratore può andare verso dietro.
+     * @return true se può andare, false altrimenti.
+     */
     public boolean hasPrevious() {
         if (mPersonalExerciseListIterator != null)
             return mPersonalExerciseListIterator.hasPrevious();
@@ -127,6 +152,13 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
             return false;
     }
 
+    /**
+     * Questo metodo restituisce l'esercizio successivo, verificando anche eventuali cambi di
+     * direzione nello scorrimento, se viene individuato un cambio di direzione il salto viene fatto
+     * due volte, altrimenti verrà restituito di nuovo l'esercizio corrente, verifica inlotre se
+     * la serie in esecuzione è l'ultima o meno.
+     * @return l'esercizio successivo
+     */
     public PersonalExercise getNextExercise() {
         if (mCurrentSeries >= mCurrentExercise.getSteps()) {
             mCurrentSeries = 1;
@@ -142,6 +174,10 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
         return mCurrentExercise;
     }
 
+    /**
+     * Questo metodo funziona come il precedente ma per lo scorrimento verso dietro nella lista.
+     * @return l'esercizio precedente
+     */
     public PersonalExercise getPreviousExercise() {
         if (mCurrentSeries <= 1) {
             if (this.direction == NEXT && mPersonalExerciseListIterator.hasPrevious()) {

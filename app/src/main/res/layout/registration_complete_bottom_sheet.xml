@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:padding="@dimen/margin">
 
     <TextView
@@ -12,8 +13,10 @@
         android:layout_marginStart="@dimen/margin"
         android:layout_marginTop="@dimen/margin"
         android:layout_marginEnd="@dimen/margin"
-        android:text="@string/sharing_progress"
+        android:layout_marginBottom="@dimen/margin"
+        android:text="@string/subscribing_in_a_new_room_please_wait"
         android:textSize="@dimen/title"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/registration_progress_bar" />
@@ -27,30 +30,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/registration_close_sheet" />
-
-    <TextView
-        android:id="@+id/shared_point_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/multiline_distance"
-        android:layout_marginBottom="@dimen/fab_margin"
-        android:text="@string/shared_point"
-        android:textSize="@dimen/sub_title"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/shared_point"
-        app:layout_constraintStart_toStartOf="@+id/registration_label"
-        app:layout_constraintTop_toBottomOf="@+id/registration_label" />
-
-    <TextView
-        android:id="@+id/shared_point"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/small_distance"
-        android:text="@string/_0"
-        android:textSize="@dimen/sub_title"
-        app:layout_constraintBottom_toBottomOf="@+id/shared_point_label"
-        app:layout_constraintStart_toEndOf="@+id/shared_point_label"
-        app:layout_constraintTop_toTopOf="@+id/shared_point_label" />
 
     <ImageButton
         android:id="@+id/registration_close_sheet"
@@ -67,7 +46,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/success"
-        android:visibility="invisible"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/registration_progress_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

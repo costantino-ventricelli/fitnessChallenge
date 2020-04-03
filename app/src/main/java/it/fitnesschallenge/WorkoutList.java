@@ -115,6 +115,11 @@ public class WorkoutList extends Fragment {
 
         Log.d(TAG, "RecyclerView: " + mRecyclerView.toString());
 
+        /*
+         * Questo controllo permette di segliere quale Fab utilizzare nel particolare frangente,
+         * se non ci sono instanze dell'utente avremo un wokout outdoor, che richiede un fab che
+         * permette le modifiche e l'esecuzione dell'allenamento.
+         */
         if (mUser != null) {
             FloatingActionButton floatingActionButton = view.findViewById(R.id.start_workout_FAB);
             floatingActionButton.setVisibility(View.VISIBLE);
@@ -168,6 +173,11 @@ public class WorkoutList extends Fragment {
             });
         }
 
+        /*
+         * Da questo punto parte l'algoritmo di selezione del workout e dei relativi esercizi
+         * Qui vengono selezionati tutti i workout presenti in locale, se non ce ne sono viene avviata
+         * la ricerca in cloud, se ovviamente è possibile reperire un'istanza di utente.
+         */
         mViewModel.getWorkout().observe(getViewLifecycleOwner(), new Observer<List<Workout>>() {
             @Override
             public void onChanged(List<Workout> workoutList) {
@@ -184,6 +194,12 @@ public class WorkoutList extends Fragment {
         return view;
     }
 
+    /**
+     * Questo metodo permette di settare il workout nella recyclerview, questo metodo viene richiamato
+     * quando il viene notificato il live data contenente il workoutid.
+     *
+     * @param workoutId contiene l'id del workout.
+     */
     private void setCurrentWorkout(Long workoutId) {
         if (workoutId != -1) {
             Log.d(TAG, "Workout settatto.");
@@ -203,6 +219,10 @@ public class WorkoutList extends Fragment {
         }
     }
 
+    /**
+     * Questo metodo permette di settare il layout sulla recycler view, e il relativo contenuto.
+     * @param workoutWithExercise contiene il workout e la lista degli esercizi da eseguire.
+     */
     private void setUI(WorkoutWithExercise workoutWithExercise) {
         Log.d(TAG, "Observer di WorkoutWithExercise");
         mViewModel.setWorkoutWithExercise(workoutWithExercise);
@@ -213,6 +233,12 @@ public class WorkoutList extends Fragment {
         mRecyclerView.setAdapter(mShowAdapter);
     }
 
+    /**
+     * Questo metodo scorre tutti i workout prelevati dal DB locale e setta il workout attivo o meno
+     * a seconda della sua endDate, se non vengono trovati wokrout in locale attivi, viene richiamato
+     * il cloud per prelevare workout da esso.
+     * @param workoutList contiene la lista dei workout locali
+     */
     private void checkWorkoutInLocalDB(List<Workout> workoutList) {
         boolean found = false;
         Workout activeWorkout = null;
@@ -242,6 +268,10 @@ public class WorkoutList extends Fragment {
         }
     }
 
+    /**
+     * Questo metodo mostra dei dialog di errore.
+     * @param message contiene il messaggio da visualizzare.
+     */
     private void errorDialog(int message) {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext())
                 .setTitle(R.string.ops)
@@ -262,13 +292,17 @@ public class WorkoutList extends Fragment {
             builder.setPositiveButton(R.string.create, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    
+
                 }
             });
         }
         builder.show();
     }
 
+    /**
+     * Questo metodo preleva l'ultimo workout inserito su firebase, verifica se esso è attivo, se lo
+     * è avvia la scrittura sul DB locale.
+     */
     private void getLastWorkoutOnFireBase() {
         mDatabase.collection("user").document(mUser.getUsername())
                 .collection("workout").orderBy("workout", Query.Direction.DESCENDING).limit(1)
@@ -296,6 +330,12 @@ public class WorkoutList extends Fragment {
                 });
     }
 
+    /**
+     * Questo metodo avvia la strittura del workout prelevato da fire base in locale e setta l'observer
+     * che notifica l'inserimento del workout, per poi richiamare il metodo che scrive gli esercizi
+     * relativi al workout nel DB.
+     * @param workoutWithExercise contiene il workout e i suoi relativi esercizi.
+     */
     private void writeNewWorkoutInLocalDB(final WorkoutWithExercise workoutWithExercise) {
         mViewModel.writeWorkout(workoutWithExercise.getWorkout()).observe(
                 getViewLifecycleOwner(), new Observer<Long>() {
@@ -308,6 +348,13 @@ public class WorkoutList extends Fragment {
         );
     }
 
+    /**
+     * Questo metodo permette di scrivere gli esercizi del workout nel DB locale, imposta un observer
+     * che notifica l'inserimento di tutti gli esercizi e avvia il metodo che permette di collegare
+     * gli esercizi al workout.
+     * @param workoutId contiene l'id del nuovo workout.
+     * @param workoutWithExercise contiene la lista degli esercizi.
+     */
     private void writePersonaExercise(final Long workoutId, WorkoutWithExercise workoutWithExercise) {
         mViewModel.writePersonaExercise(workoutWithExercise.getPersonalExerciseList()).observe(
                 getViewLifecycleOwner(), new Observer<long[]>() {
@@ -320,6 +367,11 @@ public class WorkoutList extends Fragment {
         );
     }
 
+    /**
+     * Questo metodo permette di mettere in relazione gli esercizi del workout con il workout stesso.
+     * @param longs contiene gli id degli esercizi inseriti.
+     * @param workoutId contiene l'id del workout.
+     */
     private void writePersonalExerciseWorkoutReference(long[] longs, final Long workoutId) {
         mViewModel.insertWorkoutExerciseReference(workoutId, longs).observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
