@@ -18,9 +18,6 @@ import static it.fitnesschallenge.model.SharedConstance.WORKOUT_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.WORKOUT_LIST_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.WORKOUT_STATISTICS_FRAGMENT;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class WorkoutHome extends Fragment {
 
     private static final String USER = "user";

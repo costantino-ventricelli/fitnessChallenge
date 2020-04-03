@@ -171,4 +171,5 @@
     <string name="subscribing_complete">Subscribing complete, thank you</string>
     <string name="subscribing_error">Subscribing error</string>
     <string name="room_error">Room error</string>
+    <string name="algolia_logo">Algolia logo</string>
 </resources>
