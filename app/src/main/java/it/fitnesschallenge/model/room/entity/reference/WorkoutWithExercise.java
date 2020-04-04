@@ -25,6 +25,11 @@ public class WorkoutWithExercise {
         // Required empty constructor
     }
 
+    public WorkoutWithExercise(Workout workout, List<PersonalExercise> personalExerciseList) {
+        this.workout = workout;
+        this.personalExerciseList = personalExerciseList;
+    }
+
     public Workout getWorkout() {
         return workout;
     }

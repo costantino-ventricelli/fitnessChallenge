@@ -34,5 +34,5 @@ public final class SharedConstance {
     public final static String UPLOAD_WORKOUT_ON_FIREBASE = "uploadWorkoutOnFirebase";
     public final static String ROOM_FRAGMENT = "roomFragment";
     public final static String WORKOUT_LIST_FRAGMENT = "workoutListFragmet";
-    public final static String EDIT_LIST_FRAGMENT = "EditListFragment";
+    public final static String EDIT_LIST_FRAGMENT = "editListFragment";
 }

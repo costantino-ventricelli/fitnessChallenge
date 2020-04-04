@@ -8,8 +8,11 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverter;
 
 import java.util.Date;
+
+import it.fitnesschallenge.model.room.WorkoutType;
 
 @Entity(tableName = "workout")
 public class Workout {
@@ -23,19 +26,19 @@ public class Workout {
     private Date startDate;
     @ColumnInfo(name = "end_date")
     private Date endDate;
-    @Ignore
-    private long endDateInMillis;
+    @ColumnInfo(name = "workout_type")
+    private WorkoutType workoutType;
 
     @Ignore
     public Workout() {
         //Required empty constructor
     }
 
-    public Workout(boolean isActive, Date startDate, Date endDate) {
+    public Workout(boolean isActive, Date startDate, Date endDate, WorkoutType workoutType) {
         this.isActive = isActive;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.endDateInMillis = endDate.getTime();
+        this.workoutType = workoutType;
     }
 
     public int getWorkOutId() {
@@ -58,14 +61,6 @@ public class Workout {
         return endDate;
     }
 
-    public void setEndDateInMillis(long endDateInMillis) {
-        this.endDateInMillis = endDateInMillis;
-    }
-
-    public long getEndDateInMillis() {
-        return endDateInMillis;
-    }
-
     public void setActive(boolean active) {
         isActive = active;
     }
@@ -76,5 +71,13 @@ public class Workout {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    public void setWorkoutType(WorkoutType workoutType) {
+        this.workoutType = workoutType;
+    }
+
+    public WorkoutType getWorkoutType() {
+        return this.workoutType;
     }
 }

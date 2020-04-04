@@ -40,9 +40,12 @@ import it.fitnesschallenge.model.room.entity.Exercise;
 import it.fitnesschallenge.model.room.entity.PersonalExercise;
 import it.fitnesschallenge.model.view.AddExerciseToListModel;
 import it.fitnesschallenge.model.view.CreationViewModel;
+import it.fitnesschallenge.model.view.EditListViewModel;
 
 import static android.app.Activity.RESULT_OK;
+import static it.fitnesschallenge.model.SharedConstance.CREATE_TRAINING_LIST;
 import static it.fitnesschallenge.model.SharedConstance.DATE_PICKER;
+import static it.fitnesschallenge.model.SharedConstance.EDIT_LIST_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.POSITION_IN_ADAPTER;
 import static it.fitnesschallenge.model.SharedConstance.SELECTED_TIMER;
 
@@ -51,6 +54,7 @@ public class AddExerciseToList extends Fragment {
 
     private static final String TAG = "AddExerciseToList";
     private static final int TIMER_PICKER_RESULT = 1;
+    private static final String CALLER_FRAGMENT = "callerFragment";
 
     private List<Exercise> mExerciseList;
     private RecyclerView mRecyclerView;
@@ -58,19 +62,32 @@ public class AddExerciseToList extends Fragment {
     private AddExerciseToListModel mViewModel;
     private AddAdapter mAddAdapter;
     private List<PersonalExercise> mPersonalExerciseList;
+    private String mCallerFragment;
 
     public AddExerciseToList() {
         // Required empty public constructor
+    }
+
+    public static AddExerciseToList newInstance(String callerFragment) {
+        AddExerciseToList fragment = new AddExerciseToList();
+        Bundle bundle = new Bundle();
+        bundle.putString(CALLER_FRAGMENT, callerFragment);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mCallerFragment = getArguments().getString(CALLER_FRAGMENT);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_exercise_to_list, container, false);
-        Log.d(TAG, "Prima di tutto:\n" +
-                "\t mRecyclerView: " + (mRecyclerView == null ? "null" : mRecyclerView.toString()) + "\n" +
-                "\t mAddAdapter: " + (mAddAdapter == null ? "null" : mAddAdapter.toString()) + "\n" +
-                "\t mExerciseList: " + (mExerciseList == null ? "null" : mExerciseList.toString()) + "\n");
         FloatingActionButton saveButton = view.findViewById(R.id.save_button_FAB);
         mRecyclerView = view.findViewById(R.id.adding_exercise_list);
         mViewModel = ViewModelProviders.of(getActivity()).get(AddExerciseToListModel.class);
@@ -86,9 +103,7 @@ public class AddExerciseToList extends Fragment {
                 mExerciseList = exercises;
                 mAddAdapter = new AddAdapter(mExerciseList);
                 Log.d(TAG, "Creo l'adapter: " + mAddAdapter.toString());
-                Log.d(TAG, "Adapter creato, grandezza dati: " + NumberFormat
-                        .getInstance().format(mAddAdapter
-                                .getItemCount()));
+                Log.d(TAG, "Adapter creato, grandezza dati: " + mAddAdapter.getItemCount());
                 mRecyclerView.setAdapter(mAddAdapter);
                 Log.d(TAG, "RecyclerView impostata");
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
@@ -211,8 +226,13 @@ public class AddExerciseToList extends Fragment {
         }
         //Se non ci sono stati errore viene salvato nel ViewModel la lista degli esercizi
         if (!error) {
-            CreationViewModel creationViewModel = ViewModelProviders.of(getActivity()).get(CreationViewModel.class);
-            creationViewModel.setPersonalExerciseList(mViewModel.getPersonalExerciseLiveData().getValue());
+            if (mCallerFragment.equals(CREATE_TRAINING_LIST)) {
+                CreationViewModel creationViewModel = ViewModelProviders.of(getActivity()).get(CreationViewModel.class);
+                creationViewModel.setPersonalExerciseList(mViewModel.getPersonalExerciseLiveData().getValue());
+            } else if (mCallerFragment.equals(EDIT_LIST_FRAGMENT)) {
+                EditListViewModel editListViewModel = ViewModelProviders.of(getActivity()).get(EditListViewModel.class);
+                editListViewModel.setPersonalExerciseList(mViewModel.getPersonalExerciseLiveData().getValue());
+            }
         }
     }
 

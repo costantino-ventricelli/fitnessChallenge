@@ -21,8 +21,6 @@ public class AddExerciseToListModel extends AndroidViewModel {
     private LiveData<List<Exercise>> mExerciseList;
     private MutableLiveData<List<PersonalExercise>> mPersonalExerciseLiveData;
     private ArrayList<PersonalExercise> mPersonalExerciseList;
-    private AddAdapter mAddAdapter;
-    private RecyclerView mRecyclerView;
 
     public AddExerciseToListModel(@NonNull Application application) {
         super(application);
@@ -30,24 +28,6 @@ public class AddExerciseToListModel extends AndroidViewModel {
         mExerciseList = repository.getListExerciseLiveData();
         mPersonalExerciseLiveData = new MutableLiveData<>();
         mPersonalExerciseList = new ArrayList<>();
-        mAddAdapter = null;
-        mRecyclerView = null;
-    }
-
-    public AddAdapter getAddAdapter() {
-        return mAddAdapter;
-    }
-
-    public void setAddAdapter(AddAdapter mAddAdapter) {
-        this.mAddAdapter = mAddAdapter;
-    }
-
-    public RecyclerView getRecyclerView() {
-        return mRecyclerView;
-    }
-
-    public void setRecyclerView(RecyclerView mRecyclerView) {
-        this.mRecyclerView = mRecyclerView;
     }
 
     public LiveData<List<Exercise>> getExerciseList(){

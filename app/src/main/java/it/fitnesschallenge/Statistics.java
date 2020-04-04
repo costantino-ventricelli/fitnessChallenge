@@ -65,7 +65,6 @@ public class Statistics extends Fragment {
     private StatisticsRoomsViewModel mViewModel;
     private FirebaseFirestore mDatabase;
     private User mUser;
-    private FloatingActionButton fab;
 
     public Statistics() {
         // Required empty public constructor

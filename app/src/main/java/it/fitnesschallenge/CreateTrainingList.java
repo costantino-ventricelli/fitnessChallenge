@@ -35,6 +35,7 @@ import it.fitnesschallenge.model.view.CreationViewModel;
 import static it.fitnesschallenge.model.SharedConstance.ADD_EXERCISE_TO_LIST;
 import static it.fitnesschallenge.model.SharedConstance.ADD_FINISH_DATE;
 import static it.fitnesschallenge.model.SharedConstance.ADD_USERNAME_AND_START_DATE;
+import static it.fitnesschallenge.model.SharedConstance.CREATE_TRAINING_LIST;
 import static it.fitnesschallenge.model.SharedConstance.UPLOAD_NEW_WORKOUT;
 
 public class CreateTrainingList extends Fragment {
@@ -139,7 +140,7 @@ public class CreateTrainingList extends Fragment {
         mAddExerciseFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AddExerciseToList addExerciseToList = new AddExerciseToList();
+                AddExerciseToList addExerciseToList = AddExerciseToList.newInstance(CREATE_TRAINING_LIST);
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,

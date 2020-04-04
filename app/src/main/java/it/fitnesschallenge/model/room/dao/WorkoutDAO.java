@@ -22,7 +22,7 @@ public interface WorkoutDAO {
     long insertWorkout(Workout workout);
 
     @Update
-    void update(Workout workout);
+    int update(Workout workout);
 
     @Transaction
     @Query("SELECT * FROM workout WHERE workout_id = :workoutId")

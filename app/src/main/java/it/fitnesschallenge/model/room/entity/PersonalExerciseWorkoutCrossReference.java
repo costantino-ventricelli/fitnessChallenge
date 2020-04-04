@@ -2,11 +2,15 @@ package it.fitnesschallenge.model.room.entity;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
 import androidx.room.Index;
+
+import static androidx.room.ForeignKey.CASCADE;
 
 @Entity(primaryKeys = {"workout_id", "exercise_id"},
         tableName = "personal_exercise_workout_cross_reference",
-        indices = {@Index("exercise_id"), @Index("workout_id")})
+        indices = {@Index("exercise_id"), @Index("workout_id")},
+        foreignKeys = @ForeignKey(entity = PersonalExercise.class, onUpdate = CASCADE, parentColumns = "personal_exercise_id", childColumns = "exercise_id"))
 public class PersonalExerciseWorkoutCrossReference {
 
     @ColumnInfo(name = "workout_id")

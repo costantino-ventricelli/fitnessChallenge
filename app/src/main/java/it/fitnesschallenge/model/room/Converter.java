@@ -13,7 +13,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import it.fitnesschallenge.model.room.entity.Workout;
+
 public class Converter {
+
+    /**
+     * Questo typeConverter permette di convertire la string data salvata nel DB locale nella classe
+     * java.util.Date
+     *
+     * @param date è la data prelevata dal DB sotto forma di stringa.
+     * @return ritorna la data convertita da string in java.util.Date.
+     */
     @TypeConverter
     public Date stringToDate(String date) {
         try {
@@ -23,6 +33,12 @@ public class Converter {
         }
     }
 
+    /**
+     * Questo type converter trasforma la data di tipo java.util.Date in string, così da memorizzarla
+     * nel DB.
+     * @param date contiene la data in forma di calsse java.util.Date
+     * @return contiene la data convertita in String.
+     */
     @TypeConverter
     public String dateToString(Date date) {
         return new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date);
@@ -58,6 +74,32 @@ public class Converter {
     public String floatListToArray(List<Float> floatList) {
         Gson gson = new Gson();
         return gson.toJson(floatList);
+    }
+
+    /**
+     * Questo type converter converte la classe Enumeration in String così da salvare il valore nel DB
+     *
+     * @param workoutType contiene il valore dell'enumerazione
+     * @return una string contenente il valore dell'enumerazione
+     */
+    @TypeConverter
+    public String workoutTypeToString(WorkoutType workoutType) {
+        return workoutType.getValue();
+    }
+
+    /**
+     * Questo type converte consente di convertire una stringa memorizzata nel DB in un enum di tipo
+     * WorkoutType.
+     *
+     * @param value la stringa prelevata dal DB.
+     * @return un enum con il valore passato dalla stringa.
+     */
+    @TypeConverter
+    public WorkoutType stringToWorkoutType(String value) {
+        if ("indoor".equals(value)) {
+            return WorkoutType.INDOOR;
+        }
+        return WorkoutType.OUTDOOR;
     }
 
 }

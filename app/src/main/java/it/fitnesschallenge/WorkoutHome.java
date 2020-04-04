@@ -14,6 +14,7 @@ import com.google.android.material.button.MaterialButton;
 
 import it.fitnesschallenge.model.User;
 
+import static it.fitnesschallenge.model.SharedConstance.EDIT_LIST_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.WORKOUT_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.WORKOUT_LIST_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.WORKOUT_STATISTICS_FRAGMENT;
@@ -22,10 +23,6 @@ public class WorkoutHome extends Fragment {
 
     private static final String USER = "user";
     private User mUser;
-
-    private MaterialButton openStatistics;
-    private MaterialButton openTrainingList;
-    private MaterialButton openCreateNewList;
 
     public WorkoutHome() {
         // Required empty public constructor
@@ -59,8 +56,9 @@ public class WorkoutHome extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_workout_home, container, false);
 
-        openStatistics = view.findViewById(R.id.openStatistics);
-        openTrainingList = view.findViewById(R.id.openTrainingList);
+        MaterialButton openStatistics = view.findViewById(R.id.openStatistics);
+        MaterialButton openTrainingList = view.findViewById(R.id.openTrainingList);
+        MaterialButton openCreateNewList = view.findViewById(R.id.workout_home_create_new_workout);
 
         openStatistics.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,6 +84,20 @@ public class WorkoutHome extends Fragment {
                         R.anim.enter_from_rigth, R.anim.exit_from_left);
                 transaction.replace(R.id.fragmentContainer, workoutList, WORKOUT_LIST_FRAGMENT)
                         .addToBackStack(WORKOUT_LIST_FRAGMENT)
+                        .commit();
+            }
+        });
+
+        openCreateNewList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditList editList = new EditList();
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
+                        R.anim.enter_from_rigth, R.anim.exit_from_left)
+                        .replace(R.id.fragmentContainer, editList, EDIT_LIST_FRAGMENT)
+                        .addToBackStack(EDIT_LIST_FRAGMENT)
                         .commit();
             }
         });

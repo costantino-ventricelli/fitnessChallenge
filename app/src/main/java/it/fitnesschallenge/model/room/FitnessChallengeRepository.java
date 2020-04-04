@@ -55,10 +55,10 @@ public class FitnessChallengeRepository {
     public LiveData<WorkoutWithExercise> getWorkoutWithExerciseList(long workoutId) {
         return workoutWithExerciseDAO.getWorkoutWithExercise(workoutId);
     }
-
+/*
     public List<PersonalExercise> getPersonalExerciseList(long workoutId) {
         return workoutWithExerciseDAO.getPersonalExerciseList(workoutId);
-    }
+    }*/
 
     public LiveData<List<Workout>> getWorkoutList() {
         return workoutDAO.getAllWorkOut();
@@ -107,5 +107,21 @@ public class FitnessChallengeRepository {
 
     public LiveData<List<ExerciseExecution>> getLastUsedKilograms() {
         return exerciseExecutionDAO.selectLastUsedKilograms();
+    }
+
+    public int updatePersonalExerciseList(List<PersonalExercise> personalExerciseList) {
+        return personalExerciseDAO.updatePersonalExerciseList(personalExerciseList);
+    }
+
+    public int deleteWorkoutExerciseCrossReference(PersonalExerciseWorkoutCrossReference crossReference) {
+        return personalExerciseWorkoutCrossReferenceDAO.deleteReference(crossReference);
+    }
+
+    public int deletePersonalExerciseList(List<PersonalExercise> personalExerciseList) {
+        return personalExerciseDAO.deletePersonalExerciseList(personalExerciseList);
+    }
+
+    public long insertPersonalExercise(PersonalExercise personalExercise) {
+        return personalExerciseDAO.insertPersonalExercise(personalExercise);
     }
 }

@@ -27,6 +27,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+import it.fitnesschallenge.model.room.WorkoutType;
 import it.fitnesschallenge.model.room.entity.Workout;
 import it.fitnesschallenge.model.room.entity.reference.WorkoutWithExercise;
 import it.fitnesschallenge.model.view.CreationViewModel;
@@ -110,7 +111,8 @@ public class UploadNewWorkout extends Fragment {
         WorkoutWithExercise workoutWithExercise = new WorkoutWithExercise();
         workoutWithExercise.setWorkout(new Workout(true,
                 mCreationViewModel.getStartDate().getValue(),
-                mCreationViewModel.getFinishDate().getValue()));
+                mCreationViewModel.getFinishDate().getValue(),
+                WorkoutType.INDOOR));
         workoutWithExercise.setPersonalExerciseList(mCreationViewModel.getPersonalExerciseList().getValue());
         mDatabase.collection("user")
                 .document(mCreationViewModel.getEmail().getValue())

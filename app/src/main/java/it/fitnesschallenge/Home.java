@@ -49,7 +49,7 @@ public class Home extends Fragment{
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         MaterialButton enterGymButton = view.findViewById(R.id.statistics_oper_button);
         MaterialButton startOutdoor = view.findViewById(R.id.start_training_button);
-        MaterialButton login = view.findViewById(R.id.trainerLogin);
+        MaterialButton login = view.findViewById(R.id.workout_home_create_new_workout);
 
         enterGymButton.setOnClickListener(new View.OnClickListener() {
             @Override

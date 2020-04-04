@@ -6,6 +6,7 @@
 package it.fitnesschallenge.model.room;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -35,7 +36,7 @@ import it.fitnesschallenge.model.room.entity.Workout;
 
 @Database(entities = {Exercise.class, Workout.class, PersonalExerciseWorkoutCrossReference.class,
         PersonalExercise.class, ExerciseExecution.class},
-        version = 28, exportSchema = false)
+        version = 29, exportSchema = false)
 @TypeConverters({Converter.class})
 public abstract class FitnessChallengeDatabase extends RoomDatabase {
 
@@ -64,6 +65,7 @@ public abstract class FitnessChallengeDatabase extends RoomDatabase {
                     .addCallback(roomCallback)
                     .addMigrations(MIGRATION_26_27)
                     .addMigrations(MIGRATION_27_28)
+                    .addMigrations(MIGRATION_28_29)
                     .build();
             Log.d(TAG, "Istanza db creata");
         }
@@ -112,6 +114,14 @@ public abstract class FitnessChallengeDatabase extends RoomDatabase {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
             database.execSQL("DROP TABLE IF EXISTS 'room'");
+        }
+    };
+
+    private static Migration MIGRATION_28_29 = new Migration(28, 29) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE workout ADD" +
+                    "'workout_type' TEXT DEFAULT 'indoor';");
         }
     };
 }
