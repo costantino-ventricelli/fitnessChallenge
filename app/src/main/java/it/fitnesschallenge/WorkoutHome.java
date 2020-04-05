@@ -16,7 +16,6 @@ import it.fitnesschallenge.model.User;
 
 import static it.fitnesschallenge.model.SharedConstance.EDIT_LIST_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.WORKOUT_FRAGMENT;
-import static it.fitnesschallenge.model.SharedConstance.WORKOUT_LIST_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.WORKOUT_STATISTICS_FRAGMENT;
 
 public class WorkoutHome extends Fragment {
@@ -77,13 +76,13 @@ public class WorkoutHome extends Fragment {
         openTrainingList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                WorkoutList workoutList = WorkoutList.newInstance(mUser);
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                WorkoutOutdoorList workoutOutdoorList = new WorkoutOutdoorList();
+                FragmentManager manager = getActivity().getSupportFragmentManager();
+                FragmentTransaction transaction = manager.beginTransaction();
                 transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
-                        R.anim.enter_from_rigth, R.anim.exit_from_left);
-                transaction.replace(R.id.fragmentContainer, workoutList, WORKOUT_LIST_FRAGMENT)
-                        .addToBackStack(WORKOUT_LIST_FRAGMENT)
+                        R.anim.enter_from_rigth, R.anim.exit_from_left)
+                        .replace(R.id.fragmentContainer, workoutOutdoorList, WORKOUT_FRAGMENT)
+                        .addToBackStack(WORKOUT_FRAGMENT)
                         .commit();
             }
         });

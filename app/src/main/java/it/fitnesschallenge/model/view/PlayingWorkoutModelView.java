@@ -286,6 +286,7 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
      * @return ritorna il workout con la lista degli esercizi individuati
      */
     public LiveData<WorkoutWithExercise> getWorkoutWithExercise() {
+        Log.d(TAG, "WorkoutId: " + mWorkoutId.getValue());
         return mRepository.getWorkoutWithExerciseList(mWorkoutId.getValue());
     }
 
@@ -497,6 +498,7 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
 
         @Override
         protected Long doInBackground(Workout... workouts) {
+            Log.d(TAG, "Workout type: " + workouts[0].getWorkoutType());
             return mRepository.insertWorkout(workouts[0]);
         }
     }

@@ -36,7 +36,7 @@ import it.fitnesschallenge.model.room.entity.Workout;
 
 @Database(entities = {Exercise.class, Workout.class, PersonalExerciseWorkoutCrossReference.class,
         PersonalExercise.class, ExerciseExecution.class},
-        version = 29, exportSchema = false)
+        version = 31, exportSchema = false)
 @TypeConverters({Converter.class})
 public abstract class FitnessChallengeDatabase extends RoomDatabase {
 
@@ -63,9 +63,6 @@ public abstract class FitnessChallengeDatabase extends RoomDatabase {
                     FitnessChallengeDatabase.class,
                     context.getString(R.string.fitness_challenge_db))
                     .addCallback(roomCallback)
-                    .addMigrations(MIGRATION_26_27)
-                    .addMigrations(MIGRATION_27_28)
-                    .addMigrations(MIGRATION_28_29)
                     .build();
             Log.d(TAG, "Istanza db creata");
         }
@@ -98,30 +95,4 @@ public abstract class FitnessChallengeDatabase extends RoomDatabase {
              return null;
          }
      }
-
-    private static Migration MIGRATION_26_27 = new Migration(26, 27) {
-        @Override
-        public void migrate(@NonNull SupportSQLiteDatabase database) {
-            database.execSQL("CREATE TABLE IF NOT EXISTS 'room' (" +
-                    "'room_id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
-                    "'room_name' TEXT," +
-                    "'room_members' INTEGER NOT NULL)");
-            database.execSQL("INSERT INTO room ('room_name', 'room_members') VALUES('Exemple room', 15)");
-        }
-    };
-
-    private static Migration MIGRATION_27_28 = new Migration(27, 28) {
-        @Override
-        public void migrate(@NonNull SupportSQLiteDatabase database) {
-            database.execSQL("DROP TABLE IF EXISTS 'room'");
-        }
-    };
-
-    private static Migration MIGRATION_28_29 = new Migration(28, 29) {
-        @Override
-        public void migrate(@NonNull SupportSQLiteDatabase database) {
-            database.execSQL("ALTER TABLE workout ADD" +
-                    "'workout_type' TEXT DEFAULT 'indoor';");
-        }
-    };
 }

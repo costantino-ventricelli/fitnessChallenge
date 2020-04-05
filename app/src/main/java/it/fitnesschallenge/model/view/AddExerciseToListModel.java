@@ -48,7 +48,16 @@ public class AddExerciseToListModel extends AndroidViewModel {
         return mPersonalExerciseList.indexOf(personalExercise);
     }
 
-    public LiveData<List<PersonalExercise>> getPersonalExerciseLiveData(){
+    public List<PersonalExercise> getPersonalExercise() {
+        return mPersonalExerciseList;
+    }
+
+    public void setPersonalExerciseList(List<PersonalExercise> personalExerciseList) {
+        this.mPersonalExerciseList = (ArrayList<PersonalExercise>) personalExerciseList;
+        this.mPersonalExerciseLiveData.setValue(personalExerciseList);
+    }
+
+    public LiveData<List<PersonalExercise>> getPersonalExerciseListLiveData() {
         return mPersonalExerciseLiveData;
     }
 }

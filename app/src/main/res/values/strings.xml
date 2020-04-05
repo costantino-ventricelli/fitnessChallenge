@@ -172,4 +172,7 @@
     <string name="subscribing_error">Subscribing error</string>
     <string name="room_error">Room error</string>
     <string name="algolia_logo">Algolia logo</string>
+    <string name="saving_complete">Saving complete</string>
+    <string name="enable_auto_login">Enable auto login</string>
+    <string name="use_nfc">Use NFC to get into the gym</string>
 </resources>

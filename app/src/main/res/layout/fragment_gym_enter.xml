@@ -11,7 +11,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:contentDescription="@string/gym_enter_background"
-        android:src="@mipmap/gym"
+        android:src="@mipmap/gym_enter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -34,13 +34,11 @@
         android:id="@+id/enter_gym_text_label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="200dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="@dimen/margin"
         android:text="@string/nfc_instruction"
         android:textSize="@dimen/headline"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

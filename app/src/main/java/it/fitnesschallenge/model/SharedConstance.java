@@ -11,7 +11,8 @@ public final class SharedConstance {
     public static final String TRAINER_HOME_FRAGMENT = "trainerHomeFragment";
     public static final String SHARED_PREFERENCES = "sharedPreferences";
     public static final String LOGGED_IN = "loggedIn";
-    public static final String AUTO_LOGGED = "autoLogged";
+    public static final String AUTO_LOGGED = "autoLogin";
+    public static final String USE_NFC = "useNFC";
     public static final String CREATE_TRAINING_LIST = "createTrainingList";
     public static final String ADD_USERNAME_AND_START_DATE = "addUsernameAndStartDate";
     public static final String ADD_EXERCISE_TO_WORKOUT = "addExerciseToWorkout";

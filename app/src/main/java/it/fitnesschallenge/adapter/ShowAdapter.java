@@ -142,6 +142,10 @@ public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ViewHolder>
         return mList.size();
     }
 
+    public List<PersonalExercise> getAdapterList() {
+        return mList;
+    }
+
     static class ViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView mImageView;

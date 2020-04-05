@@ -1,5 +1,6 @@
 package it.fitnesschallenge;
 
+import android.content.SharedPreferences;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,14 +11,17 @@ import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.material.button.MaterialButton;
 
 import static it.fitnesschallenge.model.SharedConstance.ENTER_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.GYM_HOME_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.HOME_FRAGMENT;
+import static it.fitnesschallenge.model.SharedConstance.LOGGED_IN;
 import static it.fitnesschallenge.model.SharedConstance.LOGIN_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.TRAINER_HOME_FRAGMENT;
+import static it.fitnesschallenge.model.SharedConstance.USE_NFC;
 import static it.fitnesschallenge.model.SharedConstance.WORKOUT_FRAGMENT;
 
 
@@ -55,8 +59,8 @@ public class Home extends Fragment{
             @Override
             public void onClick(View v) {
                 Fragment fragment;
-                //TODO: questo && false bisongerà rimuoverlo quando verrà implementato l'NFC
-                if (NfcAdapter.getDefaultAdapter(getContext()) != null && false)
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+                if (NfcAdapter.getDefaultAdapter(getContext()) != null && preferences.getBoolean(USE_NFC, false))
                     fragment = new GymEnter();
                 else
                     fragment = Login.newInstance(GYM_HOME_FRAGMENT);

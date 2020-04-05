@@ -21,6 +21,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -83,13 +84,11 @@ public class Login extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
-        if(sharedPreferences.getBoolean(AUTO_LOGGED, false)) {
-            if (currentUser != null && sharedPreferences.getBoolean(LOGGED_IN, false)) {
-                firebaseUser = mAuth.getCurrentUser();
-                readUserFromDB();
-            }
+        firebaseUser = mAuth.getCurrentUser();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        if (firebaseUser != null && sharedPreferences.getBoolean(AUTO_LOGGED, false)) {
+            Log.d(TAG, "AutoLogin abilitato.");
+            readUserFromDB();
         }
     }
 

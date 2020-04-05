@@ -38,6 +38,11 @@ public class PersonalExercise implements Parcelable {
     @Ignore
     public PersonalExercise(int exerciseId) {
         this.exerciseId = exerciseId;
+        this.personalExerciseId = 0;
+        this.steps = 0;
+        this.repetition = 0;
+        this.coolDown = 0L;
+        this.isDeleted = false;
     }
 
     public PersonalExercise(int exerciseId, int steps, int repetition, long coolDown) {
@@ -81,6 +86,14 @@ public class PersonalExercise implements Parcelable {
 
     public int getPersonalExerciseId() {
         return personalExerciseId;
+    }
+
+    public void setSteps(int steps) {
+        this.steps = steps;
+    }
+
+    public void setRepetition(int repetition) {
+        this.repetition = repetition;
     }
 
     public void setPersonalExerciseId(int personalExerciseId) {
@@ -144,6 +157,18 @@ public class PersonalExercise implements Parcelable {
     @NonNull
     @Override
     public String toString() {
-        return "" + this.getPersonalExerciseId();
+        return "" + this.getPersonalExerciseId() + ":" + this.getExerciseId();
+    }
+
+    @Override
+    public Object clone() {
+        PersonalExercise cloneObject = new PersonalExercise();
+        cloneObject.setPersonalExerciseId(this.getPersonalExerciseId());
+        cloneObject.setExerciseId(this.getExerciseId());
+        cloneObject.setDeleted(this.isDeleted());
+        cloneObject.setCoolDown(this.getCoolDown());
+        cloneObject.setSteps(this.getSteps());
+        cloneObject.setRepetition(this.getRepetition());
+        return cloneObject;
     }
 }

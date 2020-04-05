@@ -45,18 +45,17 @@ import java.util.List;
 
 import it.fitnesschallenge.adapter.ShowAdapter;
 import it.fitnesschallenge.model.User;
+import it.fitnesschallenge.model.room.WorkoutType;
 import it.fitnesschallenge.model.room.entity.Exercise;
 import it.fitnesschallenge.model.room.entity.PersonalExercise;
 import it.fitnesschallenge.model.room.entity.Workout;
 import it.fitnesschallenge.model.room.entity.reference.WorkoutWithExercise;
 import it.fitnesschallenge.model.view.PlayingWorkoutModelView;
 
-import static it.fitnesschallenge.model.SharedConstance.EDIT_LIST_FRAGMENT;
-import static it.fitnesschallenge.model.SharedConstance.LOGIN_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.PLAYING_WORKOUT;
 import static it.fitnesschallenge.model.SharedConstance.SIGN_UP_FRAGMENT;
 
-public class WorkoutList extends Fragment {
+public class WorkoutIndoorList extends Fragment {
 
     private static final String TAG = "WorkoutList";
     private static final String FIREBASE_USER = "firebaseUser";
@@ -70,12 +69,12 @@ public class WorkoutList extends Fragment {
     private ShowAdapter mShowAdapter;
     private Context mContext;
 
-    public WorkoutList() {
+    public WorkoutIndoorList() {
         // Required empty public constructor
     }
 
-    static WorkoutList newInstance(User user) {
-        WorkoutList fragment = new WorkoutList();
+    static WorkoutIndoorList newInstance(User user) {
+        WorkoutIndoorList fragment = new WorkoutIndoorList();
         Bundle args = new Bundle();
         args.putParcelable(FIREBASE_USER, user);
         fragment.setArguments(args);
@@ -102,7 +101,7 @@ public class WorkoutList extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_workout_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_workout_indoor_list, container, false);
         mRecyclerView = view.findViewById(R.id.workout_list_recycler_view);
         mViewModel = ViewModelProviders.of(getActivity()).get(PlayingWorkoutModelView.class);
 
@@ -120,7 +119,6 @@ public class WorkoutList extends Fragment {
          * se non ci sono instanze dell'utente avremo un wokout outdoor, che richiede un fab che
          * permette le modifiche e l'esecuzione dell'allenamento.
          */
-        if (mUser != null) {
             FloatingActionButton floatingActionButton = view.findViewById(R.id.start_workout_FAB);
             floatingActionButton.setVisibility(View.VISIBLE);
             floatingActionButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_arrow));
@@ -139,40 +137,6 @@ public class WorkoutList extends Fragment {
                 }
             });
 
-        } else {
-            com.github.clans.fab.FloatingActionMenu menuFab = view.findViewById(R.id.outdoor_workout_list_fab_menu);
-            menuFab.setVisibility(View.VISIBLE);
-            com.github.clans.fab.FloatingActionButton editFab = view.findViewById(R.id.outdoor_workout_list_fab_edit);
-            editFab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    EditList editList = new EditList();
-                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    FragmentTransaction transaction = fragmentManager.beginTransaction();
-                    transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
-                            R.anim.enter_from_rigth, R.anim.exit_from_left);
-                    transaction.replace(R.id.fragmentContainer, editList, EDIT_LIST_FRAGMENT)
-                            .addToBackStack(EDIT_LIST_FRAGMENT)
-                            .commit();
-                }
-            });
-
-            com.github.clans.fab.FloatingActionButton fab2 = view.findViewById(R.id.outdoor_workout_list_fab_play);
-            fab2.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    PlayingWorkout playingWorkout = new PlayingWorkout();
-                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    FragmentTransaction transaction = fragmentManager.beginTransaction();
-                    transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
-                            R.anim.enter_from_rigth, R.anim.exit_from_left);
-                    transaction.replace(R.id.fragmentContainer, playingWorkout, PLAYING_WORKOUT)
-                            .addToBackStack(PLAYING_WORKOUT)
-                            .commit();
-                }
-            });
-        }
-
         /*
          * Da questo punto parte l'algoritmo di selezione del workout e dei relativi esercizi
          * Qui vengono selezionati tutti i workout presenti in locale, se non ce ne sono viene avviata
@@ -184,10 +148,10 @@ public class WorkoutList extends Fragment {
                 Log.d(TAG, "Avvio verifica su DB, size: " + workoutList.size());
                 if (workoutList.size() > 0)
                     checkWorkoutInLocalDB(workoutList);
-                else if (mUser != null)
+                else if (checkConnection())
                     getLastWorkoutOnFireBase();
                 else
-                    errorDialog(R.string.registration_error);
+                    errorDialog(R.string.connection_error_message);
             }
         });
 
@@ -241,27 +205,26 @@ public class WorkoutList extends Fragment {
      */
     private void checkWorkoutInLocalDB(List<Workout> workoutList) {
         boolean found = false;
-        Workout activeWorkout = null;
         for (int i = 0; i < workoutList.size() && !found; i++) {
             Workout workout = workoutList.get(i);
             Log.d(TAG, "workout[" + i + "]: " + workout.getStartDate());
-            if (workout.getEndDate().before(Calendar.getInstance().getTime())) {
+            if (workout.getEndDate().before(Calendar.getInstance().getTime()) && workout.getWorkoutType().equals(WorkoutType.INDOOR)) {
                 workout.setActive(false);
                 mViewModel.updateWorkout(workout);
                 Log.d(TAG, "Trovato workout da disattivare");
             } else {
                 Log.d(TAG, "Trovato workout attivo");
                 found = true;
-                activeWorkout = workout;
             }
             if (found) {
                 Log.d(TAG, "Setto l'id del workout nel ViewModel");
-                mViewModel.setWorkoutId(activeWorkout.getWorkOutId());
+                mViewModel.setWorkoutId(workout.getWorkOutId());
             } else {
-                if (checkConnection() && mUser != null) {
+                if (checkConnection()) {
                     Log.d(TAG, "Apro connessione con firebase, poichè non ho trovato workout attivi");
                     getLastWorkoutOnFireBase();
                 } else {
+                    found = true;
                     errorDialog(R.string.connection_error_message);
                 }
             }
@@ -287,12 +250,6 @@ public class WorkoutList extends Fragment {
                     transaction.replace(R.id.fragmentContainer, signUp, SIGN_UP_FRAGMENT)
                             .addToBackStack(SIGN_UP_FRAGMENT)
                             .commit();
-                }
-            });
-            builder.setPositiveButton(R.string.create, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
                 }
             });
         }

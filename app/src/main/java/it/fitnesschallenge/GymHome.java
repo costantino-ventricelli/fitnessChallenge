@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import it.fitnesschallenge.model.User;
 
+import static it.fitnesschallenge.model.SharedConstance.GYM_HOME_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.PLAYING_WORKOUT;
 
 public class GymHome extends Fragment {
@@ -54,12 +55,12 @@ public class GymHome extends Fragment {
         startWorkoutStatistics.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                WorkoutList workoutList = WorkoutList.newInstance(mUser);
+                WorkoutIndoorList workoutIndoorList = WorkoutIndoorList.newInstance(mUser);
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
                         R.anim.enter_from_rigth, R.anim.exit_from_left);
-                transaction.replace(R.id.fragmentContainer, workoutList, PLAYING_WORKOUT)
+                transaction.replace(R.id.fragmentContainer, workoutIndoorList, PLAYING_WORKOUT)
                         .addToBackStack(PLAYING_WORKOUT)
                         .commit();
             }

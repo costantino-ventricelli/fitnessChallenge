@@ -22,23 +22,25 @@ import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import it.fitnesschallenge.R;
 import it.fitnesschallenge.model.room.entity.Exercise;
+import it.fitnesschallenge.model.room.entity.PersonalExercise;
 
 public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
 
     private static final String TAG = "AddAdapter";
 
-    private OnClickListener mOnClickListener;
+    private ExpandOnClickListener mExpandOnClickListener;
     private OnSelectItemListener mOnSelectedItemListener;
-    private OnClickTimerListener mOnClickTimerListener;
-    private List<Exercise> mList;
+    private OnOpenTimerListener mOnOpenTimerListener;
+    private List<Exercise> mExerciseList;
 
-    public AddAdapter(List<Exercise> mList) {
-        this.mList = mList;
+    public AddAdapter(List<Exercise> mExerciseList) {
+        this.mExerciseList = mExerciseList;
     }
 
     @NonNull
@@ -46,43 +48,32 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.add_exercise_item, parent, false);
-        Log.d(TAG, "Creo il ViewHolder");
         //qui avviene l'assegnazione dei listener al ViewHolder
-        return new ViewHolder(view, mOnClickListener, mOnSelectedItemListener, mOnClickTimerListener);
+        return new ViewHolder(view, mExpandOnClickListener, mOnSelectedItemListener, mOnOpenTimerListener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Log.d(TAG, "Collego il ViewHolder");
-        holder.exerciseTitle.setText(mList.get(position).getExerciseName());
-        holder.exerciseDescription.setText(mList.get(position).getExerciseDescription());
-        holder.exerciseImage.setImageResource(mList.get(position).getImageReference());
-        holder.cardView.setTag(mList.get(position).getExerciseId());
+        holder.exerciseTitle.setText(mExerciseList.get(position).getExerciseName());
+        holder.exerciseDescription.setText(mExerciseList.get(position).getExerciseDescription());
+        holder.exerciseImage.setImageResource(mExerciseList.get(position).getImageReference());
+        holder.cardView.setTag(mExerciseList.get(position).getExerciseId());
     }
 
-    /**
-     * Questa funzione permette di cambiare il valore del testo nel bottone che apre il dialog per
-     * impostare il timer, così da fornire un feedback istantaneo all'utente
-     *
-     * @param holder contiene l'holder di quell particolare item
-     * @param time   contiene il tempo settato per il timer
-     */
-    public void setCoolDownTime(RecyclerView.ViewHolder holder, long time) {
-        ViewHolder thisViewHolder = (ViewHolder) holder;
-        StringBuilder builder = new StringBuilder(NumberFormat.getInstance(Locale.getDefault()).format(time));
-        builder.append("''");
-        thisViewHolder.setCoolDown.setText(builder.toString());
-    }
 
     @Override
     public int getItemCount() {
-        return mList.size();
+        return mExerciseList.size();
+    }
+
+    public Exercise getItemAt(int position) {
+        return mExerciseList.get(position);
     }
 
     /**
      * Questa interfaccia permette la gestione del click sul tasto di espansione della card
      */
-    public interface OnClickListener {
+    public interface ExpandOnClickListener {
         /**
          * Il metodo onClickListener è il metodo che verrà richiamato per gestire il click dal ViewHolder
          * @param finalHeight serve a individuare l'altezza finale che la card avrà dopo l'espasione
@@ -90,7 +81,7 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
          * @param itemView permette di passare la view della card in questione
          * @param expanded permette di discernere se la card è già espansa
          */
-        void onClickListener(int finalHeight, int startHeight, View itemView, boolean expanded);
+        void onExpandListener(int finalHeight, int startHeight, View itemView, boolean expanded);
     }
 
     /**
@@ -106,25 +97,25 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
         void onSelectItemListener(View view, int position);
     }
 
-    public interface OnClickTimerListener {
-        void onTimerListener(int position);
+    public interface OnOpenTimerListener {
+        void onOpenTimerListener(int position, View view);
     }
 
     /**
      * Questi due metodi di set permettono di settare il listener dall'activity o fragment chiamante
-     * @param onClickListener permette di ottenere un riferimento a questa classe tramite il chiamante
+     * @param expandOnClickListener permette di ottenere un riferimento a questa classe tramite il chiamante
      *                        poichè necessita della sovrasctittura del metodo onClickListener o onSelectedItemListener
      */
-    public void setOnClickListener(OnClickListener onClickListener) {
-        this.mOnClickListener = onClickListener;
+    public void setOnExpandClickListener(ExpandOnClickListener expandOnClickListener) {
+        this.mExpandOnClickListener = expandOnClickListener;
     }
 
     public void setOnSelectedItemListener(OnSelectItemListener onSelectedItemListener) {
         this.mOnSelectedItemListener = onSelectedItemListener;
     }
 
-    public void setOnClickTimerListener(OnClickTimerListener onClickTimerListener) {
-        this.mOnClickTimerListener = onClickTimerListener;
+    public void setOnOpenTimerListener(OnOpenTimerListener onOpenTimerListener) {
+        this.mOnOpenTimerListener = onOpenTimerListener;
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
@@ -138,16 +129,18 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
         private int finalHeight;
         private int startHeight;
         private MaterialButton setCoolDown;
+        private TextInputLayout exerciseSeries;
+        private TextInputLayout exerciseRepetition;
 
         /**
          * @param itemView                layout dell'oggetto in lista
-         * @param mOnClickListener        listener del AddAdapter.OnClickListener
+         * @param mExpandOnClickListener        listener del AddAdapter.OnExpandClickListener
          * @param mOnSelectedItemListener listener del AddAdapter.OnSelectedItemListener
          */
-        ViewHolder(@NonNull final View itemView, final OnClickListener mOnClickListener,
-                   final OnSelectItemListener mOnSelectedItemListener, final OnClickTimerListener mSetTimerListener) {
+        ViewHolder(@NonNull final View itemView, final ExpandOnClickListener mExpandOnClickListener,
+                   final OnSelectItemListener mOnSelectedItemListener, final OnOpenTimerListener mSetTimerListener) {
             super(itemView);
-            Log.d(TAG, "Setto il layout degli oggetti nella RecyclerView");
+
             modified = false;
             cardView = itemView.findViewById(R.id.item_card_view);
             /*
@@ -169,11 +162,10 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
             exerciseImage = itemView.findViewById(R.id.add_exercise_img);
             exerciseDescription = itemView.findViewById(R.id.add_exercise_description);
             setCoolDown = itemView.findViewById(R.id.add_exercise_pick_time_button);
-            TextInputLayout exerciseSeries = itemView.findViewById(R.id.exercise_series);
-            TextInputLayout exerciseRepetition = itemView.findViewById(R.id.exercise_repetition);
+            exerciseSeries = itemView.findViewById(R.id.exercise_series);
+            exerciseRepetition = itemView.findViewById(R.id.exercise_repetition);
             ImageButton expandCollapseButton = itemView.findViewById(R.id.card_expander_collapse_arrow);
             MaterialCheckBox selectedCheckBox = itemView.findViewById(R.id.select_exercise_check);
-            View divider = itemView.findViewById(R.id.add_card_divider);
             /*
              * La gestione dei click sui pulsanti avviene qiu infatti vengono richiamti i metodi sopra
              * descritti per gestire il click dall'esterno
@@ -186,16 +178,16 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
                         expanded = true;
                     }else
                         expanded = false;
-                    if (mOnClickListener != null && getAdapterPosition()
+                    if (mExpandOnClickListener != null && getAdapterPosition()
                             != RecyclerView.NO_POSITION)
                         //qui abbiamo la gestione dell'onClickListener
-                        mOnClickListener.onClickListener(finalHeight, startHeight, itemView, expanded);
+                        mExpandOnClickListener.onExpandListener(finalHeight, startHeight, itemView, expanded);
                 }
             });
             selectedCheckBox.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (mOnClickListener != null && getAdapterPosition()
+                    if (mExpandOnClickListener != null && getAdapterPosition()
                             != RecyclerView.NO_POSITION)
                         //qui abbiamo la gestione dell'onSelectedItemListener
                         mOnSelectedItemListener.onSelectItemListener(itemView, getAdapterPosition());
@@ -204,7 +196,7 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
             setCoolDown.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mSetTimerListener.onTimerListener(getAdapterPosition());
+                    mSetTimerListener.onOpenTimerListener(getAdapterPosition(), setCoolDown);
                 }
             });
         }
@@ -213,6 +205,6 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
     @NonNull
     @Override
     public String toString() {
-        return mList.toString();
+        return mExerciseList.toString();
     }
 }

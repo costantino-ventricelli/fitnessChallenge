@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
+import android.nfc.NfcEvent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.Settings;
@@ -23,6 +24,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firestore.v1.CreateDocumentRequestOrBuilder;
 
 import java.util.List;
 
@@ -31,10 +33,11 @@ import it.fitnesschallenge.model.view.HomeViewModel;
 
 import static it.fitnesschallenge.model.SharedConstance.HOME_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.LAST_FRAGMENT;
+import static it.fitnesschallenge.model.SharedConstance.SETTING_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.TIMER_FRAGMENT;
 
 
-public class HomeActivity extends AppCompatActivity{
+public class HomeActivity extends AppCompatActivity {
 
     private static final String TAG = "HomeActivity";
     private Home mHomeFragment;
@@ -43,8 +46,6 @@ public class HomeActivity extends AppCompatActivity{
     private HomeViewModel homeViewModel;
     private static Context mContext;
     private boolean isHome;
-    private NfcAdapter mNfcAdapter;
-    private PendingIntent mPendingIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,13 +63,6 @@ public class HomeActivity extends AppCompatActivity{
         mBackButton = findViewById(R.id.btn_back);
         mBackButton.setVisibility(View.GONE);
         mContext = this;
-
-        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
-
-        if (mNfcAdapter != null)
-            mPendingIntent = PendingIntent.getActivity(mContext,
-                    0, new Intent(this, HomeActivity.class)
-                            .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
         if (savedInstanceState == null) {
             mBottomNavigation.setSelectedItemId(R.id.navigation_home);
@@ -120,7 +114,8 @@ public class HomeActivity extends AppCompatActivity{
                             //empty for now
                             break;
                         case R.id.navigation_settings:
-                            //empty for now
+                            selectedFragment = new it.fitnesschallenge.Settings();
+                            selectedFragmentTag = SETTING_FRAGMENT;
                             break;
                     }
                     try {
@@ -132,7 +127,6 @@ public class HomeActivity extends AppCompatActivity{
                             setCurrentFragment(selectedFragmentTag);
                         }
                     } catch (NullPointerException ex) {
-                        //FIXME: probabilmente c'è un modo per non far scattare questa eccezione
                         Log.d(TAG, "Primo avvio dell'applicazione, nessun fragment impostato");
                     }
                     return true;
@@ -153,44 +147,6 @@ public class HomeActivity extends AppCompatActivity{
         return mContext;
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (mNfcAdapter != null) {
-            if (!mNfcAdapter.isEnabled())
-                turnOnNFC();
-            mNfcAdapter.enableForegroundDispatch(this, mPendingIntent, null, null);
-        }
-    }
-
-    private void turnOnNFC() {
-        startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
-    }
-
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (mNfcAdapter != null)
-            mNfcAdapter.disableForegroundDispatch(this);
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        if (intent != null && mNfcAdapter != null) {
-            if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
-                Parcelable[] rawMessage = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
-                if (rawMessage != null) {
-                    NdefMessage[] messages = new NdefMessage[rawMessage.length];
-                    for (int i = 0; i < rawMessage.length; i++)
-                        messages[i] = (NdefMessage) rawMessage[i];
-                    Log.d(TAG, "Messagio ricevuto NFC: " + messages[1]);
-                    //TODO: gli intent sono parcelizabili quindi si possono passare al fragment
-                }
-            }
-        }
-    }
 
     @Override
     public void onBackPressed() {
@@ -198,4 +154,5 @@ public class HomeActivity extends AppCompatActivity{
         if (getSupportFragmentManager().getBackStackEntryCount() <= 0)
             finish();
     }
+
 }
