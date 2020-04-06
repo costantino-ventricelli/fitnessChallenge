@@ -2,6 +2,7 @@ package it.fitnesschallenge;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -55,6 +56,7 @@ public class TrainerHome extends Fragment {
         MaterialButton openTrainigList = view.findViewById(R.id.show_training_card_btn);
         MaterialButton createTrainingListButton = view.findViewById(R.id.create_training_card_button);
 
+
         trainerTextName.setText(mUser.getNome());
 
         createTrainingListButton.setOnClickListener(new View.OnClickListener() {
@@ -71,10 +73,14 @@ public class TrainerHome extends Fragment {
             }
         });
 
+
+
+
         openTrainigList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(getContext(), UserListActivity.class);
+                startActivity(intent);
             }
         });
 
