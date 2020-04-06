@@ -125,7 +125,6 @@ public class WorkoutOutdoorList extends Fragment {
             Log.d(TAG, "workout[" + i + "]: " + workout.getStartDate());
             if (workout.getWorkoutType().equals(WorkoutType.OUTDOOR)) {
                 mViewModel.setWorkoutId(workout.getWorkOutId());
-                //TODO:rivedere salvataggio workout.
                 found = true;
             }
         }

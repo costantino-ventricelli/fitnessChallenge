@@ -65,7 +65,6 @@ public class Timer extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         /*
-         * TODO: Aggiungere controllo su tempo inizialmente inserito
          * {@link = https://gist.github.com/mjohnsullivan/403149218ecb480e7759}
          */
         View view = inflater.inflate(R.layout.fragment_timer, container, false);
