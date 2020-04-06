@@ -62,11 +62,11 @@ public class WorkoutHome extends Fragment {
         openStatistics.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                WorkoutStatistics workoutStatistics = new WorkoutStatistics();
+                Statistics statistics = new Statistics();
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.setCustomAnimations(R.anim.fragment_fade_enter, R.anim.fragment_fade_exit, R.anim.fragment_fade_enter, R.anim.fragment_fade_exit);
-                transaction.replace(R.id.fragmentContainer, workoutStatistics, WORKOUT_STATISTICS_FRAGMENT)
+                transaction.replace(R.id.fragmentContainer, statistics, WORKOUT_STATISTICS_FRAGMENT)
                         .addToBackStack(WORKOUT_STATISTICS_FRAGMENT)
                         .commit();
             }

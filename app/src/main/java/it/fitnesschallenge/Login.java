@@ -259,7 +259,7 @@ public class Login extends Fragment {
                     Fragment fragment;
                     String fragmentTag = null;
                     if (mCaller.equals(TRAINER_HOME_FRAGMENT)) {
-                        if (user.getRole().equals("TRAINER/USER") || user.getRole().equals("TRAINER")) {
+                        if (user.getRole().equals("USER")) {
                             fragment = null;
                             Snackbar.make(getView(), "You are not a trainer", Snackbar.LENGTH_LONG).show();
                         } else {
