@@ -4,7 +4,6 @@
  */
 package it.fitnesschallenge.adapter;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,14 +20,10 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import it.fitnesschallenge.R;
 import it.fitnesschallenge.model.room.entity.Exercise;
-import it.fitnesschallenge.model.room.entity.PersonalExercise;
 
 public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder> {
 

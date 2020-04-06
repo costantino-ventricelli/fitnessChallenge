@@ -18,7 +18,6 @@ import com.google.android.material.button.MaterialButton;
 import static it.fitnesschallenge.model.SharedConstance.ENTER_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.GYM_HOME_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.HOME_FRAGMENT;
-import static it.fitnesschallenge.model.SharedConstance.LOGGED_IN;
 import static it.fitnesschallenge.model.SharedConstance.LOGIN_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.TRAINER_HOME_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.USE_NFC;

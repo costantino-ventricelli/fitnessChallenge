@@ -209,26 +209,24 @@ public class WorkoutIndoorList extends Fragment {
         for (int i = 0; i < workoutList.size() && !found; i++) {
             Workout workout = workoutList.get(i);
             Log.d(TAG, "workout[" + i + "]: " + workout.getStartDate());
-            if (workout.getEndDate().before(Calendar.getInstance().getTime()) && workout.getWorkoutType().equals(WorkoutType.INDOOR)) {
+            if (workout.getEndDate().before(Calendar.getInstance().getTime())
+                    && workout.getWorkoutType().equals(WorkoutType.INDOOR)) {
                 workout.setActive(false);
                 mViewModel.updateWorkout(workout);
                 Log.d(TAG, "Trovato workout da disattivare");
             } else {
                 Log.d(TAG, "Trovato workout attivo");
+                mViewModel.setWorkoutId(workout.getWorkOutId());
                 found = true;
             }
-            if (found) {
-                Log.d(TAG, "Setto l'id del workout nel ViewModel");
-                mViewModel.setWorkoutId(workout.getWorkOutId());
+        }
+        if (!found) {
+            if (checkConnection() && !mFirebaseCheck) {
+                Log.d(TAG, "Apro connessione con firebase, poichè non ho trovato workout attivi");
+                getLastWorkoutOnFireBase();
+                mFirebaseCheck = true;
             } else {
-                if (checkConnection() && !mFirebaseCheck) {
-                    Log.d(TAG, "Apro connessione con firebase, poichè non ho trovato workout attivi");
-                    getLastWorkoutOnFireBase();
-                    mFirebaseCheck = true;
-                } else {
-                    found = true;
-                    errorDialog(R.string.connection_error_message);
-                }
+                errorDialog(R.string.connection_error_message);
             }
         }
     }

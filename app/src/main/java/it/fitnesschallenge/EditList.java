@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
@@ -20,27 +19,22 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.clans.fab.FloatingActionButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import it.fitnesschallenge.adapter.ShowAdapter;
 import it.fitnesschallenge.adapter.ShowAdapterDrag;
-import it.fitnesschallenge.model.User;
 import it.fitnesschallenge.model.room.WorkoutType;
 import it.fitnesschallenge.model.room.entity.PersonalExercise;
 import it.fitnesschallenge.model.room.entity.Workout;
 import it.fitnesschallenge.model.room.entity.reference.WorkoutWithExercise;
 import it.fitnesschallenge.model.view.AddExerciseToListModel;
 import it.fitnesschallenge.model.view.EditListViewModel;
-
-import com.github.clans.fab.FloatingActionButton;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static it.fitnesschallenge.model.SharedConstance.ADD_EXERCISE_TO_LIST;
 import static it.fitnesschallenge.model.SharedConstance.EDIT_LIST_FRAGMENT;

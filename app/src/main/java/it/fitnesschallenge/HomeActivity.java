@@ -1,14 +1,7 @@
 package it.fitnesschallenge;
 
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
-import android.nfc.NdefMessage;
-import android.nfc.NfcAdapter;
-import android.nfc.NfcEvent;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,7 +17,6 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firestore.v1.CreateDocumentRequestOrBuilder;
 
 import java.util.List;
 
@@ -33,6 +25,7 @@ import it.fitnesschallenge.model.view.HomeViewModel;
 
 import static it.fitnesschallenge.model.SharedConstance.HOME_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.LAST_FRAGMENT;
+import static it.fitnesschallenge.model.SharedConstance.PROFILE_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.SETTING_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.TIMER_FRAGMENT;
 
@@ -110,7 +103,8 @@ public class HomeActivity extends AppCompatActivity {
                             selectedFragmentTag = TIMER_FRAGMENT;
                             break;
                         case R.id.navigation_profile:
-                            //empty for now
+                            selectedFragment = new Profile();
+                            selectedFragmentTag = PROFILE_FRAGMENT;
                             break;
                         case R.id.navigation_settings:
                             selectedFragment = new it.fitnesschallenge.Settings();

@@ -2,8 +2,11 @@ package it.fitnesschallenge;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
-import androidx.activity.OnBackPressedDispatcherOwner;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -12,21 +15,11 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
-import it.fitnesschallenge.EditList;
-import it.fitnesschallenge.PlayingWorkout;
-import it.fitnesschallenge.R;
 import it.fitnesschallenge.adapter.ShowAdapter;
 import it.fitnesschallenge.model.room.WorkoutType;
 import it.fitnesschallenge.model.room.entity.Exercise;

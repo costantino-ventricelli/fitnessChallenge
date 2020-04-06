@@ -14,7 +14,6 @@ import androidx.fragment.app.FragmentTransaction;
 
 import it.fitnesschallenge.model.User;
 
-import static it.fitnesschallenge.model.SharedConstance.GYM_HOME_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.PLAYING_WORKOUT;
 
 public class GymHome extends Fragment {

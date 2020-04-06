@@ -3,10 +3,8 @@ package it.fitnesschallenge;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,7 +15,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.fragment.app.Fragment;
@@ -33,9 +30,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.text.NumberFormat;
 import java.util.List;
-import java.util.Locale;
 
 import it.fitnesschallenge.adapter.AddAdapter;
 import it.fitnesschallenge.model.room.entity.Exercise;
@@ -48,8 +43,6 @@ import static android.app.Activity.RESULT_OK;
 import static it.fitnesschallenge.model.SharedConstance.CREATE_TRAINING_LIST;
 import static it.fitnesschallenge.model.SharedConstance.DATE_PICKER;
 import static it.fitnesschallenge.model.SharedConstance.EDIT_LIST_FRAGMENT;
-import static it.fitnesschallenge.model.SharedConstance.POSITION_IN_ADAPTER;
-import static it.fitnesschallenge.model.SharedConstance.SELECTED_TIMER;
 
 
 public class AddExerciseToList extends Fragment {

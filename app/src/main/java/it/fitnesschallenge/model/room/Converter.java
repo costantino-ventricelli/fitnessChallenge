@@ -13,8 +13,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import it.fitnesschallenge.model.room.entity.Workout;
-
 public class Converter {
 
     /**
