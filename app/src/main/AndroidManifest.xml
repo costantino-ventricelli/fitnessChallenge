@@ -29,6 +29,8 @@
         <activity android:name=".UserListActivity"/>
         <activity android:name=".NewRoomActivity" />
         <activity android:name=".SubscribeNewRoom" />
+        <activity android:name=".UserListActivity" />
+        <activity android:name=".UserDetailActivity" />
         <activity
             android:name=".RoomActivity"
             android:label="Room" />

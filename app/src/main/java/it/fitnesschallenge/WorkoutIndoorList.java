@@ -68,6 +68,7 @@ public class WorkoutIndoorList extends Fragment {
     private RecyclerView mRecyclerView;
     private ShowAdapter mShowAdapter;
     private Context mContext;
+    private boolean mFirebaseCheck;
 
     public WorkoutIndoorList() {
         // Required empty public constructor
@@ -104,6 +105,7 @@ public class WorkoutIndoorList extends Fragment {
         View view = inflater.inflate(R.layout.fragment_workout_indoor_list, container, false);
         mRecyclerView = view.findViewById(R.id.workout_list_recycler_view);
         mViewModel = ViewModelProviders.of(getActivity()).get(PlayingWorkoutModelView.class);
+        mFirebaseCheck = false;
 
         mViewModel.getWorkoutId().observe(getViewLifecycleOwner(), new Observer<Long>() {
             @Override
@@ -129,8 +131,7 @@ public class WorkoutIndoorList extends Fragment {
                     PlayingWorkout playingWorkout = new PlayingWorkout();
                     FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                     FragmentTransaction transaction = fragmentManager.beginTransaction();
-                    transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
-                            R.anim.enter_from_rigth, R.anim.exit_from_left);
+                    transaction.setCustomAnimations(R.anim.fragment_fade_enter, R.anim.fragment_fade_exit, R.anim.fragment_fade_enter, R.anim.fragment_fade_exit);
                     transaction.replace(R.id.fragmentContainer, playingWorkout, PLAYING_WORKOUT)
                             .addToBackStack(PLAYING_WORKOUT)
                             .commit();
@@ -208,25 +209,24 @@ public class WorkoutIndoorList extends Fragment {
         for (int i = 0; i < workoutList.size() && !found; i++) {
             Workout workout = workoutList.get(i);
             Log.d(TAG, "workout[" + i + "]: " + workout.getStartDate());
-            if (workout.getEndDate().before(Calendar.getInstance().getTime()) && workout.getWorkoutType().equals(WorkoutType.INDOOR)) {
+            if (workout.getEndDate().before(Calendar.getInstance().getTime())
+                    && workout.getWorkoutType().equals(WorkoutType.INDOOR)) {
                 workout.setActive(false);
                 mViewModel.updateWorkout(workout);
                 Log.d(TAG, "Trovato workout da disattivare");
             } else {
                 Log.d(TAG, "Trovato workout attivo");
+                mViewModel.setWorkoutId(workout.getWorkOutId());
                 found = true;
             }
-            if (found) {
-                Log.d(TAG, "Setto l'id del workout nel ViewModel");
-                mViewModel.setWorkoutId(workout.getWorkOutId());
+        }
+        if (!found) {
+            if (checkConnection() && !mFirebaseCheck) {
+                Log.d(TAG, "Apro connessione con firebase, poichè non ho trovato workout attivi");
+                getLastWorkoutOnFireBase();
+                mFirebaseCheck = true;
             } else {
-                if (checkConnection()) {
-                    Log.d(TAG, "Apro connessione con firebase, poichè non ho trovato workout attivi");
-                    getLastWorkoutOnFireBase();
-                } else {
-                    found = true;
-                    errorDialog(R.string.connection_error_message);
-                }
+                errorDialog(R.string.connection_error_message);
             }
         }
     }
@@ -240,8 +240,7 @@ public class WorkoutIndoorList extends Fragment {
                 .setTitle(R.string.ops)
                 .setMessage(message);
         final FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
-                R.anim.enter_from_rigth, R.anim.exit_from_left);
+        transaction.setCustomAnimations(R.anim.fragment_fade_enter, R.anim.fragment_fade_exit, R.anim.fragment_fade_enter, R.anim.fragment_fade_exit);
         if (message == R.string.registration_error) {
             builder.setNegativeButton(R.string.sign_in, new DialogInterface.OnClickListener() {
                 @Override
@@ -275,7 +274,8 @@ public class WorkoutIndoorList extends Fragment {
                             Log.d(TAG, "Ultimo workout inserito prelevato");
                             final WorkoutWithExercise workoutWithExercise = documentSnapshot.toObject(WorkoutWithExercise.class);
                             Log.d(TAG, "Workout: " + workoutWithExercise.getWorkout().getEndDate());
-                            if (workoutWithExercise.getWorkout().getEndDate().before(Calendar.getInstance().getTime())) {
+                            if (workoutWithExercise.getWorkout().getEndDate().before(Calendar.getInstance().getTime())
+                                    && workoutWithExercise.getWorkout().getWorkoutType().equals(WorkoutType.INDOOR)) {
                                 Log.d(TAG, "Il workout su fire base è scaduto");
                                 errorDialog(R.string.no_active_workout);
                             } else {

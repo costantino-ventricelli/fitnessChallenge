@@ -43,9 +43,9 @@ import it.fitnesschallenge.model.User;
 
 import static android.util.Patterns.EMAIL_ADDRESS;
 import static it.fitnesschallenge.model.SharedConstance.AUTO_LOGGED;
-import static it.fitnesschallenge.model.SharedConstance.LOGGED_IN;
+import static it.fitnesschallenge.model.SharedConstance.GYM_HOME_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.LOGIN_FRAGMENT;
-import static it.fitnesschallenge.model.SharedConstance.SHARED_PREFERENCES;
+import static it.fitnesschallenge.model.SharedConstance.PROFILE_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.SIGN_UP_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.TRAINER_HOME_FRAGMENT;
 
@@ -155,8 +155,7 @@ public class Login extends Fragment {
                 SignUp signUp = new SignUp();
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
-                        R.anim.enter_from_rigth, R.anim.exit_from_left);
+                transaction.setCustomAnimations(R.anim.fragment_fade_enter, R.anim.fragment_fade_exit, R.anim.fragment_fade_enter, R.anim.fragment_fade_exit);
                 transaction.addToBackStack(SIGN_UP_FRAGMENT);
                 transaction.replace(R.id.fragmentContainer, signUp, SIGN_UP_FRAGMENT)
                         .commit();
@@ -258,17 +257,29 @@ public class Login extends Fragment {
                     progressBar.setVisibility(View.GONE);
                     user = documentSnapshot.toObject(User.class);
                     Fragment fragment;
-                    if (mCaller.equals(TRAINER_HOME_FRAGMENT))
-                        fragment = TrainerHome.newInstance(user);
-                    else
+                    String fragmentTag = null;
+                    if (mCaller.equals(TRAINER_HOME_FRAGMENT)) {
+                        if (user.getRole().equals("USER")) {
+                            fragment = null;
+                            Snackbar.make(getView(), "You are not a trainer", Snackbar.LENGTH_LONG).show();
+                        } else {
+                            fragment = TrainerHome.newInstance(user);
+                            fragmentTag = TRAINER_HOME_FRAGMENT;
+                        }
+                    } else if (mCaller.equals(GYM_HOME_FRAGMENT)) {
                         fragment = GymHome.newInstance(user);
+                        fragmentTag = GYM_HOME_FRAGMENT;
+                    } else
+                        fragment = null;
                     FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                     FragmentTransaction transaction = fragmentManager.beginTransaction();
-                    transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
-                            R.anim.enter_from_rigth, R.anim.exit_from_left);
-                    transaction.replace(R.id.fragmentContainer, fragment, TRAINER_HOME_FRAGMENT)
-                            .addToBackStack(TRAINER_HOME_FRAGMENT)
-                            .commit();
+                    transaction.setCustomAnimations(R.anim.fragment_fade_enter, R.anim.fragment_fade_exit, R.anim.fragment_fade_enter, R.anim.fragment_fade_exit);
+                    if (fragment != null && fragmentTag != null)
+                        transaction.replace(R.id.fragmentContainer, fragment, fragmentTag)
+                                .addToBackStack(fragmentTag)
+                                .commit();
+                    else
+                        getActivity().getSupportFragmentManager().popBackStackImmediate();
                 }
             });
         } catch (NullPointerException ex) {

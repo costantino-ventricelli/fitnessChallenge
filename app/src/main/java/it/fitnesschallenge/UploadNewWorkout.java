@@ -25,8 +25,10 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
+import it.fitnesschallenge.model.room.Converter;
 import it.fitnesschallenge.model.room.WorkoutType;
 import it.fitnesschallenge.model.room.entity.Workout;
 import it.fitnesschallenge.model.room.entity.reference.WorkoutWithExercise;
@@ -107,11 +109,15 @@ public class UploadNewWorkout extends Fragment {
     }
 
     private void uploadNewWorkout() {
+        //Questa conversione è necessaria per non inviare su firebase una data inquinata dall'orario di upload
+        Converter converter = new Converter();
+        Date startDate = converter.stringToDate(converter.dateToString(mCreationViewModel.getStartDate().getValue()));
+        Date endDate = converter.stringToDate(converter.dateToString(mCreationViewModel.getFinishDate().getValue()));
         mProgressBar.setVisibility(View.VISIBLE);
         WorkoutWithExercise workoutWithExercise = new WorkoutWithExercise();
         workoutWithExercise.setWorkout(new Workout(true,
-                mCreationViewModel.getStartDate().getValue(),
-                mCreationViewModel.getFinishDate().getValue(),
+                startDate,
+                endDate,
                 WorkoutType.INDOOR));
         workoutWithExercise.setPersonalExerciseList(mCreationViewModel.getPersonalExerciseList().getValue());
         mDatabase.collection("user")

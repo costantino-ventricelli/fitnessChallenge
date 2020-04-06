@@ -2,15 +2,12 @@ package it.fitnesschallenge.model.room.dao;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
-import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Transaction;
 
 import java.util.List;
 
-import it.fitnesschallenge.model.ExerciseList;
 import it.fitnesschallenge.model.room.entity.PersonalExercise;
-import it.fitnesschallenge.model.room.entity.Workout;
 import it.fitnesschallenge.model.room.entity.reference.WorkoutWithExercise;
 
 @Dao

@@ -2,8 +2,11 @@ package it.fitnesschallenge;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
-import androidx.activity.OnBackPressedDispatcherOwner;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -12,21 +15,11 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
-import it.fitnesschallenge.EditList;
-import it.fitnesschallenge.PlayingWorkout;
-import it.fitnesschallenge.R;
 import it.fitnesschallenge.adapter.ShowAdapter;
 import it.fitnesschallenge.model.room.WorkoutType;
 import it.fitnesschallenge.model.room.entity.Exercise;
@@ -68,8 +61,7 @@ public class WorkoutOutdoorList extends Fragment {
                 EditList editList = new EditList();
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
-                        R.anim.enter_from_rigth, R.anim.exit_from_left);
+                transaction.setCustomAnimations(R.anim.fragment_fade_enter, R.anim.fragment_fade_exit, R.anim.fragment_fade_enter, R.anim.fragment_fade_exit);
                 transaction.replace(R.id.fragmentContainer, editList, EDIT_LIST_FRAGMENT)
                         .addToBackStack(EDIT_LIST_FRAGMENT)
                         .commit();
@@ -83,8 +75,7 @@ public class WorkoutOutdoorList extends Fragment {
                 PlayingWorkout playingWorkout = new PlayingWorkout();
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
-                        R.anim.enter_from_rigth, R.anim.exit_from_left);
+                transaction.setCustomAnimations(R.anim.fragment_fade_enter, R.anim.fragment_fade_exit, R.anim.fragment_fade_enter, R.anim.fragment_fade_exit);
                 transaction.replace(R.id.fragmentContainer, playingWorkout, PLAYING_WORKOUT)
                         .addToBackStack(PLAYING_WORKOUT)
                         .commit();
@@ -152,8 +143,7 @@ public class WorkoutOutdoorList extends Fragment {
                 .setTitle(R.string.ops)
                 .setMessage(message);
         final FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
-                R.anim.enter_from_rigth, R.anim.exit_from_left);
+        transaction.setCustomAnimations(R.anim.fragment_fade_enter, R.anim.fragment_fade_exit, R.anim.fragment_fade_enter, R.anim.fragment_fade_exit);
         if (message == R.string.registration_error) {
             builder.setNegativeButton(R.string.sign_in, new DialogInterface.OnClickListener() {
                 @Override

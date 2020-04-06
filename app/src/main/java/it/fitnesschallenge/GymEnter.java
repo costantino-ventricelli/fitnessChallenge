@@ -7,9 +7,6 @@ import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +14,6 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -61,8 +57,7 @@ public class GymEnter extends Fragment implements NfcAdapter.CreateNdefMessageCa
                         mImage.setImageResource(R.drawable.ic_check_circle_100dp);
                         Login login = Login.newInstance(GYM_HOME_FRAGMENT);
                         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                        transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
-                                R.anim.enter_from_rigth, R.anim.exit_from_left)
+                        transaction.setCustomAnimations(R.anim.fragment_fade_enter, R.anim.fragment_fade_exit, R.anim.fragment_fade_enter, R.anim.fragment_fade_exit)
                                 .replace(R.id.fragmentContainer, login, LOGIN_FRAGMENT)
                                 .addToBackStack(LOGIN_FRAGMENT)
                                 .commit();

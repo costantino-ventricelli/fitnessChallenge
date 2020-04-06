@@ -44,7 +44,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if (position == 0) {
-            return Statistics.newInstance(mUser);
+            return new Statistics();
         } else {
             return new Rooms();
         }

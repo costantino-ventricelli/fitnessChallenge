@@ -143,8 +143,7 @@ public class CreateTrainingList extends Fragment {
                 AddExerciseToList addExerciseToList = AddExerciseToList.newInstance(CREATE_TRAINING_LIST);
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
-                        R.anim.enter_from_rigth, R.anim.exit_from_left)
+                transaction.setCustomAnimations(R.anim.fragment_fade_enter, R.anim.fragment_fade_exit, R.anim.fragment_fade_enter, R.anim.fragment_fade_exit)
                         .replace(R.id.fragmentContainer, addExerciseToList, ADD_EXERCISE_TO_LIST)
                         .addToBackStack(ADD_EXERCISE_TO_LIST)
                         .commit();
@@ -168,8 +167,7 @@ public class CreateTrainingList extends Fragment {
     private void setCurrentStep(ArrayList<Integer> integers) {
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
-                R.anim.enter_from_rigth, R.anim.exit_from_left);
+        transaction.setCustomAnimations(R.anim.fragment_fade_enter, R.anim.fragment_fade_exit, R.anim.fragment_fade_enter, R.anim.fragment_fade_exit);
         Log.d(TAG, "Current step: " + integers.size());
         Log.d(TAG, "Error: " + mViewModel.isError());
         switch (integers.size()) {

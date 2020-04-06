@@ -1,6 +1,7 @@
 package it.fitnesschallenge.model.view;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -21,7 +22,9 @@ public class GetWorkoutFromDBModel extends AndroidViewModel {
     public MutableLiveData<Workout> getWorkoutMutableLiveData() {
         return workoutMutableLiveData;
     }
+
     public void setWorkoutMutableLiveData(Workout workout) {
+        Log.d(TAG, "Salvo workout.");
         this.workoutMutableLiveData.setValue(workout);
     }
 }

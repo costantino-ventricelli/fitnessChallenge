@@ -121,7 +121,11 @@ public class TimerService extends Service {
                         defaultUri);
                 mRingtone.play();
                 stopSelf();
-                cancelNotify();
+                try {
+                    cancelNotify();
+                } catch (NullPointerException ex) {
+                    ex.printStackTrace();
+                }
                 mTimerIsFinish = true;
                 mTimerIsRunning = false;
             }
@@ -157,7 +161,11 @@ public class TimerService extends Service {
             mCountDownTimer.cancel();
         mTimerIsRunning = false;
         mTimerIsStopped = true;
-        cancelNotify();
+        try {
+            cancelNotify();
+        } catch (NullPointerException ex) {
+            ex.printStackTrace();
+        }
         stopSelf();
     }
 
@@ -205,7 +213,7 @@ public class TimerService extends Service {
     /**
      * Cancella la notifica.
      */
-    private void cancelNotify() {
+    private void cancelNotify() throws NullPointerException {
         mNotificationCompactManager.cancel(NOTIFICATION_ID);
     }
 

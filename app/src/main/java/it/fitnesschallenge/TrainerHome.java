@@ -65,8 +65,7 @@ public class TrainerHome extends Fragment {
                 CreateTrainingList createTrainingList = new CreateTrainingList();
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
-                        R.anim.enter_from_rigth, R.anim.exit_from_left);
+                transaction.setCustomAnimations(R.anim.fragment_fade_enter, R.anim.fragment_fade_exit, R.anim.fragment_fade_enter, R.anim.fragment_fade_exit);
                 transaction.replace(R.id.fragmentContainer, createTrainingList, CREATE_TRAINING_LIST)
                         .addToBackStack(CREATE_TRAINING_LIST)
                         .commit();

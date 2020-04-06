@@ -29,7 +29,9 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -64,26 +66,17 @@ public class Statistics extends Fragment {
     private ArrayList<Entry> mEntryList;
     private StatisticsRoomsViewModel mViewModel;
     private FirebaseFirestore mDatabase;
-    private User mUser;
+    private FirebaseUser mUser;
 
     public Statistics() {
         // Required empty public constructor
     }
 
-    public static Statistics newInstance(User mUser) {
-        Statistics fragment = new Statistics();
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(USER, mUser);
-        fragment.setArguments(bundle);
-        return fragment;
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null)
-            mUser = getArguments().getParcelable(USER);
         mDatabase = FirebaseFirestore.getInstance();
+        mUser = FirebaseAuth.getInstance().getCurrentUser();
     }
 
     @Override
@@ -152,7 +145,14 @@ public class Statistics extends Fragment {
                 Log.d(TAG, "Workout id: " + workout.getWorkOutId() + " start date: " + workout.getStartDate());
                 workout.setActive(false);
             } else {
-                getExecution(workout);
+                if (mUser != null)
+                    getExecution(workout);
+                else {
+                    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext())
+                            .setTitle(R.string.ops)
+                            .setMessage(R.string.no_active_workout);
+                    builder.show();
+                }
             }
         }
     }
@@ -165,7 +165,7 @@ public class Statistics extends Fragment {
     private void getExecution(Workout workout) {
         Log.d(TAG, "Prelevo dati da FireStore.");
         final ArrayList<ExecutionList> executionLists = new ArrayList<>();
-        String documentPath = "user/" + mUser.getUsername() + "/workout/"
+        String documentPath = "user/" + mUser.getEmail() + "/workout/"
                 + new SimpleDateFormat(getString(R.string.date_pattern),
                 Locale.getDefault()).format(workout.getStartDate()) + "/execution";
         Log.d(TAG, "documentPath: " + documentPath);

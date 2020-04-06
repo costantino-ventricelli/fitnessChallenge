@@ -18,7 +18,6 @@ import com.google.android.material.button.MaterialButton;
 import static it.fitnesschallenge.model.SharedConstance.ENTER_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.GYM_HOME_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.HOME_FRAGMENT;
-import static it.fitnesschallenge.model.SharedConstance.LOGGED_IN;
 import static it.fitnesschallenge.model.SharedConstance.LOGIN_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.TRAINER_HOME_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.USE_NFC;
@@ -26,8 +25,6 @@ import static it.fitnesschallenge.model.SharedConstance.WORKOUT_FRAGMENT;
 
 
 public class Home extends Fragment{
-
-    //TODO: passare l'NFC dall'activty o istanziarlo da qui, per ora istanzio da qui e verifico
 
     private static final String TAG = "Home";
 
@@ -66,8 +63,8 @@ public class Home extends Fragment{
                     fragment = Login.newInstance(GYM_HOME_FRAGMENT);
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
-                        R.anim.enter_from_rigth, R.anim.exit_from_left);
+                transaction.setCustomAnimations(R.anim.fragment_fade_enter, R.anim.fragment_fade_exit,
+                        R.anim.fragment_fade_enter, R.anim.fragment_fade_exit);
                 transaction.replace(R.id.fragmentContainer, fragment, ENTER_FRAGMENT)
                         .addToBackStack(ENTER_FRAGMENT)
                         .commit();
@@ -80,8 +77,8 @@ public class Home extends Fragment{
                 Login login = Login.newInstance(TRAINER_HOME_FRAGMENT);
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
-                        R.anim.enter_from_rigth, R.anim.exit_from_left);
+                transaction.setCustomAnimations(R.anim.fragment_fade_enter, R.anim.fragment_fade_exit,
+                        R.anim.fragment_fade_enter, R.anim.fragment_fade_exit);
                 transaction.replace(R.id.fragmentContainer, login, LOGIN_FRAGMENT)
                         .addToBackStack(LOGIN_FRAGMENT)
                         .commit();
@@ -95,8 +92,7 @@ public class Home extends Fragment{
                 WorkoutHome workoutHome = new WorkoutHome();
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
-                        R.anim.enter_from_rigth, R.anim.exit_from_left);
+                transaction.setCustomAnimations(R.anim.fragment_fade_enter, R.anim.fragment_fade_exit, R.anim.fragment_fade_enter, R.anim.fragment_fade_exit);
                 transaction.replace(R.id.fragmentContainer, workoutHome, WORKOUT_FRAGMENT)
                         .addToBackStack(WORKOUT_FRAGMENT)
                         .commit();
