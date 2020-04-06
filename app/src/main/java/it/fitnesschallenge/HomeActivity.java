@@ -99,8 +99,7 @@ public class HomeActivity extends AppCompatActivity {
                     FragmentManager manager = getSupportFragmentManager();
                     FragmentTransaction transaction;
                     transaction = manager.beginTransaction();
-                    transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
-                            R.anim.enter_from_rigth, R.anim.exit_from_left);
+                    transaction.setCustomAnimations(R.anim.fragment_fade_enter, R.anim.fragment_fade_exit, R.anim.fragment_fade_enter, R.anim.fragment_fade_exit);
                     switch (item.getItemId()) {
                         case R.id.navigation_home:
                             selectedFragment = new Home();

@@ -61,8 +61,7 @@ public class GymEnter extends Fragment implements NfcAdapter.CreateNdefMessageCa
                         mImage.setImageResource(R.drawable.ic_check_circle_100dp);
                         Login login = Login.newInstance(GYM_HOME_FRAGMENT);
                         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                        transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
-                                R.anim.enter_from_rigth, R.anim.exit_from_left)
+                        transaction.setCustomAnimations(R.anim.fragment_fade_enter, R.anim.fragment_fade_exit, R.anim.fragment_fade_enter, R.anim.fragment_fade_exit)
                                 .replace(R.id.fragmentContainer, login, LOGIN_FRAGMENT)
                                 .addToBackStack(LOGIN_FRAGMENT)
                                 .commit();

@@ -65,8 +65,7 @@ public class WorkoutHome extends Fragment {
                 WorkoutStatistics workoutStatistics = new WorkoutStatistics();
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
-                        R.anim.enter_from_rigth, R.anim.exit_from_left);
+                transaction.setCustomAnimations(R.anim.fragment_fade_enter, R.anim.fragment_fade_exit, R.anim.fragment_fade_enter, R.anim.fragment_fade_exit);
                 transaction.replace(R.id.fragmentContainer, workoutStatistics, WORKOUT_STATISTICS_FRAGMENT)
                         .addToBackStack(WORKOUT_STATISTICS_FRAGMENT)
                         .commit();
@@ -79,8 +78,7 @@ public class WorkoutHome extends Fragment {
                 WorkoutOutdoorList workoutOutdoorList = new WorkoutOutdoorList();
                 FragmentManager manager = getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = manager.beginTransaction();
-                transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
-                        R.anim.enter_from_rigth, R.anim.exit_from_left)
+                transaction.setCustomAnimations(R.anim.fragment_fade_enter, R.anim.fragment_fade_exit, R.anim.fragment_fade_enter, R.anim.fragment_fade_exit)
                         .replace(R.id.fragmentContainer, workoutOutdoorList, WORKOUT_FRAGMENT)
                         .addToBackStack(WORKOUT_FRAGMENT)
                         .commit();
@@ -93,8 +91,7 @@ public class WorkoutHome extends Fragment {
                 EditList editList = new EditList();
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
-                        R.anim.enter_from_rigth, R.anim.exit_from_left)
+                transaction.setCustomAnimations(R.anim.fragment_fade_enter, R.anim.fragment_fade_exit, R.anim.fragment_fade_enter, R.anim.fragment_fade_exit)
                         .replace(R.id.fragmentContainer, editList, EDIT_LIST_FRAGMENT)
                         .addToBackStack(EDIT_LIST_FRAGMENT)
                         .commit();

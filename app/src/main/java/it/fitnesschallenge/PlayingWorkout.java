@@ -139,8 +139,7 @@ public class PlayingWorkout extends Fragment {
                 mTimer = new Timer();
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
-                        R.anim.enter_from_rigth, R.anim.exit_from_left)
+                transaction.setCustomAnimations(R.anim.fragment_fade_enter, R.anim.fragment_fade_exit, R.anim.fragment_fade_enter, R.anim.fragment_fade_exit)
                         .replace(R.id.fragmentContainer, mTimer, TIMER_FRAGMENT)
                         .addToBackStack(TIMER_FRAGMENT)
                         .commit();
@@ -177,8 +176,7 @@ public class PlayingWorkout extends Fragment {
                 AddWeight addWeight = new AddWeight();
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
-                        R.anim.enter_from_rigth, R.anim.exit_from_left)
+                transaction.setCustomAnimations(R.anim.fragment_fade_enter, R.anim.fragment_fade_exit, R.anim.fragment_fade_enter, R.anim.fragment_fade_exit)
                         .replace(R.id.fragmentContainer, addWeight, ADD_WEIGHT)
                         .addToBackStack(ADD_WEIGHT)
                         .commit();
@@ -200,8 +198,7 @@ public class PlayingWorkout extends Fragment {
         UploadWorkoutOnFireBase uploadWorkoutOnFireBase = new UploadWorkoutOnFireBase();
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
-                R.anim.enter_from_rigth, R.anim.exit_from_left)
+        transaction.setCustomAnimations(R.anim.fragment_fade_enter, R.anim.fragment_fade_exit, R.anim.fragment_fade_enter, R.anim.fragment_fade_exit)
                 .replace(R.id.fragmentContainer, uploadWorkoutOnFireBase, UPLOAD_WORKOUT_ON_FIREBASE)
                 .addToBackStack(UPLOAD_WORKOUT_ON_FIREBASE)
                 .commit();

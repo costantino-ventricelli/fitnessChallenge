@@ -155,8 +155,7 @@ public class Login extends Fragment {
                 SignUp signUp = new SignUp();
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
-                        R.anim.enter_from_rigth, R.anim.exit_from_left);
+                transaction.setCustomAnimations(R.anim.fragment_fade_enter, R.anim.fragment_fade_exit, R.anim.fragment_fade_enter, R.anim.fragment_fade_exit);
                 transaction.addToBackStack(SIGN_UP_FRAGMENT);
                 transaction.replace(R.id.fragmentContainer, signUp, SIGN_UP_FRAGMENT)
                         .commit();
@@ -264,8 +263,7 @@ public class Login extends Fragment {
                         fragment = GymHome.newInstance(user);
                     FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                     FragmentTransaction transaction = fragmentManager.beginTransaction();
-                    transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
-                            R.anim.enter_from_rigth, R.anim.exit_from_left);
+                    transaction.setCustomAnimations(R.anim.fragment_fade_enter, R.anim.fragment_fade_exit, R.anim.fragment_fade_enter, R.anim.fragment_fade_exit);
                     transaction.replace(R.id.fragmentContainer, fragment, TRAINER_HOME_FRAGMENT)
                             .addToBackStack(TRAINER_HOME_FRAGMENT)
                             .commit();

@@ -58,8 +58,7 @@ public class GymHome extends Fragment {
                 WorkoutIndoorList workoutIndoorList = WorkoutIndoorList.newInstance(mUser);
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
-                        R.anim.enter_from_rigth, R.anim.exit_from_left);
+                transaction.setCustomAnimations(R.anim.fragment_fade_enter, R.anim.fragment_fade_exit, R.anim.fragment_fade_enter, R.anim.fragment_fade_exit);
                 transaction.replace(R.id.fragmentContainer, workoutIndoorList, PLAYING_WORKOUT)
                         .addToBackStack(PLAYING_WORKOUT)
                         .commit();

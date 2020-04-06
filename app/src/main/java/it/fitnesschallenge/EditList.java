@@ -119,8 +119,7 @@ public class EditList extends Fragment {
                 }
                 AddExerciseToList addExerciseToList = AddExerciseToList.newInstance(EDIT_LIST_FRAGMENT);
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_from_right,
-                        R.anim.enter_from_rigth, R.anim.exit_from_left)
+                transaction.setCustomAnimations(R.anim.fragment_fade_enter, R.anim.fragment_fade_exit, R.anim.fragment_fade_enter, R.anim.fragment_fade_exit)
                         .replace(R.id.fragmentContainer, addExerciseToList, ADD_EXERCISE_TO_LIST)
                         .addToBackStack(ADD_EXERCISE_TO_LIST)
                         .commit();
