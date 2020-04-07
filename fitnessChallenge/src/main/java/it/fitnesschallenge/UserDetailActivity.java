@@ -40,8 +40,8 @@ import java.util.List;
 import java.util.Locale;
 
 import it.fitnesschallenge.adapter.LineChartMakerView;
+import it.fitnesschallenge.model.ExecutionList;
 import it.fitnesschallenge.model.room.entity.ExerciseExecution;
-import it.fitnesschallenge.model.room.entity.PersonalExercise;
 import it.fitnesschallenge.model.room.entity.Workout;
 import it.fitnesschallenge.model.view.GetWorkoutFromDBModel;
 
@@ -53,7 +53,7 @@ import it.fitnesschallenge.model.view.GetWorkoutFromDBModel;
  */
 public class UserDetailActivity extends AppCompatActivity {
     private static final String TAG = "UserDetailActivity";
-
+    private static final List<ExecutionList> executionList = new ArrayList<>();
     /*
      * Questa lista contiene degli oggetti denominati Entry, che fondamentalmente, racchiude due valori
      * di tipo float: x, y, che sono rispettivamente i valori che verranno utilizzati per la rappresentazione
@@ -111,20 +111,34 @@ public class UserDetailActivity extends AppCompatActivity {
 
         //otteniamo il riferimento al grafico
         LineChart lineChart = findViewById(R.id.progress_chart);
-
-
         getWorkoutFromDBModel = ViewModelProviders.of(this).get(GetWorkoutFromDBModel.class);
         /**
          * otteniamo il workout dal ViewModel
+         * successivamente otteniamo l'esecuzione del workout attraverso il metodo getInfoAboutWorkout()
          */
         getWorkoutFromFirebase();
-      getWorkoutFromDBModel.getWorkoutMutableLiveData().observe(this, new Observer<Workout>() {
-          @Override
-          public void onChanged(Workout workout) {
-              MutableLiveData<Workout> workoutMutableLiveData = getWorkoutFromDBModel.getWorkoutMutableLiveData();
+        getWorkoutFromDBModel.getWorkoutMutableLiveData().observe(this, new Observer<Workout>() {
+            @Override
+            public void onChanged(Workout workout) {
+                 MutableLiveData<Workout> workoutMutableLiveData = getWorkoutFromDBModel.getWorkoutMutableLiveData();
+                 workout = workoutMutableLiveData.getValue();
+                 //setta nel view model l'esecuzione del workout passatogli, e salviamo le info in una variabile locale
+                 getInfoAboutWorkout(workout);
+            }
+         });
+        getWorkoutFromDBModel.getExecutionListMutableLiveData().observe(this, new Observer<ExecutionList>() {
+            @Override
+            public void onChanged(ExecutionList executionList) {
+                MutableLiveData<ExecutionList> executionListMutableLiveData = getWorkoutFromDBModel.getExecutionListMutableLiveData();
+                executionList = executionListMutableLiveData.getValue();
+                setEntryList(executionList.getExerciseList());
+                }
+        });
 
-          }
-      });
+
+        //adesso richiamiamo il metodo per settare i nodi impostati in precedenza con setEntyList
+        setBarChart();
+
 
     }
 
@@ -145,27 +159,25 @@ public class UserDetailActivity extends AppCompatActivity {
     }
     /**
      * questo metodo permette attraverso l'id del workout di ottenere le info di esecuzione del workout su cui poi di faranno le statistiche
-     * @param workouts
+     *
      */
-    private static List<PersonalExercise> getInfoAboutWorkout(List<Workout> workouts) {
-        final List<PersonalExercise> personalExercises = new ArrayList<>(1);
+    private void getInfoAboutWorkout(Workout workout) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        Workout execution = workouts.get(0);
-        Date execution_id = execution.getStartDate();
+        //con le seguenti 2 istruzione ottengo l'id del workout che è la data di inizio
+        Date execution_id = workout.getStartDate();
         db.collection("user").document(item_id).collection("workout").document(String.valueOf(execution_id)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()) {
                     DocumentSnapshot documentSnapshot = task.getResult();
                     if(documentSnapshot.exists()) {
-                        personalExercises.add(documentSnapshot.toObject(PersonalExercise.class));
+                       getWorkoutFromDBModel.setExecutionListMutableLiveData(documentSnapshot.toObject(ExecutionList.class));
                     } else {
                         Log.d(TAG, "No such element");
                     }
                 }
             }
         });
-    return personalExercises;
     }
 
 

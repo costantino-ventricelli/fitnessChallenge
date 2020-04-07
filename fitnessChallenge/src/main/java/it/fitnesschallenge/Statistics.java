@@ -45,7 +45,6 @@ import java.util.Locale;
 
 import it.fitnesschallenge.adapter.LineChartMakerView;
 import it.fitnesschallenge.model.ExecutionList;
-import it.fitnesschallenge.model.User;
 import it.fitnesschallenge.model.room.entity.ExerciseExecution;
 import it.fitnesschallenge.model.room.entity.Workout;
 import it.fitnesschallenge.model.view.StatisticsRoomsViewModel;
@@ -158,16 +157,14 @@ public class Statistics extends Fragment {
     }
 
     /**
-     * In questo metodo vengono prelevare le esecuzioni dei workout da FireStore e memorizzate in locale
+     * In questo metodo vengono prelevate le esecuzioni dei workout da FireStore e memorizzate in locale
      * così da notificare i LiveData che aggiorneranno il grafico.
      * @param workout contiene il workout di riferimento.
      */
     private void getExecution(Workout workout) {
         Log.d(TAG, "Prelevo dati da FireStore.");
         final ArrayList<ExecutionList> executionLists = new ArrayList<>();
-        String documentPath = "user/" + mUser.getEmail() + "/workout/"
-                + new SimpleDateFormat(getString(R.string.date_pattern),
-                Locale.getDefault()).format(workout.getStartDate()) + "/execution";
+        String documentPath = "user/" + mUser.getEmail() + "/workout/" + new SimpleDateFormat(getString(R.string.date_pattern), Locale.getDefault()).format(workout.getStartDate()) + "/execution";
         Log.d(TAG, "documentPath: " + documentPath);
         mDatabase.collection(documentPath).get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
