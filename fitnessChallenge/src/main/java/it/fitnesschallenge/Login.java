@@ -45,7 +45,6 @@ import static android.util.Patterns.EMAIL_ADDRESS;
 import static it.fitnesschallenge.model.SharedConstance.AUTO_LOGGED;
 import static it.fitnesschallenge.model.SharedConstance.GYM_HOME_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.LOGIN_FRAGMENT;
-import static it.fitnesschallenge.model.SharedConstance.PROFILE_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.SIGN_UP_FRAGMENT;
 import static it.fitnesschallenge.model.SharedConstance.TRAINER_HOME_FRAGMENT;
 

@@ -1,6 +1,5 @@
 package it.fitnesschallenge;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,17 +16,14 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
 import it.fitnesschallenge.model.ExecutionList;
-import it.fitnesschallenge.model.room.entity.ExerciseExecution;
 import it.fitnesschallenge.model.room.entity.Workout;
 import it.fitnesschallenge.model.room.entity.reference.WorkoutWithExercise;
 
@@ -54,14 +50,20 @@ public class UserDetailFragment extends Fragment {
         //Need empty constructor
     }
 
+    public static UserDetailFragment newInstance(String userItem) {
+        UserDetailFragment fragment = new UserDetailFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(ARG_ITEM_ID, userItem);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (getArguments().containsKey(ARG_ITEM_ID)) {
             mItem = getArguments().getString(ARG_ITEM_ID);
         }
-
         mDatabase = FirebaseFirestore.getInstance();
     }
 

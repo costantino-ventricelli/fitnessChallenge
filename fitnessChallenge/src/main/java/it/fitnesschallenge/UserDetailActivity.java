@@ -1,73 +1,42 @@
 package it.fitnesschallenge;
 
-import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
-import android.widget.TextView;
+import android.view.View;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentTransaction;
 
-import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
-import it.fitnesschallenge.adapter.LineChartMakerView;
-import it.fitnesschallenge.model.ExecutionList;
-import it.fitnesschallenge.model.room.entity.ExerciseExecution;
-import it.fitnesschallenge.model.room.entity.Workout;
-import it.fitnesschallenge.model.room.entity.reference.WorkoutWithExercise;
-import it.fitnesschallenge.model.view.GetWorkoutFromDBModel;
+import static it.fitnesschallenge.model.SharedConstance.USER_DETAIL_FRAGMENT;
 
 public class UserDetailActivity extends AppCompatActivity {
-    private static final List<ExecutionList> executionList = new ArrayList<>();
+
+    private static final String TAG = "UserDetailActivity";
     private static final String ARG_ITEM_ID = "itemId";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_detail);
+        Toolbar toolbar = findViewById(R.id.user_detail_toolbar);
+        setSupportActionBar(toolbar);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         if (savedInstanceState == null) {
-            Bundle arguments = new Bundle();
-            arguments.putString(ARG_ITEM_ID,
-                    getIntent().getStringExtra(ARG_ITEM_ID));
-            UserDetailFragment fragment = new UserDetailFragment();
-            fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.user_detail_container, fragment)
+            Log.d(TAG, "Chiamo il fragment");
+            String userId = getIntent().getStringExtra(ARG_ITEM_ID);
+            getSupportActionBar().setTitle(userId);
+            UserDetailFragment userDetailFragment = UserDetailFragment.newInstance(userId);
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.user_detail_container, userDetailFragment, USER_DETAIL_FRAGMENT)
                     .commit();
         }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            navigateUpTo(new Intent(this, UserListActivity.class));
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 }
