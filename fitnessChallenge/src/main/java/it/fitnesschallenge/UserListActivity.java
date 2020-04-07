@@ -36,6 +36,7 @@ public class UserListActivity extends AppCompatActivity {
 
     private List<String> arrayListUser = new ArrayList<>();
     private SimpleItemRecyclerViewAdapter simpleItemRecyclerViewAdapter;
+    private static final String ARG_ITEM_ID = "itemId";
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -50,15 +51,6 @@ public class UserListActivity extends AppCompatActivity {
 
 
         RecyclerView recyclerView = findViewById(R.id.user_list);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.user_list_activity_FAB);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         if (findViewById(R.id.user_detail_container) != null) {
             // The detail container view will be present only in the
@@ -107,7 +99,7 @@ public class UserListActivity extends AppCompatActivity {
 
                 if (mTwoPane) {
                     Bundle arguments = new Bundle();
-                    arguments.putString(UserDetailFragment.ARG_ITEM_ID, item);
+                    arguments.putString(ARG_ITEM_ID, item);
                     UserDetailFragment fragment = new UserDetailFragment();
                     fragment.setArguments(arguments);
                     mParentActivity.getSupportFragmentManager().beginTransaction()
@@ -116,7 +108,7 @@ public class UserListActivity extends AppCompatActivity {
                 } else {
                     Context context = view.getContext();
                     Intent intent = new Intent(context, UserDetailActivity.class);
-                    intent.putExtra(UserDetailFragment.ARG_ITEM_ID, item);
+                    intent.putExtra(ARG_ITEM_ID, item);
 
                     context.startActivity(intent);
                 }
@@ -151,7 +143,7 @@ public class UserListActivity extends AppCompatActivity {
             return mValues.size();
         }
 
-        public class ViewHolder extends RecyclerView.ViewHolder {
+        static class ViewHolder extends RecyclerView.ViewHolder {
             final TextView mContentView;
 
             ViewHolder(View view) {

@@ -10,7 +10,9 @@ import android.view.ViewGroup;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -24,8 +26,10 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import it.fitnesschallenge.model.ExecutionList;
 import it.fitnesschallenge.model.room.entity.ExerciseExecution;
 import it.fitnesschallenge.model.room.entity.Workout;
+import it.fitnesschallenge.model.room.entity.reference.WorkoutWithExercise;
 
 
 /**
@@ -39,22 +43,15 @@ public class UserDetailFragment extends Fragment {
     private static final String TAG = "UserDetailFragment";
 
     private List<Entry> mEntryList = new ArrayList<>();
-    /**
-     * The fragment argument representing the item ID that this fragment
-     * represents.
-     */
-    public static final String ARG_ITEM_ID = "item_id";
+    private LineChart mLineChart;
+    private FirebaseFirestore mDatabase;
 
-    /**
-     * The dummy content this fragment is presenting.
-     */
+    private static final String ARG_ITEM_ID = "itemId";
+
     private String mItem;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
     public UserDetailFragment() {
+        //Need empty constructor
     }
 
     @Override
@@ -62,70 +59,65 @@ public class UserDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
-            // Load the dummy content specified by the fragment
-            // arguments. In a real-world scenario, use a Loader
-            // to load content from a content provider.
             mItem = getArguments().getString(ARG_ITEM_ID);
-
-            Activity activity = this.getActivity();
-
         }
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("user").document(mItem).collection("workout").orderBy("workout", Query.Direction.DESCENDING).limit(1).addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                if(e != null) {
-                    e.printStackTrace();
-                    return;
-                }
-                for(DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                    Workout workout = documentSnapshot.toObject(Workout.class);
-                }
-            }
-        });
+        mDatabase = FirebaseFirestore.getInstance();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.user_detail, container, false);
+        mLineChart = rootView.findViewById(R.id.progress_chart);
 
-        // Show the dummy content as text in a TextView.
-
-
-
-
-
-
-       return rootView;
-    }
-
-    private void ottieniEsecuzioneWorkout(Workout workout) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("user").document(mItem).collection("workout").document(new SimpleDateFormat(getString(R.string.date_pattern), Locale.getDefault()).format(workout.getStartDate())).collection("execution").addSnapshotListener(new EventListener<QuerySnapshot>() {
+        /*
+         * In questo richiamo firebase ottengo l'utlimo workout, che a sua volta richiama getExecutionList
+         */
+        mDatabase.collection("user").document(mItem).collection("workout")
+                .orderBy("workout").limit(1).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                if(e != null) {
+                if (e != null) {
                     e.printStackTrace();
                     return;
                 }
-                for(DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                    ExerciseExecution execution = documentSnapshot.toObject(ExerciseExecution.class);
-                    Calendar calendar = Calendar.getInstance(Locale.getDefault());
-                    calendar.setTime(execution.getExecutionDate());
-                    String floatDate = calendar.get(Calendar.DAY_OF_YEAR) + "." + calendar.get(Calendar.YEAR);
-                    float executionDate = Float.parseFloat(floatDate);
-                    Log.d(TAG, "Data di esecuzione: " + executionDate);
-                    float usedKilogramsAvg = getKilogramsAVG(execution.getUsedKilograms());
-                    Entry entry = new Entry(executionDate, usedKilogramsAvg);
-                    Log.d(TAG, "\tCreata nuova entry: " + executionDate + ", " + usedKilogramsAvg);
-                    mEntryList.add(entry);
+                for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                    Log.d(TAG, "Ottenuto workout con esercizi");
+                    getExecutionList(documentSnapshot.toObject(WorkoutWithExercise.class).getWorkout());
                 }
             }
-
-
         });
+        return rootView;
+    }
+
+    /**
+     * In questo metodo viene richiamato Firebase fino ad ottenere la lista di tutte le esecuzioni
+     * per quel workout, ora per ogni esecuzione va a richiamare getExecutionData.
+     */
+    private void getExecutionList(Workout workout) {
+        mDatabase.collection("user").document(mItem).collection("workout")
+                .document(new SimpleDateFormat(getString(R.string.date_pattern), Locale.getDefault()).format(workout.getStartDate()))
+                .collection("execution").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                    Log.d(TAG, "Ottenuto lista esecuzione");
+                    getExecutionData(documentSnapshot.toObject(ExecutionList.class));
+                }
+            }
+        });
+    }
+
+    /**
+     * Ogni lista di esecuzione contiene una lista di ExerciseExecution dove bisogna calcolare per
+     * ognuno il peso medio usato in quanto la classe contiene un array contentente i pesi usati,
+     * per ogni ExecutionList la media deve essere unica.
+     *
+     * @param executionList
+     */
+    private void getExecutionData(ExecutionList executionList) {
+
     }
 
     /**
