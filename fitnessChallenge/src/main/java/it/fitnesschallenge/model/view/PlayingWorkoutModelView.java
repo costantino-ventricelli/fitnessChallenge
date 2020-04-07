@@ -48,7 +48,7 @@ public class PlayingWorkoutModelView extends AndroidViewModel {
     // Questo indicatore tiene conto della serie in esecuzione
     private int mCurrentSeries;
     /*
-     * Questa variablie indica all'iteratore come si deve comportare se avviene un cambio di riezione
+     * Questa variablie indica all'iteratore come si deve comportare se avviene un cambio di diriezione
      * nello scorrimento della lista, in pratica gli chiamado next() l'iterarore restituisce l'elemento
      * successivo:  A  B  C
      *            ^         (posizione inizale iteratore)

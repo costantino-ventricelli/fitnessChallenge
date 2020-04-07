@@ -22,6 +22,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
@@ -89,7 +90,7 @@ public class UserDetailFragment extends Fragment {
          * In questo richiamo firebase ottengo l'utlimo workout, che a sua volta richiama getExecutionList
          */
         mDatabase.collection("user").document(mItem).collection("workout")
-                .orderBy("workout").limit(1).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                .orderBy("workout", Query.Direction.DESCENDING).limit(1).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 if (e != null) {
@@ -99,13 +100,13 @@ public class UserDetailFragment extends Fragment {
                 for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
                     Log.d(TAG, "Ottenuto workout con esercizi");
                     getExecutionList(documentSnapshot.toObject(WorkoutWithExercise.class).getWorkout());
+
                 }
             }
         });
 
         //impostiamo il grafico
         mLineChart = rootView.findViewById(R.id.progress_chart);
-        setBarChart();
         return rootView;
     }
 
@@ -146,6 +147,7 @@ public class UserDetailFragment extends Fragment {
            media.add(getKilogramsAVG(pesi.get(i)));
         }
         setEntryList(exerciseExecutions);
+        setBarChart();
     }
 
     /**
