@@ -146,13 +146,15 @@ public class WorkoutIndoorList extends Fragment {
         mViewModel.getWorkout().observe(getViewLifecycleOwner(), new Observer<List<Workout>>() {
             @Override
             public void onChanged(List<Workout> workoutList) {
-                Log.d(TAG, "Avvio verifica su DB, size: " + workoutList.size());
-                if (workoutList.size() > 0)
-                    checkWorkoutInLocalDB(workoutList);
-                else if (checkConnection())
-                    getLastWorkoutOnFireBase();
-                else
-                    errorDialog(R.string.connection_error_message);
+                if (!mFirebaseCheck) {
+                    Log.d(TAG, "Avvio verifica su DB, size: " + workoutList.size());
+                    if (workoutList.size() > 0)
+                        checkWorkoutInLocalDB(workoutList);
+                    else if (checkConnection())
+                        getLastWorkoutOnFireBase();
+                    else
+                        errorDialog(R.string.connection_error_message);
+                }
             }
         });
 
@@ -221,10 +223,13 @@ public class WorkoutIndoorList extends Fragment {
             }
         }
         if (!found) {
-            if (checkConnection() && !mFirebaseCheck) {
-                Log.d(TAG, "Apro connessione con firebase, poichè non ho trovato workout attivi");
-                getLastWorkoutOnFireBase();
-                mFirebaseCheck = true;
+            if (checkConnection()) {
+                if (!mFirebaseCheck) {
+                    Log.d(TAG, "Apro connessione con firebase, poichè non ho trovato workout attivi");
+                    getLastWorkoutOnFireBase();
+                    mFirebaseCheck = true;
+                } else
+                    errorDialog(R.string.no_active_workout);
             } else {
                 errorDialog(R.string.connection_error_message);
             }
